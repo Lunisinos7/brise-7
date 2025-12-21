@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useUsers, UserProfile } from '@/hooks/useUsers';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, Users as UsersIcon, UserPlus, Mail, Calendar, Shield } from 'lucide-react';
+import { Search, Users as UsersIcon, UserPlus, Mail, Calendar, Shield, Filter, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import EditUserDialog from '@/components/users/EditUserDialog';
@@ -44,16 +44,27 @@ const Users = () => {
     setIsEditOpen(true);
   };
 
+  const getStatusBadge = (isActive: boolean) => (
+    <Badge variant={isActive ? "default" : "secondary"} className="gap-1">
+      <div
+        className={`w-2 h-2 rounded-full ${
+          isActive ? "bg-energy-efficient" : "bg-muted-foreground"
+        }`}
+      />
+      {isActive ? "Ativo" : "Inativo"}
+    </Badge>
+  );
+
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <Skeleton className="h-8 w-32" />
           <Skeleton className="h-10 w-48" />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4">
           {[1, 2, 3].map(i => (
-            <Skeleton key={i} className="h-48" />
+            <Skeleton key={i} className="h-32" />
           ))}
         </div>
       </div>
@@ -61,104 +72,107 @@ const Users = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <UsersIcon className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold">Usuários</h1>
-            <p className="text-sm text-muted-foreground">
-              {users.length} usuário{users.length !== 1 ? 's' : ''} cadastrado{users.length !== 1 ? 's' : ''}
-            </p>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Usuários</h1>
+          <p className="text-muted-foreground">
+            {users.length} usuário{users.length !== 1 ? 's' : ''} cadastrado{users.length !== 1 ? 's' : ''}
+          </p>
         </div>
-
-        <div className="flex gap-3">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar usuários..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          {isAdmin && (
-            <Button disabled>
-              <UserPlus className="h-4 w-4 mr-2" />
-              Convidar
-            </Button>
-          )}
-        </div>
+        {isAdmin && (
+          <Button variant="cooling" className="gap-2" disabled>
+            <UserPlus className="h-4 w-4" />
+            Convidar
+          </Button>
+        )}
       </div>
 
-      {/* Users Grid */}
-      {filteredUsers.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <UsersIcon className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium">Nenhum usuário encontrado</h3>
-            <p className="text-sm text-muted-foreground">
-              {searchTerm ? 'Tente buscar por outro termo' : 'Não há usuários cadastrados'}
+      {/* Search and Filters */}
+      <div className="flex gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar usuários..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Button variant="outline" className="gap-2">
+          <Filter className="h-4 w-4" />
+          Filtros
+        </Button>
+      </div>
+
+      {/* Users List */}
+      <div className="grid gap-4">
+        {filteredUsers.length === 0 ? (
+          <Card className="p-8 text-center">
+            <p className="text-muted-foreground">
+              {searchTerm ? 'Nenhum usuário encontrado' : 'Nenhum usuário cadastrado'}
             </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredUsers.map(user => (
+          </Card>
+        ) : (
+          filteredUsers.map(user => (
             <Card
               key={user.id}
-              className="group hover:shadow-lg transition-all duration-200 cursor-pointer"
-              onClick={() => handleEditUser(user)}
+              className="hover:shadow-elevated transition-all duration-300"
             >
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between mb-4">
+              <CardHeader>
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-lg font-semibold text-primary">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-sm font-semibold text-primary">
                         {user.full_name?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
                       </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold truncate">
-                        {user.full_name || 'Sem nome'}
-                      </h3>
-                      <Badge
-                        variant={user.is_active ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {user.is_active ? 'Ativo' : 'Inativo'}
-                      </Badge>
+                    <div>
+                      <CardTitle className="text-lg">{user.full_name || 'Sem nome'}</CardTitle>
+                      <p className="text-muted-foreground text-sm">{user.email}</p>
                     </div>
                   </div>
-                </div>
-
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="h-4 w-4" />
-                    <span className="truncate">{user.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Shield className="h-4 w-4" />
+                  <div className="flex items-center gap-2">
+                    {getStatusBadge(user.is_active)}
                     <Badge variant={roleBadgeVariants[user.role]}>
                       {roleLabels[user.role]}
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>
-                      Desde {format(new Date(user.created_at), "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
-                    </span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="font-medium truncate">{user.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Perfil</p>
+                    <p className="font-medium">{roleLabels[user.role]}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Cadastrado em</p>
+                    <p className="font-medium">
+                      {format(new Date(user.created_at), "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 items-center justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditUser(user)}
+                    >
+                      <Pencil className="h-3 w-3 mr-1" />
+                      Editar
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
 
       {/* Edit Dialog */}
       <EditUserDialog
