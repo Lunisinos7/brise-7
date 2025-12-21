@@ -184,12 +184,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                     <SelectContent>
                       <SelectItem value="SMART">SMART</SelectItem>
                       <SelectItem value="BRISE">BRISE</SelectItem>
-                      <SelectItem value="SMARTTHINGS">
-                        <div className="flex items-center gap-2">
-                          <Wifi className="h-4 w-4" />
-                          SmartThings
-                        </div>
-                      </SelectItem>
+                      <SelectItem value="SMARTTHINGS">SmartThings</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
