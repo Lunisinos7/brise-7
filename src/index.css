@@ -1,0 +1,253 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 12%;
+
+    --primary: 195 80% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 215 25% 12%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 20% 50%;
+
+    --accent: 165 80% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 40% 90%;
+    --input: 210 40% 95%;
+    --ring: 195 80% 45%;
+
+    /* HVAC Design System */
+    --cooling: 195 80% 45%;
+    --cooling-light: 195 60% 85%;
+    --cooling-dark: 195 80% 35%;
+    
+    --heating: 15 80% 55%;
+    --heating-light: 15 60% 85%;
+    --heating-dark: 15 80% 45%;
+    
+    --energy-efficient: 165 80% 45%;
+    --energy-warning: 45 80% 55%;
+    --energy-critical: 0 80% 55%;
+    
+    --temperature-cold: 195 80% 55%;
+    --temperature-neutral: 45 30% 65%;
+    --temperature-hot: 15 80% 55%;
+
+    /* Gradients */
+    --gradient-cooling: linear-gradient(135deg, hsl(var(--cooling)), hsl(var(--cooling-light)));
+    --gradient-dashboard: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--muted)));
+
+    /* Shadows */
+    --shadow-cool: 0 10px 30px -10px hsl(var(--cooling) / 0.2);
+    --shadow-elevated: 0 20px 40px -12px hsl(215 25% 12% / 0.15);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark, .theme-dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --cooling: 210 40% 98%;
+    --cooling-light: 217.2 32.6% 17.5%;
+    --cooling-dark: 210 40% 85%;
+    --heating: 25 90% 65%;
+    --heating-light: 25 70% 85%;
+    --heating-dark: 25 90% 55%;
+    --gradient-cooling: linear-gradient(135deg, hsl(var(--cooling)), hsl(var(--cooling-light)));
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Green Light Theme */
+  .theme-green-light {
+    --background: 120 20% 98%;
+    --foreground: 120 25% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 120 25% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 120 25% 12%;
+    --primary: 142 70% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 120 40% 96%;
+    --secondary-foreground: 120 25% 12%;
+    --muted: 120 40% 96%;
+    --muted-foreground: 120 20% 50%;
+    --accent: 142 70% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 120 40% 90%;
+    --input: 120 40% 95%;
+    --ring: 142 70% 45%;
+    --cooling: 142 70% 45%;
+    --cooling-light: 142 50% 85%;
+    --cooling-dark: 142 70% 35%;
+    --heating: 35 80% 55%;
+    --heating-light: 35 60% 85%;
+    --heating-dark: 35 80% 45%;
+    --gradient-cooling: linear-gradient(135deg, hsl(var(--cooling)), hsl(var(--cooling-light)));
+  }
+
+  /* Green Dark Theme */
+  .theme-green-dark {
+    --background: 120 15% 8%;
+    --foreground: 120 40% 95%;
+    --card: 120 15% 8%;
+    --card-foreground: 120 40% 95%;
+    --popover: 120 15% 8%;
+    --popover-foreground: 120 40% 95%;
+    --primary: 142 70% 55%;
+    --primary-foreground: 120 15% 8%;
+    --secondary: 120 20% 15%;
+    --secondary-foreground: 120 40% 95%;
+    --muted: 120 20% 15%;
+    --muted-foreground: 120 20% 65%;
+    --accent: 142 70% 55%;
+    --accent-foreground: 120 15% 8%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 120 40% 95%;
+    --border: 120 20% 15%;
+    --input: 120 20% 15%;
+    --ring: 142 70% 55%;
+    --cooling: 142 70% 55%;
+    --cooling-light: 120 20% 15%;
+    --cooling-dark: 142 70% 45%;
+    --heating: 35 80% 55%;
+    --heating-light: 35 60% 85%;
+    --heating-dark: 35 80% 45%;
+    --gradient-cooling: linear-gradient(135deg, hsl(var(--cooling)), hsl(var(--cooling-light)));
+  }
+
+  /* Red Theme */
+  .theme-red {
+    --background: 0 20% 98%;
+    --foreground: 0 25% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 25% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 25% 12%;
+    --primary: 0 70% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 40% 96%;
+    --secondary-foreground: 0 25% 12%;
+    --muted: 0 40% 96%;
+    --muted-foreground: 0 20% 50%;
+    --accent: 15 80% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 40% 90%;
+    --input: 0 40% 95%;
+    --ring: 0 70% 55%;
+    --cooling: 195 70% 55%;
+    --cooling-light: 195 50% 85%;
+    --cooling-dark: 195 70% 45%;
+    --heating: 0 70% 55%;
+    --heating-light: 0 50% 85%;
+    --heating-dark: 0 70% 45%;
+    --gradient-cooling: linear-gradient(135deg, hsl(var(--heating)), hsl(var(--heating-light)));
+  }
+
+  /* Purple Theme */
+  .theme-purple {
+    --background: 270 20% 98%;
+    --foreground: 270 25% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 270 25% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 25% 12%;
+    --primary: 270 70% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 270 40% 96%;
+    --secondary-foreground: 270 25% 12%;
+    --muted: 270 40% 96%;
+    --muted-foreground: 270 20% 50%;
+    --accent: 280 70% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 270 40% 90%;
+    --input: 270 40% 95%;
+    --ring: 270 70% 55%;
+    --cooling: 270 70% 55%;
+    --cooling-light: 270 50% 85%;
+    --cooling-dark: 270 70% 45%;
+    --heating: 15 80% 55%;
+    --heating-light: 15 60% 85%;
+    --heating-dark: 15 80% 45%;
+    --gradient-cooling: linear-gradient(135deg, hsl(var(--cooling)), hsl(var(--cooling-light)));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
