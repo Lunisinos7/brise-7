@@ -18,6 +18,7 @@ export interface Equipment {
   smartthings_device_id?: string | null;
   smartthings_capabilities?: any;
   last_synced_at?: string | null;
+  workspace_id?: string | null;
 }
 
 interface DbEquipment {
@@ -38,6 +39,7 @@ interface DbEquipment {
   smartthings_device_id?: string | null;
   smartthings_capabilities?: any;
   last_synced_at?: string | null;
+  workspace_id?: string | null;
 }
 
 const mapDbToEquipment = (db: DbEquipment): Equipment => ({
@@ -56,6 +58,7 @@ const mapDbToEquipment = (db: DbEquipment): Equipment => ({
   smartthings_device_id: db.smartthings_device_id,
   smartthings_capabilities: db.smartthings_capabilities,
   last_synced_at: db.last_synced_at,
+  workspace_id: db.workspace_id,
 });
 
 const mapEquipmentToDb = (eq: Equipment) => ({
@@ -74,18 +77,26 @@ const mapEquipmentToDb = (eq: Equipment) => ({
   smartthings_device_id: eq.smartthings_device_id,
   smartthings_capabilities: eq.smartthings_capabilities,
   last_synced_at: eq.last_synced_at,
+  workspace_id: eq.workspace_id,
 });
 
-export function useEquipments() {
+export function useEquipments(workspaceId: string | null) {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   const fetchEquipments = async () => {
+    if (!workspaceId) {
+      setEquipments([]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from("equipments")
         .select("*")
+        .eq("workspace_id", workspaceId)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -104,6 +115,8 @@ export function useEquipments() {
   };
 
   const addEquipment = async (equipment: Omit<Equipment, "id">) => {
+    if (!workspaceId) throw new Error("No workspace selected");
+    
     try {
       const dbEquipment = {
         name: equipment.name,
@@ -117,6 +130,7 @@ export function useEquipments() {
         mode: equipment.mode,
         energy_consumption: equipment.energyConsumption,
         efficiency: equipment.efficiency,
+        workspace_id: workspaceId,
       };
 
       const { data, error } = await supabase
@@ -175,7 +189,7 @@ export function useEquipments() {
 
   useEffect(() => {
     fetchEquipments();
-  }, []);
+  }, [workspaceId]);
 
   return {
     equipments,
