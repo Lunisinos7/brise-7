@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { LayoutDashboard, Wind, Settings, BarChart3, AlertCircle, Zap, Users, LogOut } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import WorkspaceSelector from "@/components/workspace/WorkspaceSelector";
 
 const Navigation = () => {
   const location = useLocation();
@@ -51,11 +52,12 @@ const Navigation = () => {
 
   return (
     <nav className="bg-card border-r border-border min-h-screen w-64 p-6 flex flex-col">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold bg-gradient-cooling bg-clip-text text-transparent">Brise Cloud</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground mb-4">
           Gestão Inteligente de Climatização
         </p>
+        <WorkspaceSelector />
       </div>
 
       <div className="space-y-2 flex-1">
