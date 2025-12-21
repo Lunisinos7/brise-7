@@ -68,7 +68,7 @@ const Reports = () => {
                 {periodLabels[selectedPeriod]}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
+            <PopoverContent className="w-96" align="end">
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">Selecione o Período</h4>
                 <PeriodSelector
