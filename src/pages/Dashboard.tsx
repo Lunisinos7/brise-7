@@ -11,6 +11,7 @@ import { Wind, Zap, Thermometer, TrendingUp, AlertTriangle, Plus } from "lucide-
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +24,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const Dashboard = () => {
-  const { equipments, updateEquipment, isLoading } = useEquipments();
+  const { currentWorkspaceId } = useWorkspaceContext();
+  const { equipments, updateEquipment, isLoading } = useEquipments(currentWorkspaceId);
   const { environments, addEnvironment, updateEnvironment, removeEnvironment } = useEnvironments();
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
   const [isControlDialogOpen, setIsControlDialogOpen] = useState(false);

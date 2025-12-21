@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useWorkspaceContext } from "./WorkspaceContext";
 
 export interface Environment {
   id: string;
   name: string;
   equipmentIds: string[];
+  workspace_id?: string | null;
 }
 
 interface DbEnvironment {
@@ -14,6 +16,7 @@ interface DbEnvironment {
   equipment_ids: string[];
   created_at: string;
   updated_at: string;
+  workspace_id?: string | null;
 }
 
 interface EnvironmentContextType {
@@ -31,18 +34,27 @@ const mapDbToEnvironment = (db: DbEnvironment): Environment => ({
   id: db.id,
   name: db.name,
   equipmentIds: db.equipment_ids || [],
+  workspace_id: db.workspace_id,
 });
 
 export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
   const [environments, setEnvironments] = useState<Environment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { currentWorkspaceId } = useWorkspaceContext();
 
   const fetchEnvironments = async () => {
+    if (!currentWorkspaceId) {
+      setEnvironments([]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       setIsLoading(true);
       const { data, error } = await supabase
         .from("environments")
         .select("*")
+        .eq("workspace_id", currentWorkspaceId)
         .order("created_at", { ascending: true });
 
       if (error) {
@@ -62,15 +74,21 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     fetchEnvironments();
-  }, []);
+  }, [currentWorkspaceId]);
 
   const addEnvironment = async (environment: Omit<Environment, "id">): Promise<Environment | null> => {
+    if (!currentWorkspaceId) {
+      toast.error("Selecione um workspace");
+      return null;
+    }
+
     try {
       const { data, error } = await supabase
         .from("environments")
         .insert({
           name: environment.name,
           equipment_ids: environment.equipmentIds,
+          workspace_id: currentWorkspaceId,
         })
         .select()
         .single();

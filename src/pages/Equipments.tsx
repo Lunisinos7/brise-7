@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { AddEquipmentDialog } from "@/components/equipments/AddEquipmentDialog";
 import { EditEquipmentDialog } from "@/components/equipments/EditEquipmentDialog";
 import { useEquipments, Equipment } from "@/hooks/useEquipments";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { Search, Filter, Plus, Pencil, Loader2 } from "lucide-react";
 
 const Equipments = () => {
-  const { equipments, isLoading, addEquipment, updateEquipment, deleteEquipment } = useEquipments();
+  const { currentWorkspaceId } = useWorkspaceContext();
+  const { equipments, isLoading, addEquipment, updateEquipment, deleteEquipment } = useEquipments(currentWorkspaceId);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
