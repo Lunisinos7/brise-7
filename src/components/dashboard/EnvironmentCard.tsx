@@ -70,7 +70,7 @@ const EnvironmentCard = ({
       <CardContent className="p-4 pt-2 flex flex-col flex-1">
         <div className="flex-1">
           {/* Stats row */}
-          <div className="flex items-center gap-6 mb-3">
+          <div className="gap-6 mb-3 flex items-start justify-start">
             <div>
               <p className="text-xs text-muted-foreground">Temp. média</p>
               <p className="text-xl font-bold">{avgTemp > 0 ? `${avgTemp}°C` : "--"}</p>
@@ -81,7 +81,7 @@ const EnvironmentCard = ({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Modo</p>
-              <p className="text-xl text-muted-foreground/60 flex items-center gap-1 font-normal">
+              <p className="text-muted-foreground/60 flex items-center gap-1 font-normal text-sm">
                 {environment.isAutomatic ? <>
                     <Zap className="h-4 w-4" />
                     Auto
