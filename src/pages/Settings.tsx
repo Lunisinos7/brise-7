@@ -3,8 +3,10 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Palette, Monitor, Moon, Leaf, Heart, Crown, Plug, Zap, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { SmartThingsConfig } from "@/components/settings/SmartThingsConfig";
 import { EnergyRateConfig } from "@/components/settings/EnergyRateConfig";
+import LanguageSelector from "@/components/settings/LanguageSelector";
 
 type Theme = 'default' | 'dark' | 'green-light' | 'green-dark' | 'red' | 'red-dark' | 'purple' | 'purple-dark';
 
@@ -71,6 +73,7 @@ const darkThemes: ThemeOption[] = [
 
 const Settings = () => {
   const [selectedTheme, setSelectedTheme] = useState<Theme>('default');
+  const { t } = useTranslation();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('hvac-theme') as Theme;
@@ -125,17 +128,20 @@ const Settings = () => {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Configurações</h1>
+        <h1 className="text-3xl font-bold">{t('settings.title')}</h1>
         <p className="text-muted-foreground">
-          Personalize a aparência e comportamento do sistema HVAC Smart
+          {t('settings.subtitle')}
         </p>
       </div>
+
+      {/* Language Selector */}
+      <LanguageSelector />
 
       {/* Energy Rate Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-muted-foreground" />
-          <h2 className="text-xl font-semibold">Tarifa de Energia</h2>
+          <h2 className="text-xl font-semibold">{t('settings.energyRate')}</h2>
         </div>
         
         <EnergyRateConfig />
@@ -145,7 +151,7 @@ const Settings = () => {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Plug className="h-5 w-5 text-muted-foreground" />
-          <h2 className="text-xl font-semibold">Integrações</h2>
+          <h2 className="text-xl font-semibold">{t('settings.integrations')}</h2>
         </div>
         
         <SmartThingsConfig />

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,28 +12,29 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Wind } from 'lucide-react';
 
-const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-});
-
-const signupSchema = z.object({
-  fullName: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),
-  email: z.string().email('Email inválido'),
-  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'As senhas não coincidem',
-  path: ['confirmPassword'],
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
-type SignupFormValues = z.infer<typeof signupSchema>;
-
 const Auth = () => {
   const navigate = useNavigate();
   const { user, loading, signIn, signUp } = useAuthContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
+
+  const loginSchema = z.object({
+    email: z.string().email(t('auth.validation.invalidEmail')),
+    password: z.string().min(6, t('auth.validation.passwordMinLength')),
+  });
+
+  const signupSchema = z.object({
+    fullName: z.string().min(2, t('auth.validation.nameMinLength')),
+    email: z.string().email(t('auth.validation.invalidEmail')),
+    password: z.string().min(6, t('auth.validation.passwordMinLength')),
+    confirmPassword: z.string(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('auth.validation.passwordsNotMatch'),
+    path: ['confirmPassword'],
+  });
+
+  type LoginFormValues = z.infer<typeof loginSchema>;
+  type SignupFormValues = z.infer<typeof signupSchema>;
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -93,19 +95,19 @@ const Auth = () => {
           <div className="flex items-center justify-center gap-2 mb-4">
             <Wind className="h-8 w-8 text-primary" />
             <h1 className="text-2xl font-bold bg-gradient-cooling bg-clip-text text-transparent">
-              Brise Cloud
+              {t('brand.name')}
             </h1>
           </div>
-          <CardTitle>Bem-vindo</CardTitle>
+          <CardTitle>{t('auth.welcome')}</CardTitle>
           <CardDescription>
-            Faça login ou crie uma conta para continuar
+            {t('auth.loginOrSignup')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Entrar</TabsTrigger>
-              <TabsTrigger value="signup">Cadastrar</TabsTrigger>
+              <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+              <TabsTrigger value="signup">{t('auth.signup')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
@@ -116,9 +118,9 @@ const Auth = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>{t('auth.email')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="seu@email.com" type="email" {...field} />
+                          <Input placeholder={t('auth.emailPlaceholder')} type="email" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -129,7 +131,7 @@ const Auth = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Senha</FormLabel>
+                        <FormLabel>{t('auth.password')}</FormLabel>
                         <FormControl>
                           <Input placeholder="••••••" type="password" {...field} />
                         </FormControl>
@@ -141,10 +143,10 @@ const Auth = () => {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Entrando...
+                        {t('auth.loggingIn')}
                       </>
                     ) : (
-                      'Entrar'
+                      t('auth.login')
                     )}
                   </Button>
                 </form>
@@ -159,9 +161,9 @@ const Auth = () => {
                     name="fullName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Nome completo</FormLabel>
+                        <FormLabel>{t('auth.fullName')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="João Silva" {...field} />
+                          <Input placeholder={t('auth.namePlaceholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -172,9 +174,9 @@ const Auth = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>{t('auth.email')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="seu@email.com" type="email" {...field} />
+                          <Input placeholder={t('auth.emailPlaceholder')} type="email" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -185,7 +187,7 @@ const Auth = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Senha</FormLabel>
+                        <FormLabel>{t('auth.password')}</FormLabel>
                         <FormControl>
                           <Input placeholder="••••••" type="password" {...field} />
                         </FormControl>
@@ -198,7 +200,7 @@ const Auth = () => {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirmar senha</FormLabel>
+                        <FormLabel>{t('auth.confirmPassword')}</FormLabel>
                         <FormControl>
                           <Input placeholder="••••••" type="password" {...field} />
                         </FormControl>
@@ -210,10 +212,10 @@ const Auth = () => {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Cadastrando...
+                        {t('auth.signingUp')}
                       </>
                     ) : (
-                      'Criar conta'
+                      t('auth.createAccount')
                     )}
                   </Button>
                 </form>
