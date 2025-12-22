@@ -1,5 +1,6 @@
 import { useState } from "react";
 import StatusCard from "@/components/dashboard/StatusCard";
+import { AccumulatedExpenseCard } from "@/components/dashboard/AccumulatedExpenseCard";
 import EquipmentControlDialog from "@/components/dashboard/EquipmentControlDialog";
 import EnvironmentControlDialog from "@/components/dashboard/EnvironmentControlDialog";
 import CreateEnvironmentDialog from "@/components/dashboard/CreateEnvironmentDialog";
@@ -7,7 +8,7 @@ import EditEnvironmentDialog from "@/components/dashboard/EditEnvironmentDialog"
 import EnvironmentCard from "@/components/dashboard/EnvironmentCard";
 import { mockAlerts } from "@/data/mockData";
 import { useEquipments } from "@/hooks/useEquipments";
-import { Wind, Zap, Thermometer, TrendingUp, AlertTriangle, Plus } from "lucide-react";
+import { Wind, Zap, Thermometer, AlertTriangle, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
@@ -52,7 +53,6 @@ const Dashboard = () => {
   const totalEquipments = equipments.length;
   const activeEquipments = equipments.filter(eq => eq.isOn).length;
   const totalConsumption = equipments.reduce((sum, eq) => sum + eq.energyConsumption, 0);
-  const avgEfficiency = Math.round(equipments.reduce((sum, eq) => sum + eq.efficiency, 0) / equipments.length);
   const avgTemp = Math.round(equipments.filter(eq => eq.isOn).reduce((sum, eq) => sum + eq.currentTemp, 0) / activeEquipments || 0);
   
   const handleToggleEquipment = async (id: string) => {
@@ -195,7 +195,7 @@ const Dashboard = () => {
         <StatusCard title="Equipamentos Ativos" value={`${activeEquipments}/${totalEquipments}`} description="Equipamentos em operação" icon={Wind} variant="cooling" />
         <StatusCard title="Consumo Total" value={`${(totalConsumption / 1000).toFixed(1)}kW`} description="Consumo energético atual" icon={Zap} variant="energy" />
         <StatusCard title="Temperatura Média" value={`${avgTemp}°C`} description="Média dos ambientes ativos" icon={Thermometer} variant="cooling" />
-        <StatusCard title="Eficiência Média" value={`${avgEfficiency}%`} description="Performance do sistema" icon={TrendingUp} variant="energy" />
+        <AccumulatedExpenseCard workspaceId={currentWorkspaceId} />
         <StatusCard title="Alertas Ativos" value={mockAlerts.length} description="Requer atenção" icon={AlertTriangle} variant="heating" />
       </div>
 
