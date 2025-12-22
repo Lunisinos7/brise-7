@@ -135,28 +135,30 @@ const Equipments = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Modelo</p>
-                    <p className="font-medium">{equipment.model}</p>
+                <div className="flex items-center gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Modelo</p>
+                      <p className="font-medium">{equipment.model}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Capacidade</p>
+                      <p className="font-medium">
+                        {equipment.capacity.toLocaleString()} BTU/h
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Temperatura</p>
+                      <p className="font-medium">
+                        {equipment.currentTemp}°C / {equipment.targetTemp}°C
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Consumo</p>
+                      <p className="font-medium">{equipment.energyConsumption}W</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Capacidade</p>
-                    <p className="font-medium">
-                      {equipment.capacity.toLocaleString()} BTU/h
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Temperatura</p>
-                    <p className="font-medium">
-                      {equipment.currentTemp}°C / {equipment.targetTemp}°C
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Consumo</p>
-                    <p className="font-medium">{equipment.energyConsumption}W</p>
-                  </div>
-                  <div className="flex gap-2 items-center justify-end md:col-span-2">
+                  <div className="flex gap-2 items-center shrink-0">
                     <Button
                       variant="outline"
                       size="sm"
