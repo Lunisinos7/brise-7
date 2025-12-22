@@ -103,6 +103,7 @@ const Dashboard = () => {
     const created = await addEnvironment({
       name,
       equipmentIds: selectedEquipmentIds,
+      isActive: true,
     });
     if (created) {
       toast({
@@ -155,6 +156,15 @@ const Dashboard = () => {
 
   const handleDeleteEnvironment = (environmentId: string) => {
     setEnvironmentToDelete(environmentId);
+  };
+
+  const handleToggleEnvironment = async (environmentId: string, isActive: boolean) => {
+    const env = environments.find(e => e.id === environmentId);
+    await updateEnvironment(environmentId, { isActive });
+    toast({
+      title: isActive ? "Ambiente Ativado" : "Ambiente Pausado",
+      description: `${env?.name || "Ambiente"} foi ${isActive ? "ativado" : "pausado"}.`,
+    });
   };
 
   const confirmDeleteEnvironment = () => {
@@ -211,6 +221,7 @@ const Dashboard = () => {
                 onControlEnvironment={handleControlEnvironment}
                 onEditEnvironment={handleEditEnvironment}
                 onDeleteEnvironment={handleDeleteEnvironment}
+                onToggleEnvironment={handleToggleEnvironment}
               />
             ))}
           </div>

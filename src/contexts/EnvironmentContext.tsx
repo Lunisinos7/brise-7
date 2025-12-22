@@ -8,6 +8,7 @@ export interface Environment {
   name: string;
   equipmentIds: string[];
   workspace_id?: string | null;
+  isActive: boolean;
 }
 
 interface DbEnvironment {
@@ -17,6 +18,7 @@ interface DbEnvironment {
   created_at: string;
   updated_at: string;
   workspace_id?: string | null;
+  is_active: boolean;
 }
 
 interface EnvironmentContextType {
@@ -35,6 +37,7 @@ const mapDbToEnvironment = (db: DbEnvironment): Environment => ({
   name: db.name,
   equipmentIds: db.equipment_ids || [],
   workspace_id: db.workspace_id,
+  isActive: db.is_active,
 });
 
 export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
@@ -134,6 +137,7 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
       const dbUpdates: Partial<DbEnvironment> = {};
       if (updates.name !== undefined) dbUpdates.name = updates.name;
       if (updates.equipmentIds !== undefined) dbUpdates.equipment_ids = updates.equipmentIds;
+      if (updates.isActive !== undefined) dbUpdates.is_active = updates.isActive;
 
       const { error } = await supabase
         .from("environments")
