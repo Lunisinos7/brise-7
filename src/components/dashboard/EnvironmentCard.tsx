@@ -104,8 +104,17 @@ const EnvironmentCard = ({
             <div>
               <p className="text-xs text-muted-foreground">Modo</p>
               <p className="text-xl font-bold text-muted-foreground/60 flex items-center gap-1">
-                <Settings2 className="h-4 w-4" />
-                Manual
+                {environment.isAutomatic ? (
+                  <>
+                    <Zap className="h-4 w-4" />
+                    Auto
+                  </>
+                ) : (
+                  <>
+                    <Settings2 className="h-4 w-4" />
+                    Manual
+                  </>
+                )}
               </p>
             </div>
           </div>

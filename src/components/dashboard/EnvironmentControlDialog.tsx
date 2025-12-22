@@ -14,23 +14,26 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Power, Minus, Plus, Snowflake, Sun, Wind, Timer, Info, Thermometer } from "lucide-react";
 import { Equipment } from "@/hooks/useEquipments";
+import { Environment } from "@/contexts/EnvironmentContext";
 
 interface EnvironmentControlDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  environmentName: string;
+  environment: Environment | null;
   equipments: Equipment[];
   onUpdateEquipments: (updates: Partial<Equipment>) => Promise<void>;
+  onUpdateEnvironment: (updates: Partial<Omit<Environment, "id">>) => Promise<void>;
 }
 
 const EnvironmentControlDialog = ({
   isOpen,
   onClose,
-  environmentName,
+  environment,
   equipments,
   onUpdateEquipments,
+  onUpdateEnvironment,
 }: EnvironmentControlDialogProps) => {
-  const [isManualMode, setIsManualMode] = useState(false);
+  const [isManualMode, setIsManualMode] = useState(true);
   
   // Setpoints mode state - Opção C: configurações separadas para aquecimento e refrigeração
   const [coolingEnabled, setCoolingEnabled] = useState(true);
@@ -56,7 +59,20 @@ const EnvironmentControlDialog = ({
     ? Math.round(equipments.reduce((sum, eq) => sum + eq.targetTemp, 0) / equipments.length)
     : 21;
 
-  // Sync state with equipments when dialog opens
+  // Sync state with environment setpoints when dialog opens
+  useEffect(() => {
+    if (isOpen && environment) {
+      setIsManualMode(!environment.isAutomatic);
+      setCoolingEnabled(environment.coolingEnabled);
+      setHeatingEnabled(environment.heatingEnabled);
+      setCoolTriggerTemp(environment.coolTriggerTemp);
+      setCoolTargetTemp(environment.coolTargetTemp);
+      setHeatTriggerTemp(environment.heatTriggerTemp);
+      setHeatTargetTemp(environment.heatTargetTemp);
+    }
+  }, [isOpen, environment]);
+
+  // Sync manual mode state with equipments when dialog opens
   useEffect(() => {
     if (isOpen && equipments.length > 0) {
       setTargetTemp(avgTargetTemp);
@@ -66,6 +82,36 @@ const EnvironmentControlDialog = ({
       }
     }
   }, [isOpen, equipments, avgTargetTemp]);
+
+  // Save setpoints when they change (debounced via mode toggle)
+  const handleModeToggle = async (manual: boolean) => {
+    setIsManualMode(manual);
+    await onUpdateEnvironment({
+      isAutomatic: !manual,
+      coolingEnabled,
+      heatingEnabled,
+      coolTriggerTemp,
+      coolTargetTemp,
+      heatTriggerTemp,
+      heatTargetTemp,
+    });
+  };
+
+  // Save setpoints when closing the dialog
+  const handleClose = async () => {
+    if (environment) {
+      await onUpdateEnvironment({
+        isAutomatic: !isManualMode,
+        coolingEnabled,
+        heatingEnabled,
+        coolTriggerTemp,
+        coolTargetTemp,
+        heatTriggerTemp,
+        heatTargetTemp,
+      });
+    }
+    onClose();
+  };
 
   const handlePowerToggle = async () => {
     const newState = !isAnyOn;
@@ -213,10 +259,10 @@ const EnvironmentControlDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Controle - {environmentName}</DialogTitle>
+          <DialogTitle>Controle - {environment?.name || ""}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">

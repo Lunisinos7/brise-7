@@ -9,6 +9,14 @@ export interface Environment {
   equipmentIds: string[];
   workspace_id?: string | null;
   isActive: boolean;
+  // Setpoint fields
+  isAutomatic: boolean;
+  coolingEnabled: boolean;
+  heatingEnabled: boolean;
+  coolTriggerTemp: number;
+  coolTargetTemp: number;
+  heatTriggerTemp: number;
+  heatTargetTemp: number;
 }
 
 interface DbEnvironment {
@@ -19,6 +27,13 @@ interface DbEnvironment {
   updated_at: string;
   workspace_id?: string | null;
   is_active: boolean;
+  is_automatic: boolean;
+  cooling_enabled: boolean;
+  heating_enabled: boolean;
+  cool_trigger_temp: number;
+  cool_target_temp: number;
+  heat_trigger_temp: number;
+  heat_target_temp: number;
 }
 
 interface EnvironmentContextType {
@@ -38,6 +53,13 @@ const mapDbToEnvironment = (db: DbEnvironment): Environment => ({
   equipmentIds: db.equipment_ids || [],
   workspace_id: db.workspace_id,
   isActive: db.is_active,
+  isAutomatic: db.is_automatic,
+  coolingEnabled: db.cooling_enabled,
+  heatingEnabled: db.heating_enabled,
+  coolTriggerTemp: Number(db.cool_trigger_temp),
+  coolTargetTemp: Number(db.cool_target_temp),
+  heatTriggerTemp: Number(db.heat_trigger_temp),
+  heatTargetTemp: Number(db.heat_target_temp),
 });
 
 export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
@@ -138,6 +160,13 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
       if (updates.name !== undefined) dbUpdates.name = updates.name;
       if (updates.equipmentIds !== undefined) dbUpdates.equipment_ids = updates.equipmentIds;
       if (updates.isActive !== undefined) dbUpdates.is_active = updates.isActive;
+      if (updates.isAutomatic !== undefined) dbUpdates.is_automatic = updates.isAutomatic;
+      if (updates.coolingEnabled !== undefined) dbUpdates.cooling_enabled = updates.coolingEnabled;
+      if (updates.heatingEnabled !== undefined) dbUpdates.heating_enabled = updates.heatingEnabled;
+      if (updates.coolTriggerTemp !== undefined) dbUpdates.cool_trigger_temp = updates.coolTriggerTemp;
+      if (updates.coolTargetTemp !== undefined) dbUpdates.cool_target_temp = updates.coolTargetTemp;
+      if (updates.heatTriggerTemp !== undefined) dbUpdates.heat_trigger_temp = updates.heatTriggerTemp;
+      if (updates.heatTargetTemp !== undefined) dbUpdates.heat_target_temp = updates.heatTargetTemp;
 
       const { error } = await supabase
         .from("environments")

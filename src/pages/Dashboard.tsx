@@ -104,6 +104,13 @@ const Dashboard = () => {
       name,
       equipmentIds: selectedEquipmentIds,
       isActive: true,
+      isAutomatic: false,
+      coolingEnabled: true,
+      heatingEnabled: true,
+      coolTriggerTemp: 28,
+      coolTargetTemp: 24,
+      heatTriggerTemp: 18,
+      heatTargetTemp: 22,
     });
     if (created) {
       toast({
@@ -259,9 +266,14 @@ const Dashboard = () => {
       <EnvironmentControlDialog
         isOpen={isEnvironmentControlOpen}
         onClose={() => setIsEnvironmentControlOpen(false)}
-        environmentName={selectedEnvironment?.name || ""}
+        environment={selectedEnvironment || null}
         equipments={selectedEnvironmentEquipments}
         onUpdateEquipments={handleEnvironmentUpdate}
+        onUpdateEnvironment={async (updates) => {
+          if (selectedEnvironment) {
+            await updateEnvironment(selectedEnvironment.id, updates);
+          }
+        }}
       />
 
       {/* Delete Confirmation Dialog */}
