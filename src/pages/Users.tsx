@@ -1,46 +1,51 @@
 import { useState } from 'react';
-import { useUsers, UserProfile } from '@/hooks/useUsers';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useWorkspaceContext } from '@/contexts/WorkspaceContext';
+import { useWorkspaceMembers, WorkspaceMember, WorkspaceRole } from '@/hooks/useWorkspaces';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, Users as UsersIcon, UserPlus, Mail, Calendar, Shield, Filter, Pencil } from 'lucide-react';
+import { Search, Users as UsersIcon, UserPlus, Calendar, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import EditUserDialog from '@/components/users/EditUserDialog';
+import InviteUserDialog from '@/components/workspace/InviteUserDialog';
+import InvitationsPanel from '@/components/workspace/InvitationsPanel';
+import PendingInvitationsNotification from '@/components/workspace/PendingInvitationsNotification';
+import EditMemberDialog from '@/components/workspace/EditMemberDialog';
 
-const roleLabels: Record<string, string> = {
+const roleLabels: Record<WorkspaceRole, string> = {
+  owner: 'Proprietário',
   admin: 'Administrador',
-  manager: 'Gerente',
   viewer: 'Visualizador',
 };
 
-const roleBadgeVariants: Record<string, 'default' | 'secondary' | 'outline'> = {
-  admin: 'default',
-  manager: 'secondary',
+const roleBadgeVariants: Record<WorkspaceRole, 'default' | 'secondary' | 'outline'> = {
+  owner: 'default',
+  admin: 'secondary',
   viewer: 'outline',
 };
 
 const Users = () => {
-  const { users, isLoading } = useUsers();
-  const { isAdmin } = useAuthContext();
+  const { currentWorkspaceId, currentWorkspace, canManageWorkspace } = useWorkspaceContext();
+  const { members, isLoading } = useWorkspaceMembers(currentWorkspaceId);
+  
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [selectedMember, setSelectedMember] = useState<WorkspaceMember | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
-  const filteredUsers = users.filter(user => {
+  const filteredMembers = members.filter(member => {
     const searchLower = searchTerm.toLowerCase();
     return (
-      user.full_name?.toLowerCase().includes(searchLower) ||
-      user.email.toLowerCase().includes(searchLower) ||
-      roleLabels[user.role]?.toLowerCase().includes(searchLower)
+      member.profile?.full_name?.toLowerCase().includes(searchLower) ||
+      member.profile?.email.toLowerCase().includes(searchLower) ||
+      roleLabels[member.role]?.toLowerCase().includes(searchLower)
     );
   });
 
-  const handleEditUser = (user: UserProfile) => {
-    setSelectedUser(user);
+  const handleEditMember = (member: WorkspaceMember) => {
+    setSelectedMember(member);
     setIsEditOpen(true);
   };
 
@@ -73,51 +78,52 @@ const Users = () => {
 
   return (
     <div className="p-6 space-y-6">
+      {/* Pending Invitations for current user */}
+      <PendingInvitationsNotification />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Usuários</h1>
+          <h1 className="text-3xl font-bold">Membros</h1>
           <p className="text-muted-foreground">
-            {users.length} usuário{users.length !== 1 ? 's' : ''} cadastrado{users.length !== 1 ? 's' : ''}
+            {members.length} membro{members.length !== 1 ? 's' : ''} em{' '}
+            <span className="font-medium">{currentWorkspace?.name || 'este workspace'}</span>
           </p>
         </div>
-        {isAdmin && (
-          <Button variant="cooling" className="gap-2" disabled>
+        {canManageWorkspace && (
+          <Button variant="cooling" className="gap-2" onClick={() => setIsInviteOpen(true)}>
             <UserPlus className="h-4 w-4" />
             Convidar
           </Button>
         )}
       </div>
 
-      {/* Search and Filters */}
-      <div className="flex gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar usuários..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Button variant="outline" className="gap-2">
-          <Filter className="h-4 w-4" />
-          Filtros
-        </Button>
+      {/* Pending Invitations Panel (for admins) */}
+      <InvitationsPanel />
+
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Buscar membros..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
-      {/* Users List */}
+      {/* Members List */}
       <div className="grid gap-4">
-        {filteredUsers.length === 0 ? (
+        {filteredMembers.length === 0 ? (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground">
-              {searchTerm ? 'Nenhum usuário encontrado' : 'Nenhum usuário cadastrado'}
+              {searchTerm ? 'Nenhum membro encontrado' : 'Nenhum membro neste workspace'}
             </p>
           </Card>
         ) : (
-          filteredUsers.map(user => (
+          filteredMembers.map(member => (
             <Card
-              key={user.id}
+              key={member.id}
               className="hover:shadow-elevated transition-all duration-300"
             >
               <CardHeader>
@@ -125,18 +131,23 @@ const Users = () => {
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                       <span className="text-sm font-semibold text-primary">
-                        {user.full_name?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
+                        {member.profile?.full_name?.[0]?.toUpperCase() || 
+                         member.profile?.email[0].toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <CardTitle className="text-lg">{user.full_name || 'Sem nome'}</CardTitle>
-                      <p className="text-muted-foreground text-sm">{user.email}</p>
+                      <CardTitle className="text-lg">
+                        {member.profile?.full_name || 'Sem nome'}
+                      </CardTitle>
+                      <p className="text-muted-foreground text-sm">
+                        {member.profile?.email}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {getStatusBadge(user.is_active)}
-                    <Badge variant={roleBadgeVariants[user.role]}>
-                      {roleLabels[user.role]}
+                    {member.profile && getStatusBadge(member.profile.is_active)}
+                    <Badge variant={roleBadgeVariants[member.role]}>
+                      {roleLabels[member.role]}
                     </Badge>
                   </div>
                 </div>
@@ -145,23 +156,23 @@ const Users = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="font-medium truncate">{user.email}</p>
+                    <p className="font-medium truncate">{member.profile?.email}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Perfil</p>
-                    <p className="font-medium">{roleLabels[user.role]}</p>
+                    <p className="text-sm text-muted-foreground">Acesso</p>
+                    <p className="font-medium">{roleLabels[member.role]}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Cadastrado em</p>
+                    <p className="text-sm text-muted-foreground">Membro desde</p>
                     <p className="font-medium">
-                      {format(new Date(user.created_at), "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
+                      {format(new Date(member.created_at), "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
                     </p>
                   </div>
                   <div className="flex gap-2 items-center justify-end">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleEditUser(user)}
+                      onClick={() => handleEditMember(member)}
                     >
                       <Pencil className="h-3 w-3 mr-1" />
                       Editar
@@ -174,11 +185,15 @@ const Users = () => {
         )}
       </div>
 
-      {/* Edit Dialog */}
-      <EditUserDialog
-        user={selectedUser}
+      {/* Dialogs */}
+      <EditMemberDialog
+        member={selectedMember}
         open={isEditOpen}
         onOpenChange={setIsEditOpen}
+      />
+      <InviteUserDialog
+        open={isInviteOpen}
+        onOpenChange={setIsInviteOpen}
       />
     </div>
   );
