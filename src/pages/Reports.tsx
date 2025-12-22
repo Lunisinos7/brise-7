@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { BarChart3, Calendar, Zap } from "lucide-react";
+import { BarChart3, Calendar, Zap, Building2 } from "lucide-react";
 import { PeriodSelector } from "@/components/reports/PeriodSelector";
 import { ExportDialog } from "@/components/reports/ExportDialog";
 import { EnergyConsumptionChart } from "@/components/reports/EnergyConsumptionChart";
@@ -22,26 +22,44 @@ import {
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { useEquipments } from "@/hooks/useEquipments";
 import { useWorkspaceSettings } from "@/hooks/useWorkspaceSettings";
+import { useEnvironments } from "@/contexts/EnvironmentContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Reports = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
   const [customRange, setCustomRange] = useState<DateRange | undefined>();
   const [periodPopoverOpen, setPeriodPopoverOpen] = useState(false);
+  const [selectedEnvironmentId, setSelectedEnvironmentId] = useState<string | null>(null);
 
   const { currentWorkspaceId } = useWorkspaceContext();
   const { equipments } = useEquipments(currentWorkspaceId);
   const { settings } = useWorkspaceSettings(currentWorkspaceId);
-  const equipmentIds = equipments.map(eq => eq.id);
+  const { environments } = useEnvironments();
+
+  // Filtrar equipmentIds baseado no ambiente selecionado
+  const filteredEquipmentIds = selectedEnvironmentId
+    ? environments.find(e => e.id === selectedEnvironmentId)?.equipmentIds || []
+    : equipments.map(eq => eq.id);
+
+  const selectedEnvironmentName = selectedEnvironmentId
+    ? environments.find(e => e.id === selectedEnvironmentId)?.name || "Ambiente"
+    : "Todos os Ambientes";
 
   const dateRange = getDateRangeFromPeriod(selectedPeriod, customRange);
 
-  const { data: energyData = [], isLoading: isLoadingEnergy } = useAggregatedEnergyData(dateRange, equipmentIds);
-  const { data: equipmentEfficiency = [], isLoading: isLoadingEfficiency } = useEquipmentEfficiency(dateRange, equipmentIds);
-  const { data: temperatureData = [], isLoading: isLoadingTemperature } = useAggregatedTemperatureData(dateRange, equipmentIds);
-  const { data: usagePatterns = [], isLoading: isLoadingUsage } = useUsagePatterns(dateRange, equipmentIds);
+  const { data: energyData = [], isLoading: isLoadingEnergy } = useAggregatedEnergyData(dateRange, filteredEquipmentIds);
+  const { data: equipmentEfficiency = [], isLoading: isLoadingEfficiency } = useEquipmentEfficiency(dateRange, filteredEquipmentIds);
+  const { data: temperatureData = [], isLoading: isLoadingTemperature } = useAggregatedTemperatureData(dateRange, filteredEquipmentIds);
+  const { data: usagePatterns = [], isLoading: isLoadingUsage } = useUsagePatterns(dateRange, filteredEquipmentIds);
   const summary = useReportSummary(
     dateRange, 
-    equipmentIds, 
+    filteredEquipmentIds, 
     settings.kwh_rate, 
     settings.currency_symbol
   );
@@ -74,6 +92,23 @@ const Reports = () => {
           </p>
         </div>
         <div className="flex gap-2">
+          <Select
+            value={selectedEnvironmentId || "all"}
+            onValueChange={(v) => setSelectedEnvironmentId(v === "all" ? null : v)}
+          >
+            <SelectTrigger className="w-[200px]">
+              <Building2 className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Todos os Ambientes" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os Ambientes</SelectItem>
+              {environments.map((env) => (
+                <SelectItem key={env.id} value={env.id}>
+                  {env.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Popover open={periodPopoverOpen} onOpenChange={setPeriodPopoverOpen}>
             <PopoverTrigger asChild>
               <Button variant="outline" className="gap-2">
@@ -97,6 +132,7 @@ const Reports = () => {
             temperatureData={temperatureData}
             equipmentEfficiency={equipmentEfficiency}
             summary={summary}
+            environmentName={selectedEnvironmentName}
           />
         </div>
       </div>

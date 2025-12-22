@@ -14,10 +14,11 @@ interface ExportData {
     totalSpent: number;
   };
   dateRange: DateRange;
+  environmentName?: string;
 }
 
 export const exportToPDF = async (data: ExportData): Promise<void> => {
-  const { energyData, temperatureData, equipmentEfficiency, summary, dateRange } = data;
+  const { energyData, temperatureData, equipmentEfficiency, summary, dateRange, environmentName = "Todos os Ambientes" } = data;
   
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -39,14 +40,19 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   doc.setTextColor(40, 40, 40);
   doc.text("Relatório de Climatização", pageWidth / 2, 20, { align: "center" });
   
+  // Environment name
+  doc.setFontSize(12);
+  doc.setTextColor(60, 60, 60);
+  doc.text(`Ambiente: ${environmentName}`, pageWidth / 2, 28, { align: "center" });
+  
   // Date range
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
   const periodText = `Período: ${format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })} - ${format(dateRange.to, "dd/MM/yyyy", { locale: ptBR })}`;
-  doc.text(periodText, pageWidth / 2, 28, { align: "center" });
+  doc.text(periodText, pageWidth / 2, 35, { align: "center" });
   
   // Summary section
-  let currentY = 42;
+  let currentY = 48;
   doc.setFontSize(14);
   doc.setTextColor(40, 40, 40);
   doc.text("Resumo Executivo", margin, currentY);
@@ -142,13 +148,14 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
 };
 
 export const exportToExcel = async (data: ExportData): Promise<void> => {
-  const { energyData, temperatureData, equipmentEfficiency, summary, dateRange } = data;
+  const { energyData, temperatureData, equipmentEfficiency, summary, dateRange, environmentName = "Todos os Ambientes" } = data;
   
   const workbook = XLSX.utils.book_new();
   
   // Summary sheet
   const summarySheetData = [
     ["Relatório de Climatização"],
+    [`Ambiente: ${environmentName}`],
     [`Período: ${format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })} - ${format(dateRange.to, "dd/MM/yyyy", { locale: ptBR })}`],
     [],
     ["Resumo Executivo"],
