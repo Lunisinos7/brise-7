@@ -267,7 +267,12 @@ export const useUsagePatterns = (dateRange: DateRange, equipmentIds?: string[]) 
   return { data: patterns, ...rest };
 };
 
-export const useReportSummary = (dateRange: DateRange, equipmentIds?: string[]) => {
+export const useReportSummary = (
+  dateRange: DateRange, 
+  equipmentIds?: string[],
+  kwhRate: number = 0.70,
+  currencySymbol: string = "R$"
+) => {
   const { data: energyData } = useEnergyHistory(dateRange, equipmentIds);
   
   if (!energyData || energyData.length === 0) {
@@ -277,6 +282,7 @@ export const useReportSummary = (dateRange: DateRange, equipmentIds?: string[]) 
       totalConsumption: 0,
       co2Reduction: 0,
       moneySaved: 0,
+      currencySymbol,
     };
   }
 
@@ -290,8 +296,8 @@ export const useReportSummary = (dateRange: DateRange, equipmentIds?: string[]) 
   // Estimativas de CO2 (0.4 kg CO2 por kWh - média Brasil)
   const co2Reduction = (baselineConsumption - totalConsumption) * 0.0004; // em toneladas
   
-  // Estimativa de economia (R$ 0.70 por kWh - média Brasil)
-  const moneySaved = (baselineConsumption - totalConsumption) * 0.70;
+  // Economia usando tarifa dinâmica
+  const moneySaved = (baselineConsumption - totalConsumption) * kwhRate;
 
   return {
     energySavings: Math.max(0, energySavings),
@@ -299,5 +305,6 @@ export const useReportSummary = (dateRange: DateRange, equipmentIds?: string[]) 
     totalConsumption,
     co2Reduction: Math.max(0, co2Reduction),
     moneySaved: Math.max(0, moneySaved),
+    currencySymbol,
   };
 };

@@ -21,6 +21,7 @@ import {
 } from "@/hooks/useReportData";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { useEquipments } from "@/hooks/useEquipments";
+import { useWorkspaceSettings } from "@/hooks/useWorkspaceSettings";
 
 const Reports = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
@@ -29,6 +30,7 @@ const Reports = () => {
 
   const { currentWorkspaceId } = useWorkspaceContext();
   const { equipments } = useEquipments(currentWorkspaceId);
+  const { settings } = useWorkspaceSettings(currentWorkspaceId);
   const equipmentIds = equipments.map(eq => eq.id);
 
   const dateRange = getDateRangeFromPeriod(selectedPeriod, customRange);
@@ -37,7 +39,12 @@ const Reports = () => {
   const { data: equipmentEfficiency = [], isLoading: isLoadingEfficiency } = useEquipmentEfficiency(dateRange, equipmentIds);
   const { data: temperatureData = [], isLoading: isLoadingTemperature } = useAggregatedTemperatureData(dateRange, equipmentIds);
   const { data: usagePatterns = [], isLoading: isLoadingUsage } = useUsagePatterns(dateRange, equipmentIds);
-  const summary = useReportSummary(dateRange, equipmentIds);
+  const summary = useReportSummary(
+    dateRange, 
+    equipmentIds, 
+    settings.kwh_rate, 
+    settings.currency_symbol
+  );
 
   const handlePeriodChange = (period: PeriodType, range?: DateRange) => {
     setSelectedPeriod(period);
@@ -139,12 +146,12 @@ const Reports = () => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              Economia (R$)
+              Economia ({summary.currencySymbol})
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              R$ {summary.moneySaved.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {summary.currencySymbol} {summary.moneySaved.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <p className="text-sm text-muted-foreground">Período selecionado</p>
           </CardContent>

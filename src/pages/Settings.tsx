@@ -1,9 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Palette, Monitor, Moon, Leaf, Heart, Crown, Plug } from "lucide-react";
+import { Palette, Monitor, Moon, Leaf, Heart, Crown, Plug, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
 import { SmartThingsConfig } from "@/components/settings/SmartThingsConfig";
+import { EnergyRateConfig } from "@/components/settings/EnergyRateConfig";
 
 type Theme = 'default' | 'dark' | 'green-light' | 'green-dark' | 'red' | 'purple';
 
@@ -88,6 +89,16 @@ const Settings = () => {
         <p className="text-muted-foreground">
           Personalize a aparência e comportamento do sistema HVAC Smart
         </p>
+      </div>
+
+      {/* Energy Rate Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Zap className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-xl font-semibold">Tarifa de Energia</h2>
+        </div>
+        
+        <EnergyRateConfig />
       </div>
 
       {/* Integrations Section */}
