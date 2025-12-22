@@ -267,7 +267,7 @@ const EnvironmentControlDialog = ({
 
         <div className="space-y-6">
           {/* Mode Toggle */}
-          <div className="flex items-center justify-center gap-3 p-3 bg-muted/50 rounded-lg">
+          <div className="flex items-center justify-center gap-3 p-3 bg-muted/80 dark:bg-white/5 rounded-lg">
             <span className={cn(
               "text-sm font-medium transition-colors",
               !isManualMode ? "text-foreground" : "text-muted-foreground"
@@ -293,7 +293,7 @@ const EnvironmentControlDialog = ({
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 coolingEnabled 
-                  ? "border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20" 
+                  ? "border-blue-300 dark:border-blue-700/50 bg-blue-50/80 dark:bg-blue-900/30" 
                   : "border-muted bg-muted/30 opacity-60"
               )}>
                 <div className="flex items-center justify-between">
@@ -346,7 +346,7 @@ const EnvironmentControlDialog = ({
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 heatingEnabled 
-                  ? "border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-950/20" 
+                  ? "border-orange-300 dark:border-orange-700/50 bg-orange-50/80 dark:bg-orange-900/30" 
                   : "border-muted bg-muted/30 opacity-60"
               )}>
                 <div className="flex items-center justify-between">
@@ -397,7 +397,7 @@ const EnvironmentControlDialog = ({
 
               {/* Zona de Conforto */}
               {(coolingEnabled || heatingEnabled) && (
-                <div className="p-4 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="p-4 bg-green-50/90 dark:bg-green-900/40 rounded-lg border border-green-300 dark:border-green-700/50">
                   <div className="flex items-center gap-2 mb-2">
                     <Thermometer className="h-4 w-4 text-green-600 dark:text-green-400" />
                     <span className="font-medium text-green-700 dark:text-green-300">
@@ -411,7 +411,7 @@ const EnvironmentControlDialog = ({
               )}
               
               {!coolingEnabled && !heatingEnabled && (
-                <div className="p-4 bg-yellow-50 dark:bg-yellow-950/30 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <div className="p-4 bg-yellow-50/90 dark:bg-yellow-900/30 rounded-lg border border-yellow-300 dark:border-yellow-700/50">
                   <p className="text-sm text-yellow-600 dark:text-yellow-400">
                     ⚠️ Nenhum modo automático está ativo. Ative pelo menos um modo para o sistema funcionar automaticamente.
                   </p>
@@ -419,7 +419,7 @@ const EnvironmentControlDialog = ({
               )}
 
               {/* Info */}
-              <div className="flex items-start gap-2 p-3 bg-muted/50 rounded-lg">
+              <div className="flex items-start gap-2 p-3 bg-muted/80 dark:bg-white/5 rounded-lg">
                 <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                 <p className="text-xs text-muted-foreground">
                   O sistema ativará automaticamente o modo apropriado (aquecimento ou refrigeração) com base na temperatura atual do ambiente.
