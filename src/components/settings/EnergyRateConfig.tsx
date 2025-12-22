@@ -28,11 +28,18 @@ export const EnergyRateConfig = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (settings) {
-      setKwhRate(String(settings.kwh_rate));
-      setSelectedCurrency(settings.currency_code);
+    if (settings && settings.kwh_rate !== undefined) {
+      const newRate = String(settings.kwh_rate);
+      const newCurrency = settings.currency_code;
+      
+      if (newRate !== kwhRate) {
+        setKwhRate(newRate);
+      }
+      if (newCurrency !== selectedCurrency) {
+        setSelectedCurrency(newCurrency);
+      }
     }
-  }, [settings]);
+  }, [settings?.kwh_rate, settings?.currency_code]);
 
   const handleSave = async () => {
     const rate = parseFloat(kwhRate);
