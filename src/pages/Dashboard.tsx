@@ -290,7 +290,7 @@ const Dashboard = () => {
       </AlertDialog>
 
       {/* Footer */}
-      <div className="flex justify-end">
+      <div className="fixed bottom-4 right-4">
         <p className="text-xs text-muted-foreground">
           Última atualização: {new Date().toLocaleString()}
         </p>
