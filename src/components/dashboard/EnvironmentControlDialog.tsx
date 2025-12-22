@@ -277,6 +277,7 @@ const EnvironmentControlDialog = ({
             <Switch
               checked={isManualMode}
               onCheckedChange={setIsManualMode}
+              className="data-[state=checked]:bg-muted-foreground data-[state=unchecked]:bg-muted-foreground"
             />
             <span className={cn(
               "text-sm font-medium transition-colors",
@@ -293,7 +294,7 @@ const EnvironmentControlDialog = ({
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 coolingEnabled 
-                  ? "border-blue-300 dark:border-blue-700/50 bg-muted/80 dark:bg-white/5" 
+                  ? "border-blue-500/30 dark:border-blue-500/20 bg-muted/80 dark:bg-white/5" 
                   : "border-muted bg-muted/30 opacity-60"
               )}>
                 <div className="flex items-center justify-between">
@@ -346,7 +347,7 @@ const EnvironmentControlDialog = ({
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 heatingEnabled 
-                  ? "border-orange-300 dark:border-orange-700/50 bg-muted/80 dark:bg-white/5" 
+                  ? "border-orange-500/30 dark:border-orange-500/20 bg-muted/80 dark:bg-white/5" 
                   : "border-muted bg-muted/30 opacity-60"
               )}>
                 <div className="flex items-center justify-between">
