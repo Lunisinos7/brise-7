@@ -18,8 +18,6 @@ interface ExportDialogProps {
   temperatureData: any[];
   equipmentEfficiency: any[];
   summary: {
-    energySavings: number;
-    avgEfficiency: number;
     totalConsumption: number;
     totalSpent: number;
   };
