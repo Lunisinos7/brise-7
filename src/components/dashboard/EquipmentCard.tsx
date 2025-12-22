@@ -1,14 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { 
   Wind, 
   Thermometer, 
   Power, 
   Settings,
-  TrendingUp,
-  TrendingDown,
   Pencil
 } from "lucide-react";
 import { Equipment } from "@/data/mockData";
@@ -21,36 +18,6 @@ interface EquipmentCardProps {
 }
 
 const EquipmentCard = ({ equipment, onToggle, onControl, onEdit }: EquipmentCardProps) => {
-  const getModeColor = (mode: string) => {
-    switch (mode) {
-      case "cool":
-        return "bg-cooling text-white";
-      case "heat":
-        return "bg-heating text-white";
-      case "auto":
-        return "bg-energy-efficient text-white";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
-
-  const getModeIcon = (mode: string) => {
-    switch (mode) {
-      case "cool":
-      case "heat":
-        return <Thermometer className="h-3 w-3" />;
-      default:
-        return <Wind className="h-3 w-3" />;
-    }
-  };
-
-  const getEfficiencyTrend = (efficiency: number) => {
-    if (efficiency >= 85) return { icon: TrendingUp, color: "text-energy-efficient" };
-    if (efficiency >= 70) return { icon: TrendingUp, color: "text-energy-warning" };
-    return { icon: TrendingDown, color: "text-energy-critical" };
-  };
-
-  const efficiencyTrend = getEfficiencyTrend(equipment.efficiency);
 
   return (
     <Card className={cn(
