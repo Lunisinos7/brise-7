@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { MapPin, Wind, Sliders, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MapPin, Wind, Sliders, MoreVertical, Pencil, Trash2, Settings2, Zap } from "lucide-react";
 import { Equipment } from "@/hooks/useEquipments";
 import { Environment } from "@/contexts/EnvironmentContext";
 
@@ -51,8 +51,12 @@ const EnvironmentCard = ({
               <MapPin className="h-4 w-4 text-muted-foreground" />
               {environment.name}
             </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
               {linkedEquipments.length} equipamento(s)
+              <span className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-muted">
+                <Settings2 className="h-3 w-3" />
+                Manual
+              </span>
             </p>
           </div>
           <div className="flex items-center gap-1">
