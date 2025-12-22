@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ const CreateEnvironmentDialog = ({
   equipments,
   onCreateEnvironment,
 }: CreateEnvironmentDialogProps) => {
+  const { t } = useTranslation();
   const [environmentName, setEnvironmentName] = useState("");
   const [selectedEquipments, setSelectedEquipments] = useState<string[]>([]);
 
@@ -50,22 +52,22 @@ const CreateEnvironmentDialog = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Criar Novo Ambiente</DialogTitle>
+          <DialogTitle>{t("createEnvironmentDialog.title")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="environment-name">Nome do Ambiente</Label>
+            <Label htmlFor="environment-name">{t("createEnvironmentDialog.environmentName")}</Label>
             <Input
               id="environment-name"
-              placeholder="Ex: Sala de Reuniões B"
+              placeholder={t("createEnvironmentDialog.namePlaceholder")}
               value={environmentName}
               onChange={(e) => setEnvironmentName(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Equipamentos a serem vinculados</Label>
+            <Label>{t("createEnvironmentDialog.linkEquipments")}</Label>
             <div className="border rounded-md bg-background">
               <ScrollArea className="h-48 p-3">
                 <div className="space-y-3">
@@ -91,20 +93,20 @@ const CreateEnvironmentDialog = ({
               </ScrollArea>
             </div>
             <p className="text-xs text-muted-foreground">
-              {selectedEquipments.length} equipamento(s) selecionado(s)
+              {t("createEnvironmentDialog.selectedCount", { count: selectedEquipments.length })}
             </p>
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button 
             onClick={handleSubmit} 
             disabled={!environmentName.trim() || selectedEquipments.length === 0}
           >
-            Criar Ambiente
+            {t("createEnvironmentDialog.create")}
           </Button>
         </DialogFooter>
       </DialogContent>
