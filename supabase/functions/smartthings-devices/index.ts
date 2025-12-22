@@ -22,20 +22,73 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('SmartThings Devices - No authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Get SmartThings config
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    
+    // Create client with user's auth token to verify identity
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !user) {
+      console.error('SmartThings Devices - Invalid authentication:', authError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`SmartThings Devices - Authenticated user: ${user.id}`);
+
+    const { workspaceId } = await req.json().catch(() => ({}));
+
+    if (!workspaceId) {
+      return new Response(
+        JSON.stringify({ error: 'workspaceId is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Use service role for database operations
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Verify user is workspace member
+    const { data: isMember } = await supabase.rpc('is_workspace_member', {
+      _user_id: user.id,
+      _workspace_id: workspaceId
+    });
+
+    if (!isMember) {
+      console.error('SmartThings Devices - User not authorized for workspace');
+      return new Response(
+        JSON.stringify({ error: 'Not authorized for this workspace' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Get SmartThings config for this workspace
     const { data: config, error: configError } = await supabase
       .from('smartthings_config')
       .select('*')
+      .eq('workspace_id', workspaceId)
       .eq('is_active', true)
       .limit(1)
       .single();
 
     if (configError || !config) {
-      console.error('SmartThings config not found');
+      console.error('SmartThings config not found for workspace');
       return new Response(
         JSON.stringify({ error: 'SmartThings não está configurado' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -76,10 +129,11 @@ serve(async (req) => {
 
     console.log(`Air conditioners found: ${airConditioners.length}`);
 
-    // Get already imported devices
+    // Get already imported devices for this workspace
     const { data: existingEquipments } = await supabase
       .from('equipments')
       .select('smartthings_device_id')
+      .eq('workspace_id', workspaceId)
       .not('smartthings_device_id', 'is', null);
 
     const importedDeviceIds = new Set(

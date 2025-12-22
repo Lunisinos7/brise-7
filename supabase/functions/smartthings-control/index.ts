@@ -22,18 +22,69 @@ serve(async (req) => {
   }
 
   try {
-    const { deviceId, action, value } = await req.json();
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('SmartThings Control - No authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    
+    // Create client with user's auth token to verify identity
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !user) {
+      console.error('SmartThings Control - Invalid authentication:', authError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`SmartThings Control - Authenticated user: ${user.id}`);
+
+    const { deviceId, action, value, workspaceId } = await req.json();
     
     console.log(`SmartThings Control - Device: ${deviceId}, Action: ${action}, Value: ${value}`);
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    if (!workspaceId) {
+      return new Response(
+        JSON.stringify({ error: 'workspaceId is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Get SmartThings config
+    // Use service role for database operations
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Verify user is workspace member
+    const { data: isMember } = await supabase.rpc('is_workspace_member', {
+      _user_id: user.id,
+      _workspace_id: workspaceId
+    });
+
+    if (!isMember) {
+      console.error('SmartThings Control - User not authorized for workspace');
+      return new Response(
+        JSON.stringify({ error: 'Not authorized for this workspace' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Get SmartThings config for this workspace
     const { data: config, error: configError } = await supabase
       .from('smartthings_config')
       .select('personal_access_token')
+      .eq('workspace_id', workspaceId)
       .eq('is_active', true)
       .limit(1)
       .single();

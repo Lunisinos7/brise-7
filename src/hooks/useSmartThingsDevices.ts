@@ -1,17 +1,30 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import type { SmartThingsDevice } from "@/lib/smartthings";
 
 export function useSmartThingsDevices() {
   const [devices, setDevices] = useState<SmartThingsDevice[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { currentWorkspaceId } = useWorkspaceContext();
 
   const discoverDevices = async (): Promise<SmartThingsDevice[]> => {
+    if (!currentWorkspaceId) {
+      toast({
+        title: "Erro",
+        description: "Nenhum workspace selecionado.",
+        variant: "destructive",
+      });
+      return [];
+    }
+
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("smartthings-devices");
+      const { data, error } = await supabase.functions.invoke("smartthings-devices", {
+        body: { workspaceId: currentWorkspaceId },
+      });
 
       if (error) throw error;
 
@@ -36,9 +49,18 @@ export function useSmartThingsDevices() {
   };
 
   const syncDevice = async (equipmentId: string): Promise<boolean> => {
+    if (!currentWorkspaceId) {
+      toast({
+        title: "Erro",
+        description: "Nenhum workspace selecionado.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke("smartthings-sync", {
-        body: { equipmentId },
+        body: { equipmentId, workspaceId: currentWorkspaceId },
       });
 
       if (error) throw error;
@@ -65,8 +87,19 @@ export function useSmartThingsDevices() {
   };
 
   const syncAllDevices = async (): Promise<boolean> => {
+    if (!currentWorkspaceId) {
+      toast({
+        title: "Erro",
+        description: "Nenhum workspace selecionado.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
     try {
-      const { data, error } = await supabase.functions.invoke("smartthings-sync");
+      const { data, error } = await supabase.functions.invoke("smartthings-sync", {
+        body: { workspaceId: currentWorkspaceId },
+      });
 
       if (error) throw error;
 
