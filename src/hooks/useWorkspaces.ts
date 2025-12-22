@@ -127,12 +127,41 @@ export const useWorkspaces = (userId: string | undefined) => {
     },
   });
 
+  const deleteWorkspaceMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('workspaces')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
+      toast({
+        title: 'Workspace excluído',
+        description: 'O workspace foi removido com sucesso.',
+      });
+    },
+    onError: (error) => {
+      console.error('Error deleting workspace:', error);
+      toast({
+        title: 'Erro ao excluir',
+        description: 'Não foi possível excluir o workspace.',
+        variant: 'destructive',
+      });
+    },
+  });
+
   return {
     workspaces,
     isLoading: isLoadingWorkspaces,
     createWorkspace: createWorkspaceMutation.mutate,
     updateWorkspace: updateWorkspaceMutation.mutate,
+    deleteWorkspace: deleteWorkspaceMutation.mutate,
     isCreating: createWorkspaceMutation.isPending,
+    isUpdating: updateWorkspaceMutation.isPending,
+    isDeleting: deleteWorkspaceMutation.isPending,
   };
 };
 
