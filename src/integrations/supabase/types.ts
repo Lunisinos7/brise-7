@@ -54,28 +54,49 @@ export type Database = {
       }
       environments: {
         Row: {
+          cool_target_temp: number
+          cool_trigger_temp: number
+          cooling_enabled: boolean
           created_at: string
           equipment_ids: string[]
+          heat_target_temp: number
+          heat_trigger_temp: number
+          heating_enabled: boolean
           id: string
           is_active: boolean
+          is_automatic: boolean
           name: string
           updated_at: string
           workspace_id: string | null
         }
         Insert: {
+          cool_target_temp?: number
+          cool_trigger_temp?: number
+          cooling_enabled?: boolean
           created_at?: string
           equipment_ids?: string[]
+          heat_target_temp?: number
+          heat_trigger_temp?: number
+          heating_enabled?: boolean
           id?: string
           is_active?: boolean
+          is_automatic?: boolean
           name: string
           updated_at?: string
           workspace_id?: string | null
         }
         Update: {
+          cool_target_temp?: number
+          cool_trigger_temp?: number
+          cooling_enabled?: boolean
           created_at?: string
           equipment_ids?: string[]
+          heat_target_temp?: number
+          heat_trigger_temp?: number
+          heating_enabled?: boolean
           id?: string
           is_active?: boolean
+          is_automatic?: boolean
           name?: string
           updated_at?: string
           workspace_id?: string | null
