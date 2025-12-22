@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { BarChart3, Calendar, Zap, Thermometer } from "lucide-react";
+import { BarChart3, Calendar, Zap } from "lucide-react";
 import { PeriodSelector } from "@/components/reports/PeriodSelector";
 import { ExportDialog } from "@/components/reports/ExportDialog";
 import { EnergyConsumptionChart } from "@/components/reports/EnergyConsumptionChart";
@@ -102,29 +102,16 @@ const Reports = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-energy-efficient/20 bg-gradient-to-br from-energy-efficient/10 to-transparent">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-energy-efficient">
+            <CardTitle className="flex items-center gap-2">
               <Zap className="h-4 w-4" />
-              Economia de Energia
+              Consumo Total
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{summary.energySavings.toFixed(1)}%</div>
-            <p className="text-sm text-muted-foreground">vs. consumo base</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-cooling/20 bg-gradient-to-br from-cooling-light/10 to-transparent">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-cooling">
-              <Thermometer className="h-4 w-4" />
-              Eficiência Média
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summary.avgEfficiency.toFixed(1)}%</div>
+            <div className="text-2xl font-bold">{summary.totalConsumption.toFixed(2)} kWh</div>
             <p className="text-sm text-muted-foreground">Período selecionado</p>
           </CardContent>
         </Card>

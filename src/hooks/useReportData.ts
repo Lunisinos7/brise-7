@@ -277,8 +277,6 @@ export const useReportSummary = (
   
   if (!energyData || energyData.length === 0) {
     return {
-      energySavings: 0,
-      avgEfficiency: 0,
       totalConsumption: 0,
       totalSpent: 0,
       currencySymbol,
@@ -286,18 +284,11 @@ export const useReportSummary = (
   }
 
   const totalConsumption = energyData.reduce((acc, item) => acc + Number(item.energy_consumption), 0);
-  const avgEfficiency = energyData.reduce((acc, item) => acc + Number(item.efficiency), 0) / energyData.length;
-  
-  // Estimativas baseadas em eficiência
-  const baselineConsumption = totalConsumption * (100 / avgEfficiency);
-  const energySavings = ((baselineConsumption - totalConsumption) / baselineConsumption) * 100;
   
   // Gasto total (consumo × tarifa)
   const totalSpent = totalConsumption * kwhRate;
 
   return {
-    energySavings: Math.max(0, energySavings),
-    avgEfficiency,
     totalConsumption,
     totalSpent,
     currencySymbol,

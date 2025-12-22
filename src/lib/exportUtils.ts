@@ -10,8 +10,6 @@ interface ExportData {
   temperatureData: any[];
   equipmentEfficiency: any[];
   summary: {
-    energySavings: number;
-    avgEfficiency: number;
     totalConsumption: number;
     totalSpent: number;
   };
@@ -54,8 +52,6 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   doc.text("Resumo Executivo", margin, currentY);
   
   const summaryData = [
-    ["Economia de Energia", `${summary.energySavings.toFixed(1)}%`],
-    ["Eficiência Média", `${summary.avgEfficiency.toFixed(1)}%`],
     ["Consumo Total", `${summary.totalConsumption.toFixed(2)} kWh`],
     ["Gasto Total", `R$ ${summary.totalSpent.toFixed(2)}`],
   ];
@@ -157,8 +153,6 @@ export const exportToExcel = async (data: ExportData): Promise<void> => {
     [],
     ["Resumo Executivo"],
     ["Métrica", "Valor"],
-    ["Economia de Energia", `${summary.energySavings.toFixed(1)}%`],
-    ["Eficiência Média", `${summary.avgEfficiency.toFixed(1)}%`],
     ["Consumo Total", `${summary.totalConsumption.toFixed(2)} kWh`],
     ["Gasto Total", `R$ ${summary.totalSpent.toFixed(2)}`],
   ];
