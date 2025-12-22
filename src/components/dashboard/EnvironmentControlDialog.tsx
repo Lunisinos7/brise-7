@@ -172,6 +172,34 @@ const EnvironmentControlDialog = ({
     }
   };
 
+  // Toggle de refrigeração com auto-correção
+  const handleCoolingToggle = (enabled: boolean) => {
+    if (enabled && heatingEnabled) {
+      // Verificar sobreposição e corrigir se necessário
+      if (coolTargetTemp <= heatTargetTemp) {
+        setCoolTargetTemp(heatTargetTemp + 1);
+      }
+      if (coolTriggerTemp <= heatTargetTemp) {
+        setCoolTriggerTemp(heatTargetTemp + 2);
+      }
+    }
+    setCoolingEnabled(enabled);
+  };
+
+  // Toggle de aquecimento com auto-correção
+  const handleHeatingToggle = (enabled: boolean) => {
+    if (enabled && coolingEnabled) {
+      // Verificar sobreposição e corrigir se necessário
+      if (heatTargetTemp >= coolTargetTemp) {
+        setHeatTargetTemp(coolTargetTemp - 1);
+      }
+      if (heatTriggerTemp >= coolTargetTemp) {
+        setHeatTriggerTemp(coolTargetTemp - 2);
+      }
+    }
+    setHeatingEnabled(enabled);
+  };
+
   // Gerar texto da zona de conforto
   const getComfortZoneText = () => {
     if (coolingEnabled && heatingEnabled) {
@@ -229,7 +257,7 @@ const EnvironmentControlDialog = ({
                   </div>
                   <Switch
                     checked={coolingEnabled}
-                    onCheckedChange={setCoolingEnabled}
+                    onCheckedChange={handleCoolingToggle}
                   />
                 </div>
                 
@@ -282,7 +310,7 @@ const EnvironmentControlDialog = ({
                   </div>
                   <Switch
                     checked={heatingEnabled}
-                    onCheckedChange={setHeatingEnabled}
+                    onCheckedChange={handleHeatingToggle}
                   />
                 </div>
                 
