@@ -305,6 +305,7 @@ const EnvironmentControlDialog = ({
                   <Switch
                     checked={coolingEnabled}
                     onCheckedChange={handleCoolingToggle}
+                    className="data-[state=checked]:bg-blue-500"
                   />
                 </div>
                 
@@ -320,7 +321,7 @@ const EnvironmentControlDialog = ({
                     min={-30}
                     max={50}
                     step={1}
-                    className="w-full"
+                    className="w-full [&_[role=slider]]:border-blue-500 [&_.bg-primary]:bg-blue-500"
                     disabled={!coolingEnabled}
                   />
                 </div>
@@ -337,7 +338,7 @@ const EnvironmentControlDialog = ({
                     min={-30}
                     max={coolTriggerTemp - 1}
                     step={1}
-                    className="w-full"
+                    className="w-full [&_[role=slider]]:border-blue-500 [&_.bg-primary]:bg-blue-500"
                     disabled={!coolingEnabled}
                   />
                 </div>
