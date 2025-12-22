@@ -1,13 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Trash2, Plus, Pencil } from "lucide-react";
+import { Clock, Trash2, Plus, Pencil, CalendarOff, RefreshCw, CalendarIcon } from "lucide-react";
 import TimeRoutineDialog from "@/components/automations/TimeRoutineDialog";
 import EditTimeRoutineDialog from "@/components/automations/EditTimeRoutineDialog";
 import { useTimeRoutines } from "@/hooks/useTimeRoutines";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { Switch } from "@/components/ui/switch";
+import { format, isAfter, addDays } from "date-fns";
 const Automations = () => {
   const {
     currentWorkspaceId
@@ -45,6 +46,17 @@ const Automations = () => {
     }, {} as Record<string, string[]>);
     return Object.entries(dayGroups).map(([day, times]) => `${daysOfWeek[day]}: ${times.join(", ")}`).join(" | ");
   };
+
+  const getUpcomingExceptions = (exceptions: typeof routines[0]['exceptions']) => {
+    const now = new Date();
+    const sevenDaysFromNow = addDays(now, 7);
+    
+    return exceptions.filter(e => {
+      const excDate = new Date(e.exception_date + 'T12:00:00');
+      return isAfter(excDate, now) && !isAfter(excDate, sevenDaysFromNow);
+    });
+  };
+
   const activeCount = routines.filter(r => r.is_active).length;
   const inactiveCount = routines.filter(r => !r.is_active).length;
   return <div className="p-6 space-y-6">
@@ -127,6 +139,36 @@ const Automations = () => {
                       </p>
                     </div>
                   </div>
+
+                  {/* Exceptions info */}
+                  {routine.exceptions && routine.exceptions.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <CalendarOff className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Exceções:</span>
+                        
+                        {routine.exceptions.filter(e => e.is_recurring).length > 0 && (
+                          <Badge variant="outline" className="text-xs">
+                            <RefreshCw className="h-3 w-3 mr-1" />
+                            {routine.exceptions.filter(e => e.is_recurring).length} anual(is)
+                          </Badge>
+                        )}
+                        
+                        {routine.exceptions.filter(e => !e.is_recurring).length > 0 && (
+                          <Badge variant="outline" className="text-xs">
+                            <CalendarIcon className="h-3 w-3 mr-1" />
+                            {routine.exceptions.filter(e => !e.is_recurring).length} pontual(is)
+                          </Badge>
+                        )}
+
+                        {getUpcomingExceptions(routine.exceptions).length > 0 && (
+                          <Badge className="bg-warning/10 text-warning text-xs">
+                            {getUpcomingExceptions(routine.exceptions).length} nos próximos 7 dias
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>)}
           </div>}

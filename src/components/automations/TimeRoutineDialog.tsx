@@ -9,8 +9,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMe
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Clock, CalendarDays, Plus, ChevronDown, Trash2 } from "lucide-react";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
-import { useTimeRoutines, type DaySchedule, type TimeSlot } from "@/hooks/useTimeRoutines";
+import { useTimeRoutines, type DaySchedule, type TimeSlot, type RoutineException } from "@/hooks/useTimeRoutines";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import ExceptionsSection from "./ExceptionsSection";
 
 interface TimeRoutineDialogProps {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ const TimeRoutineDialog = ({ children }: TimeRoutineDialogProps) => {
   const [daySchedules, setDaySchedules] = useState<DaySchedule[]>([]);
   const [selectedEnvironments, setSelectedEnvironments] = useState<string[]>([]);
   const [openAccordions, setOpenAccordions] = useState<string[]>([]);
+  const [exceptions, setExceptions] = useState<RoutineException[]>([]);
 
   const daysOfWeek = [
     { id: "monday", label: "Seg", name: "Segunda-feira" },
@@ -41,6 +43,7 @@ const TimeRoutineDialog = ({ children }: TimeRoutineDialogProps) => {
     setDaySchedules([]);
     setSelectedEnvironments([]);
     setOpenAccordions([]);
+    setExceptions([]);
   };
 
   const handleCreateRoutine = async () => {
@@ -51,6 +54,7 @@ const TimeRoutineDialog = ({ children }: TimeRoutineDialogProps) => {
       daySchedules,
       environmentIds: selectedEnvironments,
       workspaceId: currentWorkspaceId,
+      exceptions,
     });
     resetForm();
     setOpen(false);
@@ -290,8 +294,11 @@ const TimeRoutineDialog = ({ children }: TimeRoutineDialogProps) => {
             </DropdownMenu>
           </div>
 
-
-          {/* Resumo */}
+          {/* Exceções */}
+          <ExceptionsSection 
+            exceptions={exceptions} 
+            onExceptionsChange={setExceptions} 
+          />
           {routineName && daySchedules.length > 0 && selectedEnvironments.length > 0 && (
             <Card className="bg-cooling/5 border-cooling/20">
               <CardContent className="p-4">
