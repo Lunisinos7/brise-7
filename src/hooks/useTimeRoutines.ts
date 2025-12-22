@@ -31,22 +31,26 @@ export interface CreateTimeRoutineInput {
   name: string;
   daySchedules: DaySchedule[];
   environmentIds: string[];
+  workspaceId: string;
 }
 
 export interface UpdateTimeRoutineInput extends CreateTimeRoutineInput {
   id: string;
 }
 
-export const useTimeRoutines = () => {
+export const useTimeRoutines = (workspaceId?: string) => {
   const queryClient = useQueryClient();
 
   const { data: routines = [], isLoading } = useQuery({
-    queryKey: ["time-routines"],
+    queryKey: ["time-routines", workspaceId],
     queryFn: async (): Promise<TimeRoutine[]> => {
-      // Fetch routines
+      if (!workspaceId) return [];
+      
+      // Fetch routines filtered by workspace
       const { data: routinesData, error: routinesError } = await supabase
         .from("time_routines")
         .select("*")
+        .eq("workspace_id", workspaceId)
         .order("created_at", { ascending: false });
 
       if (routinesError) throw routinesError;
@@ -74,14 +78,15 @@ export const useTimeRoutines = () => {
 
       return routinesWithDetails;
     },
+    enabled: !!workspaceId,
   });
 
   const addRoutine = useMutation({
     mutationFn: async (input: CreateTimeRoutineInput) => {
-      // 1. Create the routine
+      // 1. Create the routine with workspace_id
       const { data: routine, error: routineError } = await supabase
         .from("time_routines")
-        .insert({ name: input.name })
+        .insert({ name: input.name, workspace_id: input.workspaceId })
         .select()
         .single();
 
@@ -122,7 +127,7 @@ export const useTimeRoutines = () => {
       return routine;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["time-routines"] });
+      queryClient.invalidateQueries({ queryKey: ["time-routines", workspaceId] });
       toast({
         title: "Rotina criada!",
         description: "A rotina foi salva com sucesso.",
@@ -193,7 +198,7 @@ export const useTimeRoutines = () => {
       return input.id;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["time-routines"] });
+      queryClient.invalidateQueries({ queryKey: ["time-routines", workspaceId] });
       toast({
         title: "Rotina atualizada!",
         description: "As alterações foram salvas com sucesso.",
@@ -218,7 +223,7 @@ export const useTimeRoutines = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["time-routines"] });
+      queryClient.invalidateQueries({ queryKey: ["time-routines", workspaceId] });
     },
   });
 
@@ -232,7 +237,7 @@ export const useTimeRoutines = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["time-routines"] });
+      queryClient.invalidateQueries({ queryKey: ["time-routines", workspaceId] });
       toast({
         title: "Rotina excluída",
         description: "A rotina foi removida com sucesso.",

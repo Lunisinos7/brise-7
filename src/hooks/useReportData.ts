@@ -75,16 +75,24 @@ export const getDateRangeFromPeriod = (period: PeriodType, customRange?: DateRan
   }
 };
 
-export const useEnergyHistory = (dateRange: DateRange) => {
+export const useEnergyHistory = (dateRange: DateRange, equipmentIds?: string[]) => {
   return useQuery({
-    queryKey: ["energy-history", dateRange.from.toISOString(), dateRange.to.toISOString()],
+    queryKey: ["energy-history", dateRange.from.toISOString(), dateRange.to.toISOString(), equipmentIds],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (equipmentIds && equipmentIds.length === 0) return [];
+      
+      let query = supabase
         .from("energy_history")
         .select("*")
         .gte("recorded_at", dateRange.from.toISOString())
         .lte("recorded_at", dateRange.to.toISOString())
         .order("recorded_at", { ascending: true });
+
+      if (equipmentIds && equipmentIds.length > 0) {
+        query = query.in("equipment_id", equipmentIds);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return data as EnergyHistoryItem[];
@@ -92,16 +100,24 @@ export const useEnergyHistory = (dateRange: DateRange) => {
   });
 };
 
-export const useTemperatureHistory = (dateRange: DateRange) => {
+export const useTemperatureHistory = (dateRange: DateRange, equipmentIds?: string[]) => {
   return useQuery({
-    queryKey: ["temperature-history", dateRange.from.toISOString(), dateRange.to.toISOString()],
+    queryKey: ["temperature-history", dateRange.from.toISOString(), dateRange.to.toISOString(), equipmentIds],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (equipmentIds && equipmentIds.length === 0) return [];
+      
+      let query = supabase
         .from("temperature_history")
         .select("*")
         .gte("recorded_at", dateRange.from.toISOString())
         .lte("recorded_at", dateRange.to.toISOString())
         .order("recorded_at", { ascending: true });
+
+      if (equipmentIds && equipmentIds.length > 0) {
+        query = query.in("equipment_id", equipmentIds);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return data as TemperatureHistoryItem[];
@@ -109,8 +125,8 @@ export const useTemperatureHistory = (dateRange: DateRange) => {
   });
 };
 
-export const useAggregatedEnergyData = (dateRange: DateRange) => {
-  const { data: rawData, ...rest } = useEnergyHistory(dateRange);
+export const useAggregatedEnergyData = (dateRange: DateRange, equipmentIds?: string[]) => {
+  const { data: rawData, ...rest } = useEnergyHistory(dateRange, equipmentIds);
 
   const aggregatedData: AggregatedEnergyData[] = [];
   
@@ -137,15 +153,19 @@ export const useAggregatedEnergyData = (dateRange: DateRange) => {
   return { data: aggregatedData, ...rest };
 };
 
-export const useEquipmentEfficiency = (dateRange: DateRange) => {
-  const { data: energyData, ...energyRest } = useEnergyHistory(dateRange);
+export const useEquipmentEfficiency = (dateRange: DateRange, equipmentIds?: string[]) => {
+  const { data: energyData, ...energyRest } = useEnergyHistory(dateRange, equipmentIds);
   
   return useQuery({
-    queryKey: ["equipment-efficiency", dateRange.from.toISOString(), dateRange.to.toISOString()],
+    queryKey: ["equipment-efficiency", dateRange.from.toISOString(), dateRange.to.toISOString(), equipmentIds],
     queryFn: async () => {
-      const { data: equipments, error } = await supabase
-        .from("equipments")
-        .select("id, name");
+      let query = supabase.from("equipments").select("id, name");
+      
+      if (equipmentIds && equipmentIds.length > 0) {
+        query = query.in("id", equipmentIds);
+      }
+
+      const { data: equipments, error } = await query;
 
       if (error) throw error;
 
@@ -180,8 +200,8 @@ export const useEquipmentEfficiency = (dateRange: DateRange) => {
   });
 };
 
-export const useAggregatedTemperatureData = (dateRange: DateRange) => {
-  const { data: rawData, ...rest } = useTemperatureHistory(dateRange);
+export const useAggregatedTemperatureData = (dateRange: DateRange, equipmentIds?: string[]) => {
+  const { data: rawData, ...rest } = useTemperatureHistory(dateRange, equipmentIds);
 
   const aggregatedData: TemperatureData[] = [];
   
@@ -208,8 +228,8 @@ export const useAggregatedTemperatureData = (dateRange: DateRange) => {
   return { data: aggregatedData, ...rest };
 };
 
-export const useUsagePatterns = (dateRange: DateRange) => {
-  const { data: rawData, ...rest } = useEnergyHistory(dateRange);
+export const useUsagePatterns = (dateRange: DateRange, equipmentIds?: string[]) => {
+  const { data: rawData, ...rest } = useEnergyHistory(dateRange, equipmentIds);
 
   const patterns: UsagePattern[] = [];
   const daysOfWeek = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -247,8 +267,8 @@ export const useUsagePatterns = (dateRange: DateRange) => {
   return { data: patterns, ...rest };
 };
 
-export const useReportSummary = (dateRange: DateRange) => {
-  const { data: energyData } = useEnergyHistory(dateRange);
+export const useReportSummary = (dateRange: DateRange, equipmentIds?: string[]) => {
+  const { data: energyData } = useEnergyHistory(dateRange, equipmentIds);
   
   if (!energyData || energyData.length === 0) {
     return {

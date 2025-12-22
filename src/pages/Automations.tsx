@@ -6,10 +6,12 @@ import TimeRoutineDialog from "@/components/automations/TimeRoutineDialog";
 import EditTimeRoutineDialog from "@/components/automations/EditTimeRoutineDialog";
 import { useTimeRoutines } from "@/hooks/useTimeRoutines";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { Switch } from "@/components/ui/switch";
 
 const Automations = () => {
-  const { routines, isLoading, toggleRoutine, deleteRoutine } = useTimeRoutines();
+  const { currentWorkspaceId } = useWorkspaceContext();
+  const { routines, isLoading, toggleRoutine, deleteRoutine } = useTimeRoutines(currentWorkspaceId || undefined);
   const { environments } = useEnvironments();
 
   const daysOfWeek: Record<string, string> = {
