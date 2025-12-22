@@ -280,7 +280,7 @@ export const useReportSummary = (
       energySavings: 0,
       avgEfficiency: 0,
       totalConsumption: 0,
-      moneySaved: 0,
+      totalSpent: 0,
       currencySymbol,
     };
   }
@@ -292,14 +292,14 @@ export const useReportSummary = (
   const baselineConsumption = totalConsumption * (100 / avgEfficiency);
   const energySavings = ((baselineConsumption - totalConsumption) / baselineConsumption) * 100;
   
-  // Economia usando tarifa dinâmica
-  const moneySaved = (baselineConsumption - totalConsumption) * kwhRate;
+  // Gasto total (consumo × tarifa)
+  const totalSpent = totalConsumption * kwhRate;
 
   return {
     energySavings: Math.max(0, energySavings),
     avgEfficiency,
     totalConsumption,
-    moneySaved: Math.max(0, moneySaved),
+    totalSpent,
     currencySymbol,
   };
 };

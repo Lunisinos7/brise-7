@@ -13,7 +13,7 @@ interface ExportData {
     energySavings: number;
     avgEfficiency: number;
     totalConsumption: number;
-    moneySaved: number;
+    totalSpent: number;
   };
   dateRange: DateRange;
 }
@@ -57,7 +57,7 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
     ["Economia de Energia", `${summary.energySavings.toFixed(1)}%`],
     ["Eficiência Média", `${summary.avgEfficiency.toFixed(1)}%`],
     ["Consumo Total", `${summary.totalConsumption.toFixed(2)} kWh`],
-    ["Economia Financeira", `R$ ${summary.moneySaved.toFixed(2)}`],
+    ["Gasto Total", `R$ ${summary.totalSpent.toFixed(2)}`],
   ];
   
   autoTable(doc, {
@@ -160,7 +160,7 @@ export const exportToExcel = async (data: ExportData): Promise<void> => {
     ["Economia de Energia", `${summary.energySavings.toFixed(1)}%`],
     ["Eficiência Média", `${summary.avgEfficiency.toFixed(1)}%`],
     ["Consumo Total", `${summary.totalConsumption.toFixed(2)} kWh`],
-    ["Economia Financeira", `R$ ${summary.moneySaved.toFixed(2)}`],
+    ["Gasto Total", `R$ ${summary.totalSpent.toFixed(2)}`],
   ];
 
   const summarySheet = XLSX.utils.aoa_to_sheet(summarySheetData);
