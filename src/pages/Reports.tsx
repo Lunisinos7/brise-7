@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { BarChart3, Calendar, Zap, Building2 } from "lucide-react";
+import { BarChart3, Calendar, Zap, Building2, Check } from "lucide-react";
 import { PeriodSelector } from "@/components/reports/PeriodSelector";
 import { ExportDialog } from "@/components/reports/ExportDialog";
 import { EnergyConsumptionChart } from "@/components/reports/EnergyConsumptionChart";
@@ -23,33 +23,34 @@ import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { useEquipments } from "@/hooks/useEquipments";
 import { useWorkspaceSettings } from "@/hooks/useWorkspaceSettings";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const Reports = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
   const [customRange, setCustomRange] = useState<DateRange | undefined>();
   const [periodPopoverOpen, setPeriodPopoverOpen] = useState(false);
-  const [selectedEnvironmentId, setSelectedEnvironmentId] = useState<string | null>(null);
+  const [environmentPopoverOpen, setEnvironmentPopoverOpen] = useState(false);
+  const [selectedEnvironmentIds, setSelectedEnvironmentIds] = useState<string[]>([]);
 
   const { currentWorkspaceId } = useWorkspaceContext();
   const { equipments } = useEquipments(currentWorkspaceId);
   const { settings } = useWorkspaceSettings(currentWorkspaceId);
   const { environments } = useEnvironments();
 
-  // Filtrar equipmentIds baseado no ambiente selecionado
-  const filteredEquipmentIds = selectedEnvironmentId
-    ? environments.find(e => e.id === selectedEnvironmentId)?.equipmentIds || []
+  // Filtrar equipmentIds baseado nos ambientes selecionados
+  const filteredEquipmentIds = selectedEnvironmentIds.length > 0
+    ? [...new Set(
+        environments
+          .filter(e => selectedEnvironmentIds.includes(e.id))
+          .flatMap(e => e.equipmentIds)
+      )]
     : equipments.map(eq => eq.id);
 
-  const selectedEnvironmentName = selectedEnvironmentId
-    ? environments.find(e => e.id === selectedEnvironmentId)?.name || "Ambiente"
-    : "Todos os Ambientes";
+  const selectedEnvironmentName = selectedEnvironmentIds.length === 0
+    ? "Todos os Ambientes"
+    : selectedEnvironmentIds.length === 1
+      ? environments.find(e => e.id === selectedEnvironmentIds[0])?.name || "Ambiente"
+      : `${selectedEnvironmentIds.length} ambientes`;
 
   const dateRange = getDateRangeFromPeriod(selectedPeriod, customRange);
 
@@ -72,6 +73,22 @@ const Reports = () => {
     setPeriodPopoverOpen(false);
   };
 
+  const toggleEnvironment = (envId: string) => {
+    setSelectedEnvironmentIds(prev => 
+      prev.includes(envId)
+        ? prev.filter(id => id !== envId)
+        : [...prev, envId]
+    );
+  };
+
+  const selectAllEnvironments = () => {
+    if (selectedEnvironmentIds.length === environments.length) {
+      setSelectedEnvironmentIds([]);
+    } else {
+      setSelectedEnvironmentIds(environments.map(e => e.id));
+    }
+  };
+
   const periodLabels: Record<PeriodType, string> = {
     "24h": "Últimas 24h",
     week: "Última Semana",
@@ -80,6 +97,15 @@ const Reports = () => {
     semester: "Último Semestre",
     year: "Último Ano",
     custom: "Período Customizado",
+  };
+
+  // Gerar nome do ambiente para export
+  const getEnvironmentNameForExport = () => {
+    if (selectedEnvironmentIds.length === 0) return "Todos os Ambientes";
+    const selectedNames = environments
+      .filter(e => selectedEnvironmentIds.includes(e.id))
+      .map(e => e.name);
+    return selectedNames.join(", ");
   };
 
   return (
@@ -92,23 +118,48 @@ const Reports = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Select
-            value={selectedEnvironmentId || "all"}
-            onValueChange={(v) => setSelectedEnvironmentId(v === "all" ? null : v)}
-          >
-            <SelectTrigger className="w-[200px]">
-              <Building2 className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Todos os Ambientes" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os Ambientes</SelectItem>
-              {environments.map((env) => (
-                <SelectItem key={env.id} value={env.id}>
-                  {env.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Popover open={environmentPopoverOpen} onOpenChange={setEnvironmentPopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="gap-2 min-w-[200px] justify-start">
+                <Building2 className="h-4 w-4" />
+                <span className="truncate">{selectedEnvironmentName}</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64" align="start">
+              <div className="space-y-3">
+                <h4 className="font-medium text-sm">Selecione os Ambientes</h4>
+                <div className="space-y-2">
+                  <div 
+                    className="flex items-center space-x-2 py-1.5 px-2 rounded hover:bg-muted cursor-pointer"
+                    onClick={selectAllEnvironments}
+                  >
+                    <Checkbox 
+                      checked={selectedEnvironmentIds.length === 0 || selectedEnvironmentIds.length === environments.length}
+                      className="pointer-events-none"
+                    />
+                    <span className="text-sm font-medium">
+                      {selectedEnvironmentIds.length === 0 ? "Todos os Ambientes" : "Selecionar Todos"}
+                    </span>
+                  </div>
+                  <div className="border-t pt-2">
+                    {environments.map((env) => (
+                      <div 
+                        key={env.id}
+                        className="flex items-center space-x-2 py-1.5 px-2 rounded hover:bg-muted cursor-pointer"
+                        onClick={() => toggleEnvironment(env.id)}
+                      >
+                        <Checkbox 
+                          checked={selectedEnvironmentIds.includes(env.id)}
+                          className="pointer-events-none"
+                        />
+                        <span className="text-sm">{env.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
           <Popover open={periodPopoverOpen} onOpenChange={setPeriodPopoverOpen}>
             <PopoverTrigger asChild>
               <Button variant="outline" className="gap-2">
@@ -132,7 +183,7 @@ const Reports = () => {
             temperatureData={temperatureData}
             equipmentEfficiency={equipmentEfficiency}
             summary={summary}
-            environmentName={selectedEnvironmentName}
+            environmentName={getEnvironmentNameForExport()}
           />
         </div>
       </div>
