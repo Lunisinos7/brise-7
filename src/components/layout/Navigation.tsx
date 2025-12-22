@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, Wind, Settings, BarChart3, AlertCircle, Zap, Users, LogOut } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -8,41 +9,42 @@ import WorkspaceSelector from "@/components/workspace/WorkspaceSelector";
 const Navigation = () => {
   const location = useLocation();
   const { user, signOut, isAdmin } = useAuthContext();
+  const { t } = useTranslation();
 
   const navigation = [
     {
-      name: "Dashboard",
+      name: t('navigation.dashboard'),
       href: "/",
       icon: LayoutDashboard
     },
     {
-      name: "Equipamentos",
+      name: t('navigation.equipments'),
       href: "/equipments",
       icon: Wind
     },
     {
-      name: "Automações",
+      name: t('navigation.automations'),
       href: "/automations",
       icon: Zap
     },
     {
-      name: "Relatórios",
+      name: t('navigation.reports'),
       href: "/reports",
       icon: BarChart3
     },
     {
-      name: "Alarmes",
+      name: t('navigation.alarms'),
       href: "/alarms",
       icon: AlertCircle
     },
     {
-      name: "Usuários",
+      name: t('navigation.users'),
       href: "/users",
       icon: Users,
       adminOnly: false
     },
     {
-      name: "Configurações",
+      name: t('navigation.settings'),
       href: "/settings",
       icon: Settings
     }
@@ -53,9 +55,9 @@ const Navigation = () => {
   return (
     <nav className="bg-card border-r border-border min-h-screen w-64 p-6 flex flex-col">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold bg-gradient-cooling bg-clip-text text-transparent">Brise Cloud</h1>
+        <h1 className="text-2xl font-bold bg-gradient-cooling bg-clip-text text-transparent">{t('brand.name')}</h1>
         <p className="text-sm text-muted-foreground mb-4">
-          Gestão Inteligente de Climatização
+          {t('brand.tagline')}
         </p>
         <WorkspaceSelector />
       </div>
@@ -65,7 +67,7 @@ const Navigation = () => {
           const isActive = location.pathname === item.href;
           return (
             <Link
-              key={item.name}
+              key={item.href}
               to={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
@@ -92,7 +94,7 @@ const Navigation = () => {
             onClick={() => signOut()}
           >
             <LogOut className="h-4 w-4" />
-            Sair
+            {t('navigation.signOut')}
           </Button>
         </div>
       )}
