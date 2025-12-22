@@ -19,19 +19,25 @@ import {
   useUsagePatterns,
   useReportSummary,
 } from "@/hooks/useReportData";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { useEquipments } from "@/hooks/useEquipments";
 
 const Reports = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
   const [customRange, setCustomRange] = useState<DateRange | undefined>();
   const [periodPopoverOpen, setPeriodPopoverOpen] = useState(false);
 
+  const { currentWorkspaceId } = useWorkspaceContext();
+  const { equipments } = useEquipments(currentWorkspaceId);
+  const equipmentIds = equipments.map(eq => eq.id);
+
   const dateRange = getDateRangeFromPeriod(selectedPeriod, customRange);
 
-  const { data: energyData = [], isLoading: isLoadingEnergy } = useAggregatedEnergyData(dateRange);
-  const { data: equipmentEfficiency = [], isLoading: isLoadingEfficiency } = useEquipmentEfficiency(dateRange);
-  const { data: temperatureData = [], isLoading: isLoadingTemperature } = useAggregatedTemperatureData(dateRange);
-  const { data: usagePatterns = [], isLoading: isLoadingUsage } = useUsagePatterns(dateRange);
-  const summary = useReportSummary(dateRange);
+  const { data: energyData = [], isLoading: isLoadingEnergy } = useAggregatedEnergyData(dateRange, equipmentIds);
+  const { data: equipmentEfficiency = [], isLoading: isLoadingEfficiency } = useEquipmentEfficiency(dateRange, equipmentIds);
+  const { data: temperatureData = [], isLoading: isLoadingTemperature } = useAggregatedTemperatureData(dateRange, equipmentIds);
+  const { data: usagePatterns = [], isLoading: isLoadingUsage } = useUsagePatterns(dateRange, equipmentIds);
+  const summary = useReportSummary(dateRange, equipmentIds);
 
   const handlePeriodChange = (period: PeriodType, range?: DateRange) => {
     setSelectedPeriod(period);

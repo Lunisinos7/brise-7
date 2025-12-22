@@ -10,6 +10,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { Clock, CalendarDays, Plus, ChevronDown, Trash2, Pencil } from "lucide-react";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
 import { useTimeRoutines, type TimeRoutine, type DaySchedule, type TimeSlot } from "@/hooks/useTimeRoutines";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 
 interface EditTimeRoutineDialogProps {
   routine: TimeRoutine;
@@ -18,7 +19,8 @@ interface EditTimeRoutineDialogProps {
 
 const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps) => {
   const { environments } = useEnvironments();
-  const { updateRoutine } = useTimeRoutines();
+  const { currentWorkspaceId } = useWorkspaceContext();
+  const { updateRoutine } = useTimeRoutines(currentWorkspaceId || undefined);
   const [open, setOpen] = useState(false);
   const [routineName, setRoutineName] = useState("");
   const [daySchedules, setDaySchedules] = useState<DaySchedule[]>([]);
@@ -65,11 +67,14 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
   }, [open, routine]);
 
   const handleUpdateRoutine = async () => {
+    if (!currentWorkspaceId) return;
+    
     await updateRoutine.mutateAsync({
       id: routine.id,
       name: routineName,
       daySchedules,
       environmentIds: selectedEnvironments,
+      workspaceId: currentWorkspaceId,
     });
     setOpen(false);
   };
