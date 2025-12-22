@@ -1,18 +1,29 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import type { SmartThingsAction } from "@/lib/smartthings";
 
 export function useSmartThingsControl() {
   const { toast } = useToast();
+  const { currentWorkspaceId } = useWorkspaceContext();
 
   const sendCommand = async (
     deviceId: string,
     action: SmartThingsAction,
     value?: string | number
   ): Promise<boolean> => {
+    if (!currentWorkspaceId) {
+      toast({
+        title: "Erro",
+        description: "Nenhum workspace selecionado.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke("smartthings-control", {
-        body: { deviceId, action, value },
+        body: { deviceId, action, value, workspaceId: currentWorkspaceId },
       });
 
       if (error) throw error;

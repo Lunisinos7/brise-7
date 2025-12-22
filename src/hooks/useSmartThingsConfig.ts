@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import type { SmartThingsConfig, SmartThingsLocation } from "@/lib/smartthings";
 
 export function useSmartThingsConfig() {
@@ -8,12 +9,19 @@ export function useSmartThingsConfig() {
   const [isLoading, setIsLoading] = useState(true);
   const [isConfigured, setIsConfigured] = useState(false);
   const { toast } = useToast();
+  const { currentWorkspaceId } = useWorkspaceContext();
 
   const fetchConfig = async () => {
+    if (!currentWorkspaceId) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from("smartthings_config")
         .select("*")
+        .eq("workspace_id", currentWorkspaceId)
         .eq("is_active", true)
         .maybeSingle();
 
@@ -58,6 +66,15 @@ export function useSmartThingsConfig() {
   };
 
   const saveConfig = async (token: string, locationId?: string): Promise<boolean> => {
+    if (!currentWorkspaceId) {
+      toast({
+        title: "Erro",
+        description: "Nenhum workspace selecionado.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
     try {
       // First validate the token
       const validation = await validateToken(token);
@@ -71,31 +88,20 @@ export function useSmartThingsConfig() {
         return false;
       }
 
-      // Save to database
-      const existingConfig = config?.id;
+      // Save to database via edge function (handles workspace auth)
+      const { data, error } = await supabase.functions.invoke("smartthings-auth", {
+        body: { 
+          action: "save", 
+          token, 
+          locationId,
+          workspaceId: currentWorkspaceId 
+        },
+      });
 
-      if (existingConfig) {
-        const { error } = await supabase
-          .from("smartthings_config")
-          .update({
-            personal_access_token: token,
-            location_id: locationId,
-            is_active: true,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", existingConfig);
+      if (error) throw error;
 
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from("smartthings_config")
-          .insert({
-            personal_access_token: token,
-            location_id: locationId,
-            is_active: true,
-          });
-
-        if (error) throw error;
+      if (!data.success) {
+        throw new Error(data.error || "Erro ao salvar configuração");
       }
 
       await fetchConfig();
@@ -150,7 +156,7 @@ export function useSmartThingsConfig() {
 
   useEffect(() => {
     fetchConfig();
-  }, []);
+  }, [currentWorkspaceId]);
 
   return {
     config,
