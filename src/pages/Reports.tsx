@@ -133,12 +133,12 @@ const Reports = () => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              Economia ({summary.currencySymbol})
+              Gasto ({summary.currencySymbol})
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {summary.currencySymbol} {summary.moneySaved.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {summary.currencySymbol} {summary.totalSpent.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <p className="text-sm text-muted-foreground">Período selecionado</p>
           </CardContent>
