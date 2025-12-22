@@ -156,10 +156,6 @@ const Equipments = () => {
                     <p className="text-sm text-muted-foreground">Consumo</p>
                     <p className="font-medium">{equipment.energyConsumption}W</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Eficiência</p>
-                    <p className="font-medium">{equipment.efficiency}%</p>
-                  </div>
                   <div className="flex gap-2 items-center justify-end">
                     <Button
                       variant="outline"
