@@ -24,6 +24,18 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 14;
+  const bottomMargin = 25;
+  
+  // Helper function to check if we need a new page
+  const checkPageBreak = (currentY: number, neededSpace: number): number => {
+    if (currentY + neededSpace > pageHeight - bottomMargin) {
+      doc.addPage();
+      return 20;
+    }
+    return currentY;
+  };
   
   // Header
   doc.setFontSize(20);
@@ -37,9 +49,10 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   doc.text(periodText, pageWidth / 2, 28, { align: "center" });
   
   // Summary section
+  let currentY = 42;
   doc.setFontSize(14);
   doc.setTextColor(40, 40, 40);
-  doc.text("Resumo Executivo", 14, 42);
+  doc.text("Resumo Executivo", margin, currentY);
   
   const summaryData = [
     ["Economia de Energia", `${summary.energySavings.toFixed(1)}%`],
@@ -50,19 +63,22 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   ];
   
   autoTable(doc, {
-    startY: 46,
+    startY: currentY + 6,
     head: [["Métrica", "Valor"]],
     body: summaryData,
     theme: "striped",
     headStyles: { fillColor: [0, 150, 136] },
-    margin: { left: 14, right: 14 },
+    margin: { left: margin, right: margin },
+    styles: { cellPadding: 4 },
   });
   
   // Equipment efficiency section
-  let currentY = (doc as any).lastAutoTable.finalY + 15;
+  currentY = (doc as any).lastAutoTable.finalY + 20;
+  currentY = checkPageBreak(currentY, 60);
   
   doc.setFontSize(14);
-  doc.text("Eficiência por Equipamento", 14, currentY);
+  doc.setTextColor(40, 40, 40);
+  doc.text("Eficiência por Equipamento", margin, currentY);
   
   if (equipmentEfficiency.length > 0) {
     const efficiencyTableData = equipmentEfficiency.map((eq) => [
@@ -72,44 +88,49 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
     ]);
     
     autoTable(doc, {
-      startY: currentY + 4,
+      startY: currentY + 8,
       head: [["Equipamento", "Eficiência Média", "Consumo Total"]],
       body: efficiencyTableData,
       theme: "striped",
       headStyles: { fillColor: [0, 150, 136] },
-      margin: { left: 14, right: 14 },
+      margin: { left: margin, right: margin },
+      styles: { cellPadding: 4 },
+      didDrawPage: (data) => {
+        // Reset currentY on new pages created by autoTable
+      },
     });
+    
+    currentY = (doc as any).lastAutoTable.finalY + 20;
+  } else {
+    currentY += 20;
   }
   
   // Energy consumption by date
-  currentY = (doc as any).lastAutoTable.finalY + 15;
-  
-  if (currentY > 250) {
-    doc.addPage();
-    currentY = 20;
-  }
+  currentY = checkPageBreak(currentY, 60);
   
   doc.setFontSize(14);
-  doc.text("Consumo Energético por Data", 14, currentY);
+  doc.setTextColor(40, 40, 40);
+  doc.text("Consumo Energético por Data", margin, currentY);
   
   if (energyData.length > 0) {
-    const energyTableData = energyData.slice(0, 15).map((item) => [
+    const energyTableData = energyData.slice(0, 20).map((item) => [
       format(new Date(item.date), "dd/MM/yyyy", { locale: ptBR }),
       `${item.consumption.toFixed(2)} kWh`,
       `${item.efficiency.toFixed(1)}%`,
     ]);
     
     autoTable(doc, {
-      startY: currentY + 4,
+      startY: currentY + 8,
       head: [["Data", "Consumo", "Eficiência"]],
       body: energyTableData,
       theme: "striped",
       headStyles: { fillColor: [0, 150, 136] },
-      margin: { left: 14, right: 14 },
+      margin: { left: margin, right: margin },
+      styles: { cellPadding: 4 },
     });
   }
   
-  // Footer
+  // Footer on all pages
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
@@ -118,7 +139,7 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
     doc.text(
       `Página ${i} de ${pageCount} | Gerado em ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}`,
       pageWidth / 2,
-      doc.internal.pageSize.getHeight() - 10,
+      pageHeight - 10,
       { align: "center" }
     );
   }
