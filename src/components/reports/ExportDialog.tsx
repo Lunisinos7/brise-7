@@ -21,7 +21,6 @@ interface ExportDialogProps {
     energySavings: number;
     avgEfficiency: number;
     totalConsumption: number;
-    co2Reduction: number;
     moneySaved: number;
   };
 }

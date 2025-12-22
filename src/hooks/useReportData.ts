@@ -280,7 +280,6 @@ export const useReportSummary = (
       energySavings: 0,
       avgEfficiency: 0,
       totalConsumption: 0,
-      co2Reduction: 0,
       moneySaved: 0,
       currencySymbol,
     };
@@ -293,9 +292,6 @@ export const useReportSummary = (
   const baselineConsumption = totalConsumption * (100 / avgEfficiency);
   const energySavings = ((baselineConsumption - totalConsumption) / baselineConsumption) * 100;
   
-  // Estimativas de CO2 (0.4 kg CO2 por kWh - média Brasil)
-  const co2Reduction = (baselineConsumption - totalConsumption) * 0.0004; // em toneladas
-  
   // Economia usando tarifa dinâmica
   const moneySaved = (baselineConsumption - totalConsumption) * kwhRate;
 
@@ -303,7 +299,6 @@ export const useReportSummary = (
     energySavings: Math.max(0, energySavings),
     avgEfficiency,
     totalConsumption,
-    co2Reduction: Math.max(0, co2Reduction),
     moneySaved: Math.max(0, moneySaved),
     currencySymbol,
   };
