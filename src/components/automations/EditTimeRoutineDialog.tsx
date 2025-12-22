@@ -9,8 +9,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMe
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Clock, CalendarDays, Plus, ChevronDown, Trash2, Pencil } from "lucide-react";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
-import { useTimeRoutines, type TimeRoutine, type DaySchedule, type TimeSlot } from "@/hooks/useTimeRoutines";
+import { useTimeRoutines, type TimeRoutine, type DaySchedule, type TimeSlot, type RoutineException } from "@/hooks/useTimeRoutines";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import ExceptionsSection from "./ExceptionsSection";
 
 interface EditTimeRoutineDialogProps {
   routine: TimeRoutine;
@@ -26,6 +27,7 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
   const [daySchedules, setDaySchedules] = useState<DaySchedule[]>([]);
   const [selectedEnvironments, setSelectedEnvironments] = useState<string[]>([]);
   const [openAccordions, setOpenAccordions] = useState<string[]>([]);
+  const [exceptions, setExceptions] = useState<RoutineException[]>([]);
 
   const daysOfWeek = [
     { id: "monday", label: "Seg", name: "Segunda-feira" },
@@ -63,6 +65,9 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
 
       setDaySchedules(daySchedulesData);
       setOpenAccordions(Object.keys(schedulesMap));
+      
+      // Load exceptions
+      setExceptions(routine.exceptions || []);
     }
   }, [open, routine]);
 
@@ -75,6 +80,7 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
       daySchedules,
       environmentIds: selectedEnvironments,
       workspaceId: currentWorkspaceId,
+      exceptions,
     });
     setOpen(false);
   };
@@ -311,6 +317,12 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
+          {/* Exceções */}
+          <ExceptionsSection 
+            exceptions={exceptions} 
+            onExceptionsChange={setExceptions} 
+          />
 
           {/* Resumo */}
           {routineName && daySchedules.length > 0 && selectedEnvironments.length > 0 && (

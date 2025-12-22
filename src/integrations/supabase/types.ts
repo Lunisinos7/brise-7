@@ -309,6 +309,50 @@ export type Database = {
           },
         ]
       }
+      time_routine_exceptions: {
+        Row: {
+          created_at: string | null
+          custom_end_time: string | null
+          custom_start_time: string | null
+          description: string | null
+          exception_date: string
+          exception_type: string | null
+          id: string
+          is_recurring: boolean | null
+          routine_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          custom_end_time?: string | null
+          custom_start_time?: string | null
+          description?: string | null
+          exception_date: string
+          exception_type?: string | null
+          id?: string
+          is_recurring?: boolean | null
+          routine_id: string
+        }
+        Update: {
+          created_at?: string | null
+          custom_end_time?: string | null
+          custom_start_time?: string | null
+          description?: string | null
+          exception_date?: string
+          exception_type?: string | null
+          id?: string
+          is_recurring?: boolean | null
+          routine_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_routine_exceptions_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "time_routines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       time_routine_schedules: {
         Row: {
           created_at: string

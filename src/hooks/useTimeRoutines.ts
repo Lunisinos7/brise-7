@@ -13,6 +13,16 @@ export interface DaySchedule {
   timeSlots: TimeSlot[];
 }
 
+export interface RoutineException {
+  id: string;
+  exception_date: string;
+  is_recurring: boolean;
+  exception_type: 'closed' | 'custom_hours';
+  custom_start_time?: string;
+  custom_end_time?: string;
+  description?: string;
+}
+
 export interface TimeRoutine {
   id: string;
   name: string;
@@ -25,6 +35,7 @@ export interface TimeRoutine {
     end_time: string;
   }[];
   environment_ids: string[];
+  exceptions: RoutineException[];
 }
 
 export interface CreateTimeRoutineInput {
@@ -32,6 +43,7 @@ export interface CreateTimeRoutineInput {
   daySchedules: DaySchedule[];
   environmentIds: string[];
   workspaceId: string;
+  exceptions?: RoutineException[];
 }
 
 export interface UpdateTimeRoutineInput extends CreateTimeRoutineInput {
@@ -55,7 +67,7 @@ export const useTimeRoutines = (workspaceId?: string) => {
 
       if (routinesError) throw routinesError;
 
-      // Fetch schedules and environments for each routine
+      // Fetch schedules, environments and exceptions for each routine
       const routinesWithDetails = await Promise.all(
         (routinesData || []).map(async (routine) => {
           const { data: schedules } = await supabase
@@ -68,10 +80,26 @@ export const useTimeRoutines = (workspaceId?: string) => {
             .select("environment_id")
             .eq("routine_id", routine.id);
 
+          const { data: exceptionsData } = await supabase
+            .from("time_routine_exceptions")
+            .select("*")
+            .eq("routine_id", routine.id);
+
+          const exceptions: RoutineException[] = (exceptionsData || []).map((e) => ({
+            id: e.id,
+            exception_date: e.exception_date,
+            is_recurring: e.is_recurring,
+            exception_type: e.exception_type as 'closed' | 'custom_hours',
+            custom_start_time: e.custom_start_time || undefined,
+            custom_end_time: e.custom_end_time || undefined,
+            description: e.description || undefined,
+          }));
+
           return {
             ...routine,
             schedules: schedules || [],
             environment_ids: (environments || []).map((e) => e.environment_id),
+            exceptions,
           };
         })
       );
@@ -124,6 +152,25 @@ export const useTimeRoutines = (workspaceId?: string) => {
         if (envsError) throw envsError;
       }
 
+      // 4. Create exceptions
+      if (input.exceptions && input.exceptions.length > 0) {
+        const exceptionInserts = input.exceptions.map((exc) => ({
+          routine_id: routine.id,
+          exception_date: exc.exception_date,
+          is_recurring: exc.is_recurring,
+          exception_type: exc.exception_type,
+          custom_start_time: exc.custom_start_time || null,
+          custom_end_time: exc.custom_end_time || null,
+          description: exc.description || null,
+        }));
+
+        const { error: exceptionsError } = await supabase
+          .from("time_routine_exceptions")
+          .insert(exceptionInserts);
+
+        if (exceptionsError) throw exceptionsError;
+      }
+
       return routine;
     },
     onSuccess: () => {
@@ -152,7 +199,7 @@ export const useTimeRoutines = (workspaceId?: string) => {
 
       if (routineError) throw routineError;
 
-      // 2. Delete existing schedules and environments
+      // 2. Delete existing schedules, environments and exceptions
       await supabase
         .from("time_routine_schedules")
         .delete()
@@ -160,6 +207,11 @@ export const useTimeRoutines = (workspaceId?: string) => {
 
       await supabase
         .from("time_routine_environments")
+        .delete()
+        .eq("routine_id", input.id);
+
+      await supabase
+        .from("time_routine_exceptions")
         .delete()
         .eq("routine_id", input.id);
 
@@ -193,6 +245,25 @@ export const useTimeRoutines = (workspaceId?: string) => {
           .insert(environmentInserts);
 
         if (envsError) throw envsError;
+      }
+
+      // 5. Create new exceptions
+      if (input.exceptions && input.exceptions.length > 0) {
+        const exceptionInserts = input.exceptions.map((exc) => ({
+          routine_id: input.id,
+          exception_date: exc.exception_date,
+          is_recurring: exc.is_recurring,
+          exception_type: exc.exception_type,
+          custom_start_time: exc.custom_start_time || null,
+          custom_end_time: exc.custom_end_time || null,
+          description: exc.description || null,
+        }));
+
+        const { error: exceptionsError } = await supabase
+          .from("time_routine_exceptions")
+          .insert(exceptionInserts);
+
+        if (exceptionsError) throw exceptionsError;
       }
 
       return input.id;
