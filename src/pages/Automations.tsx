@@ -8,8 +8,11 @@ import { useTimeRoutines } from "@/hooks/useTimeRoutines";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { Switch } from "@/components/ui/switch";
-import { format, isAfter, addDays } from "date-fns";
+import { isAfter, addDays } from "date-fns";
+import { useTranslation } from "react-i18next";
+
 const Automations = () => {
+  const { t } = useTranslation();
   const {
     currentWorkspaceId
   } = useWorkspaceContext();
@@ -22,18 +25,21 @@ const Automations = () => {
   const {
     environments
   } = useEnvironments();
+
   const daysOfWeek: Record<string, string> = {
-    monday: "Seg",
-    tuesday: "Ter",
-    wednesday: "Qua",
-    thursday: "Qui",
-    friday: "Sex",
-    saturday: "Sáb",
-    sunday: "Dom"
+    monday: t('automations.days.monday'),
+    tuesday: t('automations.days.tuesday'),
+    wednesday: t('automations.days.wednesday'),
+    thursday: t('automations.days.thursday'),
+    friday: t('automations.days.friday'),
+    saturday: t('automations.days.saturday'),
+    sunday: t('automations.days.sunday')
   };
+
   const getEnvironmentNames = (ids: string[]) => {
     return ids.map(id => environments.find(e => e.id === id)?.name).filter(Boolean).join(", ");
   };
+
   const getScheduleSummary = (schedules: {
     day_of_week: string;
     start_time: string;
@@ -59,41 +65,51 @@ const Automations = () => {
 
   const activeCount = routines.filter(r => r.is_active).length;
   const inactiveCount = routines.filter(r => !r.is_active).length;
-  return <div className="p-6 space-y-6">
+
+  return (
+    <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-cooling bg-clip-text text-transparent">
-            Automações
+            {t('automations.title')}
           </h1>
           <p className="text-muted-foreground">
-            Crie e gerencie automações inteligentes para seus equipamentos
+            {t('automations.subtitle')}
           </p>
         </div>
         <TimeRoutineDialog>
           <Button variant="control" className="gap-2">
             <Plus className="h-4 w-4" />
-            Nova Automação 
+            {t('automations.newAutomation')}
           </Button>
         </TimeRoutineDialog>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Automações Configuradas</h2>
+          <h2 className="text-xl font-semibold">{t('automations.configured')}</h2>
           <div className="flex gap-2">
             <Badge variant="secondary" className="bg-energy-efficient/10 text-energy-efficient">
-              {activeCount} Ativa{activeCount !== 1 ? "s" : ""}
+              {activeCount} {activeCount !== 1 ? t('automations.actives') : t('automations.active')}
             </Badge>
-            <Badge variant="outline">{inactiveCount} Inativa{inactiveCount !== 1 ? "s" : ""}</Badge>
+            <Badge variant="outline">
+              {inactiveCount} {inactiveCount !== 1 ? t('automations.inactives') : t('automations.inactive')}
+            </Badge>
           </div>
         </div>
 
-        {isLoading ? <div className="text-center py-8 text-muted-foreground">Carregando rotinas...</div> : routines.length === 0 ? <Card className="p-8 text-center">
+        {isLoading ? (
+          <div className="text-center py-8 text-muted-foreground">{t('automations.loadingRoutines')}</div>
+        ) : routines.length === 0 ? (
+          <Card className="p-8 text-center">
             <p className="text-muted-foreground">
-              Nenhuma automação configurada. Clique em 'Nova Automação' para começar.
+              {t('automations.noAutomations')}
             </p>
-          </Card> : <div className="grid gap-4">
-            {routines.map(routine => <Card key={routine.id} className="hover:shadow-elevated transition-shadow">
+          </Card>
+        ) : (
+          <div className="grid gap-4">
+            {routines.map(routine => (
+              <Card key={routine.id} className="hover:shadow-elevated transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -108,12 +124,18 @@ const Automations = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Switch checked={routine.is_active} onCheckedChange={checked => toggleRoutine.mutate({
-                  id: routine.id,
-                  is_active: checked
-                })} />
-                      <Badge variant={routine.is_active ? "default" : "secondary"} className={routine.is_active ? "bg-energy-efficient text-white" : ""}>
-                        {routine.is_active ? "Ativa" : "Inativa"}
+                      <Switch 
+                        checked={routine.is_active} 
+                        onCheckedChange={checked => toggleRoutine.mutate({
+                          id: routine.id,
+                          is_active: checked
+                        })} 
+                      />
+                      <Badge 
+                        variant={routine.is_active ? "default" : "secondary"} 
+                        className={routine.is_active ? "bg-energy-efficient text-white" : ""}
+                      >
+                        {routine.is_active ? t('automations.active') : t('automations.inactive')}
                       </Badge>
                       <EditTimeRoutineDialog routine={routine}>
                         <Button variant="ghost" size="icon">
@@ -129,13 +151,13 @@ const Automations = () => {
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground">Gatilho</p>
-                      <p className="font-medium">Horário</p>
+                      <p className="text-muted-foreground">{t('automations.trigger')}</p>
+                      <p className="font-medium">{t('automations.schedule')}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Ambientes</p>
+                      <p className="text-muted-foreground">{t('automations.environments')}</p>
                       <p className="font-medium">
-                        {getEnvironmentNames(routine.environment_ids) || "Nenhum"}
+                        {getEnvironmentNames(routine.environment_ids) || t('common.none')}
                       </p>
                     </div>
                   </div>
@@ -145,34 +167,38 @@ const Automations = () => {
                     <div className="mt-4 pt-4 border-t border-border">
                       <div className="flex items-center gap-2 flex-wrap">
                         <CalendarOff className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Exceções:</span>
+                        <span className="text-sm text-muted-foreground">{t('automations.exceptions')}:</span>
                         
                         {routine.exceptions.filter(e => e.is_recurring).length > 0 && (
                           <Badge variant="outline" className="text-xs">
                             <RefreshCw className="h-3 w-3 mr-1" />
-                            {routine.exceptions.filter(e => e.is_recurring).length} anual(is)
+                            {routine.exceptions.filter(e => e.is_recurring).length} {t('automations.annual')}
                           </Badge>
                         )}
                         
                         {routine.exceptions.filter(e => !e.is_recurring).length > 0 && (
                           <Badge variant="outline" className="text-xs">
                             <CalendarIcon className="h-3 w-3 mr-1" />
-                            {routine.exceptions.filter(e => !e.is_recurring).length} pontual(is)
+                            {routine.exceptions.filter(e => !e.is_recurring).length} {t('automations.punctual')}
                           </Badge>
                         )}
 
                         {getUpcomingExceptions(routine.exceptions).length > 0 && (
                           <Badge className="bg-warning/10 text-warning text-xs">
-                            {getUpcomingExceptions(routine.exceptions).length} nos próximos 7 dias
+                            {getUpcomingExceptions(routine.exceptions).length} {t('automations.next7Days')}
                           </Badge>
                         )}
                       </div>
                     </div>
                   )}
                 </CardContent>
-              </Card>)}
-          </div>}
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Automations;

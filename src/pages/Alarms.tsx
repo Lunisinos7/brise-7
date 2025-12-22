@@ -21,8 +21,10 @@ import {
 import { useAlerts } from "@/hooks/useAlerts";
 import { useAlertSettings } from "@/hooks/useAlertSettings";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { useTranslation } from "react-i18next";
 
 const Alarms = () => {
+  const { t } = useTranslation();
   const { alerts, isLoading: alertsLoading, dismissAlert, clearAllAlerts } = useAlerts();
   const { settings, isLoading: settingsLoading, isSaving, updateSettings } = useAlertSettings();
   const { canManageWorkspace } = useWorkspaceContext();
@@ -52,9 +54,9 @@ const Alarms = () => {
     <div className="p-6 space-y-6 bg-gradient-dashboard min-h-screen">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Alarmes</h1>
+          <h1 className="text-3xl font-bold">{t('alarms.title')}</h1>
           <p className="text-muted-foreground">
-            Gerencie alertas e notificações do sistema
+            {t('alarms.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -64,7 +66,7 @@ const Alarms = () => {
             ) : (
               <BellOff className="h-3 w-3 mr-1" />
             )}
-            {settings.notifications_enabled ? "Notificações Ativas" : "Notificações Pausadas"}
+            {settings.notifications_enabled ? t('alarms.notificationsActive') : t('alarms.notificationsPaused')}
           </Badge>
         </div>
       </div>
@@ -77,7 +79,7 @@ const Alarms = () => {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4" />
-                  Alertas Ativos ({filteredAlerts.length})
+                  {t('alarms.activeAlerts')} ({filteredAlerts.length})
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <Button
@@ -85,21 +87,21 @@ const Alarms = () => {
                     size="sm"
                     onClick={() => setFilter("all")}
                   >
-                    Todos
+                    {t('alarms.all')}
                   </Button>
                   <Button
                     variant={filter === "critical" ? "destructive" : "outline"}
                     size="sm"
                     onClick={() => setFilter("critical")}
                   >
-                    Críticos
+                    {t('alarms.criticals')}
                   </Button>
                   <Button
                     variant={filter === "warning" ? "secondary" : "outline"}
                     size="sm"
                     onClick={() => setFilter("warning")}
                   >
-                    Avisos
+                    {t('alarms.warnings')}
                   </Button>
                 </div>
               </div>
@@ -114,7 +116,7 @@ const Alarms = () => {
               ) : filteredAlerts.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Check className="h-12 w-12 mx-auto mb-2 text-green-500" />
-                  <p>Nenhum alerta ativo</p>
+                  <p>{t('alarms.noAlerts')}</p>
                 </div>
               ) : (
                 <>
@@ -137,10 +139,10 @@ const Alarms = () => {
                               }
                             >
                               {alert.type === "critical"
-                                ? "CRÍTICO"
+                                ? t('alarms.critical').toUpperCase()
                                 : alert.type === "warning"
-                                ? "AVISO"
-                                : "INFO"}
+                                ? t('alarms.warning').toUpperCase()
+                                : t('common.info').toUpperCase()}
                             </Badge>
                           </div>
                           <p className="text-sm mt-1">{alert.message}</p>
@@ -167,7 +169,7 @@ const Alarms = () => {
                       className="w-full"
                       onClick={clearAllAlerts}
                     >
-                      Limpar Todos os Alertas
+                      {t('alarms.clearAll')}
                     </Button>
                   )}
                 </>
@@ -183,7 +185,7 @@ const Alarms = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Settings className="h-4 w-4" />
-                Configurações de Notificação
+                {t('alarms.notificationSettings')}
                 {isSaving && <Loader2 className="h-3 w-3 animate-spin" />}
               </CardTitle>
             </CardHeader>
@@ -197,7 +199,7 @@ const Alarms = () => {
                 <>
                   <div className="flex items-center justify-between">
                     <Label htmlFor="notifications" className="text-sm">
-                      Notificações Push
+                      {t('alarms.pushNotifications')}
                     </Label>
                     <Switch
                       id="notifications"
@@ -210,7 +212,7 @@ const Alarms = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <Label htmlFor="email" className="text-sm">
-                      Alertas por Email
+                      {t('alarms.emailAlerts')}
                     </Label>
                     <Switch
                       id="email"
@@ -231,7 +233,7 @@ const Alarms = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Thermometer className="h-4 w-4" />
-                Limites de Temperatura
+                {t('alarms.temperatureLimits')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -243,7 +245,7 @@ const Alarms = () => {
               ) : (
                 <>
                   <div className="space-y-2">
-                    <Label className="text-sm">Temperatura Mínima (°C)</Label>
+                    <Label className="text-sm">{t('alarms.minTemp')}</Label>
                     <Input
                       type="number"
                       value={settings.temp_alert_min}
@@ -255,11 +257,11 @@ const Alarms = () => {
                       disabled={!canManageWorkspace || isSaving}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Alerta se temperatura cair abaixo deste valor
+                      {t('alarms.minTempDesc')}
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm">Temperatura Máxima (°C)</Label>
+                    <Label className="text-sm">{t('alarms.maxTemp')}</Label>
                     <Input
                       type="number"
                       value={settings.temp_alert_max}
@@ -271,7 +273,7 @@ const Alarms = () => {
                       disabled={!canManageWorkspace || isSaving}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Alerta se temperatura subir acima deste valor
+                      {t('alarms.maxTempDesc')}
                     </p>
                   </div>
                 </>
@@ -284,26 +286,26 @@ const Alarms = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Zap className="h-4 w-4" />
-                Tipos de Alerta
+                {t('alarms.alertTypes')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-start gap-2">
-                <Badge variant="destructive" className="mt-0.5">CRÍTICO</Badge>
+                <Badge variant="destructive" className="mt-0.5">{t('alarms.critical').toUpperCase()}</Badge>
                 <p className="text-xs text-muted-foreground">
-                  Falhas de equipamento, temperaturas extremas
+                  {t('alarms.criticalDesc')}
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <Badge variant="secondary" className="mt-0.5">AVISO</Badge>
+                <Badge variant="secondary" className="mt-0.5">{t('alarms.warning').toUpperCase()}</Badge>
                 <p className="text-xs text-muted-foreground">
-                  Manutenção necessária, consumo elevado
+                  {t('alarms.warningDesc')}
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <Badge variant="outline" className="mt-0.5">INFO</Badge>
+                <Badge variant="outline" className="mt-0.5">{t('common.info').toUpperCase()}</Badge>
                 <p className="text-xs text-muted-foreground">
-                  Atualizações de status, lembretes
+                  {t('alarms.infoDesc')}
                 </p>
               </div>
             </CardContent>

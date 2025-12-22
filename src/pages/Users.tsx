@@ -6,27 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, Users as UsersIcon, UserPlus, Calendar, Pencil } from 'lucide-react';
+import { Search, UserPlus, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ptBR, enUS, es } from 'date-fns/locale';
 import InviteUserDialog from '@/components/workspace/InviteUserDialog';
 import InvitationsPanel from '@/components/workspace/InvitationsPanel';
 import PendingInvitationsNotification from '@/components/workspace/PendingInvitationsNotification';
 import EditMemberDialog from '@/components/workspace/EditMemberDialog';
-
-const roleLabels: Record<WorkspaceRole, string> = {
-  owner: 'Proprietário',
-  admin: 'Administrador',
-  viewer: 'Visualizador',
-};
-
-const roleBadgeVariants: Record<WorkspaceRole, 'default' | 'secondary' | 'outline'> = {
-  owner: 'default',
-  admin: 'secondary',
-  viewer: 'outline',
-};
+import { useTranslation } from 'react-i18next';
 
 const Users = () => {
+  const { t, i18n } = useTranslation();
   const { currentWorkspaceId, currentWorkspace, canManageWorkspace } = useWorkspaceContext();
   const { members, isLoading } = useWorkspaceMembers(currentWorkspaceId);
   
@@ -34,6 +24,29 @@ const Users = () => {
   const [selectedMember, setSelectedMember] = useState<WorkspaceMember | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+
+  const roleLabels: Record<WorkspaceRole, string> = {
+    owner: t('users.roles.owner'),
+    admin: t('users.roles.admin'),
+    viewer: t('users.roles.viewer'),
+  };
+
+  const roleBadgeVariants: Record<WorkspaceRole, 'default' | 'secondary' | 'outline'> = {
+    owner: 'default',
+    admin: 'secondary',
+    viewer: 'outline',
+  };
+
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'en-US':
+        return enUS;
+      case 'es-ES':
+        return es;
+      default:
+        return ptBR;
+    }
+  };
 
   const filteredMembers = members.filter(member => {
     const searchLower = searchTerm.toLowerCase();
@@ -56,7 +69,7 @@ const Users = () => {
           isActive ? "bg-energy-efficient" : "bg-muted-foreground"
         }`}
       />
-      {isActive ? "Ativo" : "Inativo"}
+      {isActive ? t('common.active') : t('common.inactive')}
     </Badge>
   );
 
@@ -84,16 +97,18 @@ const Users = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Membros</h1>
+          <h1 className="text-3xl font-bold">{t('users.title')}</h1>
           <p className="text-muted-foreground">
-            {members.length} membro{members.length !== 1 ? 's' : ''} em{' '}
-            <span className="font-medium">{currentWorkspace?.name || 'este workspace'}</span>
+            {t('users.subtitle', { 
+              count: members.length, 
+              workspace: currentWorkspace?.name || 'workspace' 
+            })}
           </p>
         </div>
         {canManageWorkspace && (
           <Button variant="cooling" className="gap-2" onClick={() => setIsInviteOpen(true)}>
             <UserPlus className="h-4 w-4" />
-            Convidar
+            {t('users.invite')}
           </Button>
         )}
       </div>
@@ -105,7 +120,7 @@ const Users = () => {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Buscar membros..."
+          placeholder={t('users.searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
@@ -117,7 +132,7 @@ const Users = () => {
         {filteredMembers.length === 0 ? (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground">
-              {searchTerm ? 'Nenhum membro encontrado' : 'Nenhum membro neste workspace'}
+              {searchTerm ? t('users.noResults') : t('users.noMembers')}
             </p>
           </Card>
         ) : (
@@ -137,7 +152,7 @@ const Users = () => {
                     </div>
                     <div>
                       <CardTitle className="text-lg">
-                        {member.profile?.full_name || 'Sem nome'}
+                        {member.profile?.full_name || t('common.none')}
                       </CardTitle>
                       <p className="text-muted-foreground text-sm">
                         {member.profile?.email}
@@ -155,17 +170,17 @@ const Users = () => {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="text-sm text-muted-foreground">{t('users.email')}</p>
                     <p className="font-medium truncate">{member.profile?.email}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Acesso</p>
+                    <p className="text-sm text-muted-foreground">{t('users.access')}</p>
                     <p className="font-medium">{roleLabels[member.role]}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Membro desde</p>
+                    <p className="text-sm text-muted-foreground">{t('users.memberSince')}</p>
                     <p className="font-medium">
-                      {format(new Date(member.created_at), "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
+                      {format(new Date(member.created_at), "dd MMM yyyy", { locale: getDateLocale() })}
                     </p>
                   </div>
                   <div className="flex gap-2 items-center justify-end">
@@ -175,7 +190,7 @@ const Users = () => {
                       onClick={() => handleEditMember(member)}
                     >
                       <Pencil className="h-3 w-3 mr-1" />
-                      Editar
+                      {t('common.edit')}
                     </Button>
                   </div>
                 </div>
