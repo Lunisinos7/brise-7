@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import StatusCard from "@/components/dashboard/StatusCard";
 import { AccumulatedExpenseCard } from "@/components/dashboard/AccumulatedExpenseCard";
 import EquipmentControlDialog from "@/components/dashboard/EquipmentControlDialog";
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const { currentWorkspaceId } = useWorkspaceContext();
   const { equipments, updateEquipment, isLoading } = useEquipments(currentWorkspaceId);
   const { environments, addEnvironment, updateEnvironment, removeEnvironment } = useEnvironments();
@@ -67,13 +69,13 @@ const Dashboard = () => {
         energyConsumption: newState ? equipment.capacity * 0.8 : 0
       });
       toast({
-        title: newState ? "Equipamento Ligado" : "Equipamento Desligado",
-        description: `${equipment.name} foi ${newState ? "ligado" : "desligado"} com sucesso.`
+        title: newState ? t('dashboard.equipmentOn') : t('dashboard.equipmentOff'),
+        description: t('dashboard.equipmentToggleSuccess', { name: equipment.name, state: newState ? t('dashboard.turnedOn') : t('dashboard.turnedOff') })
       });
     } catch {
       toast({
-        title: "Erro",
-        description: "Não foi possível alterar o estado do equipamento.",
+        title: t('common.error'),
+        description: t('dashboard.errorToggleEquipment'),
         variant: "destructive"
       });
     }
@@ -92,8 +94,8 @@ const Dashboard = () => {
       await updateEquipment({ ...equipment, ...updates });
     } catch {
       toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o equipamento.",
+        title: t('common.error'),
+        description: t('dashboard.errorUpdateEquipment'),
         variant: "destructive"
       });
     }
@@ -114,8 +116,8 @@ const Dashboard = () => {
     });
     if (created) {
       toast({
-        title: "Ambiente Criado",
-        description: `${name} foi criado com ${selectedEquipmentIds.length} equipamento(s) vinculado(s).`,
+        title: t('dashboard.environmentCreated'),
+        description: t('dashboard.environmentCreatedDesc', { name, count: selectedEquipmentIds.length }),
       });
     }
   };
@@ -136,13 +138,13 @@ const Dashboard = () => {
       await Promise.all(updatePromises);
       
       toast({
-        title: "Ambiente Atualizado",
-        description: `${selectedEnvironmentEquipments.length} equipamento(s) atualizado(s) com sucesso.`,
+        title: t('dashboard.environmentUpdated'),
+        description: t('dashboard.environmentUpdatedDesc', { count: selectedEnvironmentEquipments.length }),
       });
     } catch {
       toast({
-        title: "Erro",
-        description: "Não foi possível atualizar os equipamentos do ambiente.",
+        title: t('common.error'),
+        description: t('dashboard.errorUpdateEnvironment'),
         variant: "destructive"
       });
     }
@@ -156,8 +158,8 @@ const Dashboard = () => {
   const handleUpdateEnvironment = (id: string, name: string, equipmentIds: string[]) => {
     updateEnvironment(id, { name, equipmentIds });
     toast({
-      title: "Ambiente Atualizado",
-      description: `${name} foi atualizado com sucesso.`,
+      title: t('dashboard.environmentUpdated'),
+      description: t('dashboard.environmentUpdatedDesc', { count: equipmentIds.length }),
     });
   };
 
@@ -169,8 +171,8 @@ const Dashboard = () => {
     const env = environments.find(e => e.id === environmentId);
     await updateEnvironment(environmentId, { isActive });
     toast({
-      title: isActive ? "Ambiente Ativado" : "Ambiente Pausado",
-      description: `${env?.name || "Ambiente"} foi ${isActive ? "ativado" : "pausado"}.`,
+      title: isActive ? t('dashboard.environmentActivated') : t('dashboard.environmentPaused'),
+      description: t('dashboard.equipmentToggleSuccess', { name: env?.name, state: isActive ? t('dashboard.turnedOn') : t('dashboard.turnedOff') }),
     });
   };
 
@@ -179,8 +181,8 @@ const Dashboard = () => {
       const env = environments.find(e => e.id === environmentToDelete);
       removeEnvironment(environmentToDelete);
       toast({
-        title: "Ambiente Excluído",
-        description: `${env?.name || "Ambiente"} foi excluído com sucesso.`,
+        title: t('dashboard.environmentDeleted'),
+        description: t('dashboard.environmentDeletedDesc', { name: env?.name }),
       });
       setEnvironmentToDelete(null);
     }
@@ -190,28 +192,28 @@ const Dashboard = () => {
     <div className="p-6 space-y-6 bg-gradient-dashboard min-h-screen">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t('dashboard.title')}</h1>
           <p className="text-muted-foreground">
-            Visão geral do sistema de climatização
+            {t('dashboard.subtitle')}
           </p>
         </div>
         <Button onClick={() => setIsCreateEnvironmentOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Criar Novo Ambiente
+          {t('dashboard.createEnvironment')}
         </Button>
       </div>
 
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatusCard title="Equipamentos Ativos" value={`${activeEquipments}/${totalEquipments}`} description="Equipamentos em operação" icon={Wind} variant="cooling" />
-        <StatusCard title="Consumo Total" value={`${(totalConsumption / 1000).toFixed(1)}kW`} description="Consumo energético atual" icon={Zap} variant="energy" />
-        <StatusCard title="Temperatura Média" value={`${avgTemp}°C`} description="Média dos ambientes ativos" icon={Thermometer} variant="cooling" />
+        <StatusCard title={t('dashboard.activeEquipments')} value={`${activeEquipments}/${totalEquipments}`} description={t('dashboard.activeEquipmentsDesc')} icon={Wind} variant="cooling" />
+        <StatusCard title={t('dashboard.totalConsumption')} value={`${(totalConsumption / 1000).toFixed(1)}kW`} description={t('dashboard.totalConsumptionDesc')} icon={Zap} variant="energy" />
+        <StatusCard title={t('dashboard.averageTemperature')} value={`${avgTemp}°C`} description={t('dashboard.averageTemperatureDesc')} icon={Thermometer} variant="cooling" />
         <AccumulatedExpenseCard workspaceId={currentWorkspaceId} />
-        <StatusCard title="Alertas Ativos" value={mockAlerts.length} description="Requer atenção" icon={AlertTriangle} variant="heating" />
+        <StatusCard title={t('dashboard.activeAlerts')} value={mockAlerts.length} description={t('dashboard.activeAlertsDesc')} icon={AlertTriangle} variant="heating" />
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Ambientes</h2>
+        <h2 className="text-xl font-semibold">{t('dashboard.environments')}</h2>
         {environments.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {environments.map(environment => (
@@ -228,9 +230,9 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="text-center py-12 border border-dashed rounded-lg">
-            <p className="text-muted-foreground">Nenhum ambiente criado ainda.</p>
+            <p className="text-muted-foreground">{t('dashboard.noEnvironments')}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Clique em "Criar Novo Ambiente" para começar.
+              {t('dashboard.noEnvironmentsHint')}
             </p>
           </div>
         )}
@@ -274,16 +276,15 @@ const Dashboard = () => {
       <AlertDialog open={!!environmentToDelete} onOpenChange={(open) => !open && setEnvironmentToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir Ambiente</AlertDialogTitle>
+            <AlertDialogTitle>{t('dashboard.deleteEnvironmentTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir o ambiente "{environmentBeingDeleted?.name}"? 
-              Esta ação não pode ser desfeita. Os equipamentos vinculados não serão excluídos.
+              {t('dashboard.deleteEnvironmentDesc', { name: environmentBeingDeleted?.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDeleteEnvironment} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Excluir
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -292,7 +293,7 @@ const Dashboard = () => {
       {/* Footer */}
       <div className="fixed bottom-4 right-4">
         <p className="text-xs text-muted-foreground">
-          Última atualização: {new Date().toLocaleString()}
+          {t('common.lastUpdate')}: {new Date().toLocaleString()}
         </p>
       </div>
     </div>
