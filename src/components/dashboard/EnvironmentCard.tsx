@@ -51,12 +51,8 @@ const EnvironmentCard = ({
               <MapPin className="h-4 w-4 text-muted-foreground" />
               {environment.name}
             </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+            <p className="text-sm text-muted-foreground mt-1">
               {linkedEquipments.length} equipamento(s)
-              <span className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-muted">
-                <Settings2 className="h-3 w-3" />
-                Manual
-              </span>
             </p>
           </div>
           <div className="flex items-center gap-1">
@@ -104,6 +100,13 @@ const EnvironmentCard = ({
             <div>
               <p className="text-xs text-muted-foreground">Consumo</p>
               <p className="text-xl font-bold text-cooling">{(totalConsumption / 1000).toFixed(1)} kW</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Modo</p>
+              <p className="text-sm font-medium flex items-center gap-1">
+                <Settings2 className="h-3 w-3" />
+                Manual
+              </p>
             </div>
           </div>
 
