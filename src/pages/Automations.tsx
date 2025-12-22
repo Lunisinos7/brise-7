@@ -76,18 +76,10 @@ const Automations = () => {
           </div>
         </div>
 
-        {isLoading ? <div className="text-center py-8 text-muted-foreground">Carregando rotinas...</div> : routines.length === 0 ? <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              
-              <h3 className="text-lg font-medium mb-2">Nenhuma automação configurada</h3>
-              
-              <TimeRoutineDialog>
-                <Button variant="control" className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  Criar Rotina por Horário
-                </Button>
-              </TimeRoutineDialog>
-            </CardContent>
+        {isLoading ? <div className="text-center py-8 text-muted-foreground">Carregando rotinas...</div> : routines.length === 0 ? <Card className="p-8 text-center">
+            <p className="text-muted-foreground">
+              Nenhuma automação configurada. Clique em 'Nova Automação' para começar.
+            </p>
           </Card> : <div className="grid gap-4">
             {routines.map(routine => <Card key={routine.id} className="hover:shadow-elevated transition-shadow">
                 <CardHeader className="pb-3">
