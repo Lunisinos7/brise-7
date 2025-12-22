@@ -195,16 +195,10 @@ const Dashboard = () => {
             Visão geral do sistema de climatização
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <Button onClick={() => setIsCreateEnvironmentOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Criar Novo Ambiente
-          </Button>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Última atualização</p>
-            <p className="text-sm font-medium">{new Date().toLocaleString()}</p>
-          </div>
-        </div>
+        <Button onClick={() => setIsCreateEnvironmentOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Criar Novo Ambiente
+        </Button>
       </div>
 
       {/* Status Cards */}
@@ -294,6 +288,13 @@ const Dashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Footer */}
+      <div className="flex justify-end">
+        <p className="text-xs text-muted-foreground">
+          Última atualização: {new Date().toLocaleString()}
+        </p>
+      </div>
     </div>
   );
 };
