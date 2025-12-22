@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,7 @@ const EditEnvironmentDialog = ({
   assignedEquipmentIds,
   onUpdateEnvironment,
 }: EditEnvironmentDialogProps) => {
+  const { t } = useTranslation();
   const [environmentName, setEnvironmentName] = useState("");
   const [selectedEquipments, setSelectedEquipments] = useState<string[]>([]);
 
@@ -73,25 +75,25 @@ const EditEnvironmentDialog = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Editar Ambiente</DialogTitle>
+          <DialogTitle>{t("editEnvironmentDialog.title")}</DialogTitle>
           <DialogDescription>
-            Altere o nome ou os equipamentos vinculados a este ambiente.
+            {t("editEnvironmentDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="edit-environment-name">Nome do Ambiente</Label>
+            <Label htmlFor="edit-environment-name">{t("editEnvironmentDialog.environmentName")}</Label>
             <Input
               id="edit-environment-name"
-              placeholder="Ex: Sala de Reuniões"
+              placeholder={t("editEnvironmentDialog.namePlaceholder")}
               value={environmentName}
               onChange={(e) => setEnvironmentName(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Equipamentos Vinculados</Label>
+            <Label>{t("editEnvironmentDialog.linkedEquipments")}</Label>
             {availableEquipments.length > 0 ? (
               <ScrollArea className="h-48 border rounded-md p-2">
                 <div className="space-y-2">
@@ -122,12 +124,12 @@ const EditEnvironmentDialog = ({
               </ScrollArea>
             ) : (
               <p className="text-sm text-muted-foreground py-4 text-center border rounded-md">
-                Nenhum equipamento disponível.
+                {t("editEnvironmentDialog.noEquipments")}
               </p>
             )}
             {selectedEquipments.length === 0 && (
               <p className="text-sm text-destructive">
-                Selecione pelo menos 1 equipamento.
+                {t("editEnvironmentDialog.selectAtLeastOne")}
               </p>
             )}
           </div>
@@ -135,13 +137,13 @@ const EditEnvironmentDialog = ({
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={!environmentName.trim() || selectedEquipments.length === 0}
           >
-            Salvar Alterações
+            {t("common.saveChanges")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -42,18 +43,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Equipment } from "@/hooks/useEquipments";
 import { Trash2 } from "lucide-react";
 
-const equipmentSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório"),
-  location: z.string().min(1, "Localização é obrigatória"),
-  model: z.string().min(1, "Modelo é obrigatório"),
-  capacity: z.string().min(1, "Capacidade é obrigatória"),
-  integration: z.enum(["BRISE", "SMART"], {
-    required_error: "Selecione o tipo de integração",
-  }),
-});
-
-type EquipmentFormData = z.infer<typeof equipmentSchema>;
-
 interface EditEquipmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -69,8 +58,21 @@ export function EditEquipmentDialog({
   onEditEquipment,
   onDeleteEquipment 
 }: EditEquipmentDialogProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+
+  const equipmentSchema = z.object({
+    name: z.string().min(1, t("equipments.validation.nameRequired")),
+    location: z.string().min(1, t("equipments.validation.locationRequired")),
+    model: z.string().min(1, t("equipments.validation.modelRequired")),
+    capacity: z.string().min(1, t("equipments.validation.capacityRequired")),
+    integration: z.enum(["BRISE", "SMART"], {
+      required_error: t("equipments.validation.integrationRequired"),
+    }),
+  });
+
+  type EquipmentFormData = z.infer<typeof equipmentSchema>;
 
   const form = useForm<EquipmentFormData>({
     resolver: zodResolver(equipmentSchema),
@@ -113,15 +115,15 @@ export function EditEquipmentDialog({
       await onEditEquipment(updatedEquipment);
 
       toast({
-        title: "Equipamento atualizado!",
-        description: `${data.name} foi atualizado com sucesso.`,
+        title: t("equipments.editDialog.successTitle"),
+        description: t("equipments.editDialog.successDesc", { name: data.name }),
       });
 
       onOpenChange(false);
     } catch (error) {
       toast({
-        title: "Erro ao atualizar equipamento",
-        description: "Tente novamente em alguns instantes.",
+        title: t("equipments.editDialog.errorTitle"),
+        description: t("equipments.editDialog.errorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -138,15 +140,15 @@ export function EditEquipmentDialog({
       await onDeleteEquipment(equipment.id);
 
       toast({
-        title: "Equipamento excluído",
-        description: `${equipment.name} foi removido da lista.`,
+        title: t("equipments.editDialog.deleteSuccessTitle"),
+        description: t("equipments.editDialog.deleteSuccessDesc", { name: equipment.name }),
       });
 
       onOpenChange(false);
     } catch (error) {
       toast({
-        title: "Erro ao excluir equipamento",
-        description: "Tente novamente em alguns instantes.",
+        title: t("equipments.editDialog.deleteErrorTitle"),
+        description: t("equipments.editDialog.deleteErrorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -158,9 +160,9 @@ export function EditEquipmentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Editar Equipamento</DialogTitle>
+          <DialogTitle>{t("equipments.editDialog.title")}</DialogTitle>
           <DialogDescription>
-            Modifique as informações do equipamento de climatização.
+            {t("equipments.editDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -172,9 +174,9 @@ export function EditEquipmentDialog({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome do Equipamento</FormLabel>
+                    <FormLabel>{t("equipments.equipmentName")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Sala de Reuniões A" {...field} />
+                      <Input placeholder={t("equipments.placeholders.name")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -186,9 +188,9 @@ export function EditEquipmentDialog({
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Localização</FormLabel>
+                    <FormLabel>{t("equipments.location")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Térreo - Ala Norte" {...field} />
+                      <Input placeholder={t("equipments.placeholders.location")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -202,9 +204,9 @@ export function EditEquipmentDialog({
                 name="model"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Modelo</FormLabel>
+                    <FormLabel>{t("equipments.model")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Samsung AR12345" {...field} />
+                      <Input placeholder={t("equipments.placeholders.model")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -216,11 +218,11 @@ export function EditEquipmentDialog({
                 name="capacity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Capacidade (BTU/h)</FormLabel>
+                    <FormLabel>{t("equipments.capacity")} (BTU/h)</FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
-                        placeholder="Ex: 12000" 
+                        placeholder={t("equipments.placeholders.capacity")} 
                         {...field} 
                       />
                     </FormControl>
@@ -235,11 +237,11 @@ export function EditEquipmentDialog({
               name="integration"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tipo de Integração</FormLabel>
+                  <FormLabel>{t("equipments.integrationType")}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione o tipo" />
+                        <SelectValue placeholder={t("equipments.selectType")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -261,20 +263,20 @@ export function EditEquipmentDialog({
                     disabled={isLoading}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Excluir
+                    {t("common.delete")}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                    <AlertDialogTitle>{t("equipments.editDialog.confirmDelete")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Tem certeza que deseja excluir "{equipment?.name}"? Esta ação não pode ser desfeita.
+                      {t("equipments.editDialog.confirmDeleteDesc", { name: equipment?.name })}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDelete}>
-                      Excluir
+                      {t("common.delete")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -287,10 +289,10 @@ export function EditEquipmentDialog({
                   onClick={() => onOpenChange(false)}
                   disabled={isLoading}
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </Button>
                 <Button type="submit" variant="cooling" disabled={isLoading}>
-                  {isLoading ? "Salvando..." : "Salvar Alterações"}
+                  {isLoading ? t("common.saving") : t("common.saveChanges")}
                 </Button>
               </div>
             </DialogFooter>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -37,19 +38,6 @@ import { Link } from "react-router-dom";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
-const equipmentSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório"),
-  location: z.string().min(1, "Localização é obrigatória"),
-  model: z.string().min(1, "Modelo é obrigatório"),
-  capacity: z.string().min(1, "Capacidade é obrigatória"),
-  integration: z.enum(["BRISE", "SMART", "SMARTTHINGS"], {
-    required_error: "Selecione o tipo de integração",
-  }),
-  smartthingsDeviceId: z.string().optional(),
-});
-
-type EquipmentFormData = z.infer<typeof equipmentSchema>;
-
 interface AddEquipmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -60,11 +48,25 @@ interface AddEquipmentDialogProps {
 }
 
 export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEquipmentDialogProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { isConfigured, isLoading: isConfigLoading } = useSmartThingsConfig();
   const { devices, isLoading: isDevicesLoading, discoverDevices } = useSmartThingsDevices();
   const [selectedDevice, setSelectedDevice] = useState<SmartThingsDevice | null>(null);
+
+  const equipmentSchema = z.object({
+    name: z.string().min(1, t("equipments.validation.nameRequired")),
+    location: z.string().min(1, t("equipments.validation.locationRequired")),
+    model: z.string().min(1, t("equipments.validation.modelRequired")),
+    capacity: z.string().min(1, t("equipments.validation.capacityRequired")),
+    integration: z.enum(["BRISE", "SMART", "SMARTTHINGS"], {
+      required_error: t("equipments.validation.integrationRequired"),
+    }),
+    smartthingsDeviceId: z.string().optional(),
+  });
+
+  type EquipmentFormData = z.infer<typeof equipmentSchema>;
 
   const form = useForm<EquipmentFormData>({
     resolver: zodResolver(equipmentSchema),
@@ -137,8 +139,8 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
       await onAddEquipment(newEquipment);
 
       toast({
-        title: "Equipamento adicionado com sucesso!",
-        description: `${data.name} foi adicionado à sua lista de equipamentos.`,
+        title: t("equipments.addDialog.successTitle"),
+        description: t("equipments.addDialog.successDesc", { name: data.name }),
       });
 
       form.reset();
@@ -146,8 +148,8 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
       onOpenChange(false);
     } catch (error) {
       toast({
-        title: "Erro ao adicionar equipamento",
-        description: "Tente novamente em alguns instantes.",
+        title: t("equipments.addDialog.errorTitle"),
+        description: t("equipments.addDialog.errorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -161,9 +163,9 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Adicionar Novo Equipamento</DialogTitle>
+          <DialogTitle>{t("equipments.addDialog.title")}</DialogTitle>
           <DialogDescription>
-            Preencha as informações do equipamento de climatização que deseja adicionar.
+            {t("equipments.addDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -174,11 +176,11 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
               name="integration"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tipo de Integração</FormLabel>
+                  <FormLabel>{t("equipments.integrationType")}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione o tipo" />
+                        <SelectValue placeholder={t("equipments.selectType")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -203,22 +205,22 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                   <div className="flex flex-col items-center gap-3 py-4 text-center">
                     <AlertCircle className="h-8 w-8 text-yellow-500" />
                     <div>
-                      <p className="font-medium">SmartThings não configurado</p>
+                      <p className="font-medium">{t("equipments.addDialog.notConfigured")}</p>
                       <p className="text-sm text-muted-foreground">
-                        Configure sua conta SmartThings nas configurações primeiro.
+                        {t("equipments.addDialog.notConfiguredDesc")}
                       </p>
                     </div>
                     <Button variant="outline" size="sm" asChild>
                       <Link to="/settings">
                         <Settings className="h-4 w-4 mr-2" />
-                        Ir para Configurações
+                        {t("equipments.addDialog.goToSettings")}
                       </Link>
                     </Button>
                   </div>
                 ) : (
                   <>
                     <div className="flex items-center justify-between">
-                      <Label className="text-sm font-medium">Selecione um dispositivo</Label>
+                      <Label className="text-sm font-medium">{t("equipments.addDialog.selectDevice")}</Label>
                       <Button
                         type="button"
                         variant="ghost"
@@ -238,14 +240,14 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                       <div className="flex items-center justify-center py-6">
                         <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                         <span className="ml-2 text-sm text-muted-foreground">
-                          Buscando dispositivos...
+                          {t("equipments.addDialog.searchingDevices")}
                         </span>
                       </div>
                     ) : availableDevices.length === 0 ? (
                       <div className="text-center py-4 text-sm text-muted-foreground">
                         {devices.length > 0 
-                          ? "Todos os dispositivos já foram importados."
-                          : "Nenhum ar-condicionado encontrado na sua conta SmartThings."
+                          ? t("equipments.addDialog.allImported")
+                          : t("equipments.addDialog.noDevicesFound")
                         }
                       </div>
                     ) : (
@@ -296,10 +298,10 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Nome do Equipamento</FormLabel>
+                        <FormLabel>{t("equipments.equipmentName")}</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Ex: Sala de Reuniões A" 
+                            placeholder={t("equipments.placeholders.name")} 
                             {...field} 
                             disabled={watchIntegration === "SMARTTHINGS" && !!selectedDevice}
                           />
@@ -314,9 +316,9 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                     name="location"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Localização</FormLabel>
+                        <FormLabel>{t("equipments.location")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ex: Térreo - Ala Norte" {...field} />
+                          <Input placeholder={t("equipments.placeholders.location")} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -330,10 +332,10 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                     name="model"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Modelo</FormLabel>
+                        <FormLabel>{t("equipments.model")}</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Ex: Samsung AR12345" 
+                            placeholder={t("equipments.placeholders.model")} 
                             {...field}
                             disabled={watchIntegration === "SMARTTHINGS" && !!selectedDevice}
                           />
@@ -348,11 +350,11 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                     name="capacity"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Capacidade (BTU/h)</FormLabel>
+                        <FormLabel>{t("equipments.capacity")} (BTU/h)</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
-                            placeholder="Ex: 12000" 
+                            placeholder={t("equipments.placeholders.capacity")} 
                             {...field} 
                           />
                         </FormControl>
@@ -371,14 +373,14 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                Cancelar
+                {t("common.cancel")}
               </Button>
               <Button 
                 type="submit" 
                 variant="cooling" 
                 disabled={isLoading || (watchIntegration === "SMARTTHINGS" && !selectedDevice)}
               >
-                {isLoading ? "Adicionando..." : "Adicionar Equipamento"}
+                {isLoading ? t("common.adding") : t("equipments.addEquipment")}
               </Button>
             </DialogFooter>
           </form>

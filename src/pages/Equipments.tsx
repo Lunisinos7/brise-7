@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { Search, Filter, Plus, Pencil, Loader2 } from "lucide-react";
 
 const Equipments = () => {
+  const { t } = useTranslation();
   const { currentWorkspaceId } = useWorkspaceContext();
   const { equipments, isLoading, addEquipment, updateEquipment, deleteEquipment } = useEquipments(currentWorkspaceId);
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,7 +49,7 @@ const Equipments = () => {
           isOn ? "bg-energy-efficient" : "bg-muted-foreground"
         }`}
       />
-      {isOn ? "Ativo" : "Inativo"}
+      {isOn ? t("common.active") : t("common.inactive")}
     </Badge>
   );
 
@@ -76,9 +78,9 @@ const Equipments = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Equipamentos</h1>
+          <h1 className="text-3xl font-bold">{t("equipments.title")}</h1>
           <p className="text-muted-foreground">
-            Gerencie todos os equipamentos de climatização
+            {t("equipments.subtitle")}
           </p>
         </div>
         <Button
@@ -87,7 +89,7 @@ const Equipments = () => {
           onClick={() => setShowAddDialog(true)}
         >
           <Plus className="h-4 w-4" />
-          Adicionar Equipamento
+          {t("equipments.addEquipment")}
         </Button>
       </div>
 
@@ -96,7 +98,7 @@ const Equipments = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar equipamentos..."
+            placeholder={t("equipments.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -104,7 +106,7 @@ const Equipments = () => {
         </div>
         <Button variant="outline" className="gap-2">
           <Filter className="h-4 w-4" />
-          Filtros
+          {t("common.filters")}
         </Button>
       </div>
 
@@ -113,7 +115,7 @@ const Equipments = () => {
         {filteredEquipments.length === 0 ? (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground">
-              {searchTerm ? "Nenhum equipamento encontrado" : "Nenhum equipamento cadastrado. Clique em 'Adicionar Equipamento' para começar."}
+              {searchTerm ? t("equipments.noResults") : t("equipments.noEquipments")}
             </p>
           </Card>
         ) : (
@@ -138,23 +140,23 @@ const Equipments = () => {
                 <div className="flex items-center gap-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
                     <div>
-                      <p className="text-sm text-muted-foreground">Modelo</p>
+                      <p className="text-sm text-muted-foreground">{t("equipments.model")}</p>
                       <p className="font-medium">{equipment.model}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Capacidade</p>
+                      <p className="text-sm text-muted-foreground">{t("equipments.capacity")}</p>
                       <p className="font-medium">
                         {equipment.capacity.toLocaleString()} BTU/h
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Temperatura</p>
+                      <p className="text-sm text-muted-foreground">{t("equipments.temperature")}</p>
                       <p className="font-medium">
                         {equipment.currentTemp}°C / {equipment.targetTemp}°C
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Consumo</p>
+                      <p className="text-sm text-muted-foreground">{t("equipments.consumption")}</p>
                       <p className="font-medium">{equipment.energyConsumption}W</p>
                     </div>
                   </div>
@@ -165,7 +167,7 @@ const Equipments = () => {
                       onClick={() => openEditDialog(equipment)}
                     >
                       <Pencil className="h-3 w-3 mr-1" />
-                      Editar
+                      {t("common.edit")}
                     </Button>
                   </div>
                 </div>
