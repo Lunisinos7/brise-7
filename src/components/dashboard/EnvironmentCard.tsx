@@ -103,8 +103,8 @@ const EnvironmentCard = ({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Modo</p>
-              <p className="text-sm font-medium flex items-center gap-1">
-                <Settings2 className="h-3 w-3" />
+              <p className="text-xl font-bold flex items-center gap-1">
+                <Settings2 className="h-4 w-4" />
                 Manual
               </p>
             </div>
