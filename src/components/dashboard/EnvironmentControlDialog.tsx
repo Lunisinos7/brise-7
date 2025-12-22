@@ -300,7 +300,7 @@ const EnvironmentControlDialog = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Snowflake className={cn("h-5 w-5", coolingEnabled ? "text-blue-500" : "text-muted-foreground")} />
-                    <h3 className={cn("font-semibold", coolingEnabled ? "text-blue-700 dark:text-blue-300" : "text-muted-foreground")}>Refrigeração</h3>
+                    <h3 className={cn("font-semibold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>Refrigeração</h3>
                   </div>
                   <Switch
                     checked={coolingEnabled}
@@ -312,7 +312,7 @@ const EnvironmentControlDialog = ({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className={cn("text-sm", !coolingEnabled && "text-muted-foreground")}>Ligar quando acima de:</Label>
-                    <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground")}>{coolTriggerTemp}°C</span>
+                    <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>{coolTriggerTemp}°C</span>
                   </div>
                   <Slider
                     value={[coolTriggerTemp]}
@@ -329,7 +329,7 @@ const EnvironmentControlDialog = ({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className={cn("text-sm", !coolingEnabled && "text-muted-foreground")}>Resfriar até:</Label>
-                    <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground")}>{coolTargetTemp}°C</span>
+                    <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>{coolTargetTemp}°C</span>
                   </div>
                   <Slider
                     value={[coolTargetTemp]}
@@ -347,17 +347,18 @@ const EnvironmentControlDialog = ({
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 heatingEnabled 
-                  ? "border-orange-500/30 dark:border-orange-500/20 bg-muted/80 dark:bg-white/5" 
+                  ? "border-red-500/30 dark:border-red-500/20 bg-muted/80 dark:bg-white/5" 
                   : "border-muted bg-muted/30 opacity-60"
               )}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Sun className={cn("h-5 w-5", heatingEnabled ? "text-orange-500" : "text-muted-foreground")} />
-                    <h3 className={cn("font-semibold", heatingEnabled ? "text-orange-700 dark:text-orange-300" : "text-muted-foreground")}>Aquecimento</h3>
+                    <Sun className={cn("h-5 w-5", heatingEnabled ? "text-red-500" : "text-muted-foreground")} />
+                    <h3 className={cn("font-semibold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>Aquecimento</h3>
                   </div>
                   <Switch
                     checked={heatingEnabled}
                     onCheckedChange={handleHeatingToggle}
+                    className="data-[state=checked]:bg-red-500"
                   />
                 </div>
                 
@@ -365,7 +366,7 @@ const EnvironmentControlDialog = ({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className={cn("text-sm", !heatingEnabled && "text-muted-foreground")}>Ligar quando abaixo de:</Label>
-                    <span className={cn("text-lg font-bold", heatingEnabled ? "text-orange-600 dark:text-orange-400" : "text-muted-foreground")}>{heatTriggerTemp}°C</span>
+                    <span className={cn("text-lg font-bold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>{heatTriggerTemp}°C</span>
                   </div>
                   <Slider
                     value={[heatTriggerTemp]}
@@ -373,7 +374,7 @@ const EnvironmentControlDialog = ({
                     min={-30}
                     max={50}
                     step={1}
-                    className="w-full"
+                    className="w-full [&_[role=slider]]:bg-red-500 [&_.bg-primary]:bg-red-500"
                     disabled={!heatingEnabled}
                   />
                 </div>
@@ -382,7 +383,7 @@ const EnvironmentControlDialog = ({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className={cn("text-sm", !heatingEnabled && "text-muted-foreground")}>Aquecer até:</Label>
-                    <span className={cn("text-lg font-bold", heatingEnabled ? "text-orange-600 dark:text-orange-400" : "text-muted-foreground")}>{heatTargetTemp}°C</span>
+                    <span className={cn("text-lg font-bold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>{heatTargetTemp}°C</span>
                   </div>
                   <Slider
                     value={[heatTargetTemp]}
@@ -390,7 +391,7 @@ const EnvironmentControlDialog = ({
                     min={heatTriggerTemp + 1}
                     max={50}
                     step={1}
-                    className="w-full"
+                    className="w-full [&_[role=slider]]:bg-red-500 [&_.bg-primary]:bg-red-500"
                     disabled={!heatingEnabled}
                   />
                 </div>
