@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,7 @@ interface EnvironmentCardProps {
   onControlEnvironment?: (environmentId: string) => void;
   onEditEnvironment?: (environmentId: string) => void;
   onDeleteEnvironment?: (environmentId: string) => void;
+  onToggleEnvironment?: (environmentId: string, isActive: boolean) => void;
 }
 
 const EnvironmentCard = ({ 
@@ -26,6 +28,7 @@ const EnvironmentCard = ({
   onControlEnvironment,
   onEditEnvironment,
   onDeleteEnvironment,
+  onToggleEnvironment,
 }: EnvironmentCardProps) => {
   const linkedEquipments = equipments.filter(eq => environment.equipmentIds.includes(eq.id));
   const activeCount = linkedEquipments.filter(eq => eq.isOn).length;
@@ -33,11 +36,13 @@ const EnvironmentCard = ({
     ? Math.round(linkedEquipments.reduce((sum, eq) => sum + eq.currentTemp, 0) / linkedEquipments.length)
     : 0;
   const totalConsumption = linkedEquipments.reduce((sum, eq) => sum + eq.energyConsumption, 0);
+  const isActive = environment.isActive;
 
   return (
     <Card className={cn(
       "transition-all duration-300 hover:shadow-elevated h-full flex flex-col",
-      activeCount > 0 ? "border-cooling/30 bg-gradient-to-br from-cooling-light/5 to-transparent" : ""
+      !isActive && "opacity-60",
+      isActive && activeCount > 0 ? "border-cooling/30 bg-gradient-to-br from-cooling-light/5 to-transparent" : ""
     )}>
       <CardHeader className="p-4 pb-2">
         <div className="flex items-start justify-between gap-2">
@@ -51,9 +56,14 @@ const EnvironmentCard = ({
             </p>
           </div>
           <div className="flex items-center gap-1">
-            <Badge variant={activeCount > 0 ? "default" : "secondary"} className="shrink-0">
-              {activeCount}/{linkedEquipments.length} ativos
+            <Badge variant={!isActive ? "outline" : activeCount > 0 ? "default" : "secondary"} className="shrink-0">
+              {!isActive ? "⏸️ Pausado" : `${activeCount}/${linkedEquipments.length} ativos`}
             </Badge>
+            <Switch
+              checked={isActive}
+              onCheckedChange={(checked) => onToggleEnvironment?.(environment.id, checked)}
+              className="ml-1"
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -122,6 +132,7 @@ const EnvironmentCard = ({
               size="sm"
               className="w-full"
               onClick={() => onControlEnvironment(environment.id)}
+              disabled={!isActive}
             >
               <Sliders className="h-4 w-4 mr-2" />
               Controlar

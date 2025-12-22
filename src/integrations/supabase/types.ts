@@ -57,6 +57,7 @@ export type Database = {
           created_at: string
           equipment_ids: string[]
           id: string
+          is_active: boolean
           name: string
           updated_at: string
           workspace_id: string | null
@@ -65,6 +66,7 @@ export type Database = {
           created_at?: string
           equipment_ids?: string[]
           id?: string
+          is_active?: boolean
           name: string
           updated_at?: string
           workspace_id?: string | null
@@ -73,6 +75,7 @@ export type Database = {
           created_at?: string
           equipment_ids?: string[]
           id?: string
+          is_active?: boolean
           name?: string
           updated_at?: string
           workspace_id?: string | null
