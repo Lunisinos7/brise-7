@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Power, Minus, Plus, Snowflake, Sun, Wind, Timer, Info } from "lucide-react";
+import { Power, Minus, Plus, Snowflake, Sun, Wind, Timer, Info, Thermometer } from "lucide-react";
 import { Equipment } from "@/hooks/useEquipments";
 
 interface EnvironmentControlDialogProps {
@@ -32,9 +32,11 @@ const EnvironmentControlDialog = ({
 }: EnvironmentControlDialogProps) => {
   const [isManualMode, setIsManualMode] = useState(false);
   
-  // Setpoints mode state
-  const [minTemp, setMinTemp] = useState(18);
-  const [maxTemp, setMaxTemp] = useState(26);
+  // Setpoints mode state - Opção C: configurações separadas para aquecimento e refrigeração
+  const [coolTriggerTemp, setCoolTriggerTemp] = useState(28);
+  const [coolTargetTemp, setCoolTargetTemp] = useState(24);
+  const [heatTriggerTemp, setHeatTriggerTemp] = useState(18);
+  const [heatTargetTemp, setHeatTargetTemp] = useState(22);
   
   // Manual mode state
   const [targetTemp, setTargetTemp] = useState(21);
@@ -72,7 +74,7 @@ const EnvironmentControlDialog = ({
   };
 
   const handleTemperatureChange = async (newTemp: number) => {
-    const clampedTemp = Math.min(30, Math.max(16, newTemp));
+    const clampedTemp = Math.min(50, Math.max(-30, newTemp));
     setTargetTemp(clampedTemp);
     await onUpdateEquipments({ targetTemp: clampedTemp });
   };
@@ -83,7 +85,6 @@ const EnvironmentControlDialog = ({
   };
 
   const handleSetTimer = () => {
-    // Timer logic would go here - for now just show feedback
     console.log(`Timer set for ${timerHours}h ${timerMinutes}min`);
   };
 
@@ -105,6 +106,47 @@ const EnvironmentControlDialog = ({
     }
   };
 
+  // Validações para evitar configurações inválidas
+  const handleCoolTriggerChange = (value: number[]) => {
+    const newValue = value[0];
+    // Cool trigger deve ser maior que heat target (zona de conforto)
+    if (newValue > heatTargetTemp) {
+      setCoolTriggerTemp(newValue);
+      // Ajustar cool target se necessário
+      if (coolTargetTemp >= newValue) {
+        setCoolTargetTemp(newValue - 1);
+      }
+    }
+  };
+
+  const handleCoolTargetChange = (value: number[]) => {
+    const newValue = value[0];
+    // Cool target deve ser menor que cool trigger e maior ou igual a heat target
+    if (newValue < coolTriggerTemp && newValue >= heatTargetTemp) {
+      setCoolTargetTemp(newValue);
+    }
+  };
+
+  const handleHeatTriggerChange = (value: number[]) => {
+    const newValue = value[0];
+    // Heat trigger deve ser menor que cool target (zona de conforto)
+    if (newValue < coolTargetTemp) {
+      setHeatTriggerTemp(newValue);
+      // Ajustar heat target se necessário
+      if (heatTargetTemp <= newValue) {
+        setHeatTargetTemp(newValue + 1);
+      }
+    }
+  };
+
+  const handleHeatTargetChange = (value: number[]) => {
+    const newValue = value[0];
+    // Heat target deve ser maior que heat trigger e menor ou igual a cool target
+    if (newValue > heatTriggerTemp && newValue <= coolTargetTemp) {
+      setHeatTargetTemp(newValue);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
@@ -119,7 +161,7 @@ const EnvironmentControlDialog = ({
               "text-sm font-medium transition-colors",
               !isManualMode ? "text-foreground" : "text-muted-foreground"
             )}>
-              Modo Automático (Setpoints)
+              Modo Automático
             </span>
             <Switch
               checked={isManualMode}
@@ -134,58 +176,104 @@ const EnvironmentControlDialog = ({
           </div>
 
           {!isManualMode ? (
-            /* Setpoints Mode */
-            <div className="space-y-6">
-              {/* Min Temperature */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Temperatura Mínima</Label>
-                  <span className="text-lg font-bold text-cooling">{minTemp}°C</span>
+            /* Setpoints Mode - Opção C */
+            <div className="space-y-5">
+              {/* Refrigeração */}
+              <div className="p-4 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Snowflake className="h-5 w-5 text-blue-500" />
+                  <h3 className="font-semibold text-blue-700 dark:text-blue-300">Refrigeração</h3>
                 </div>
-                <Slider
-                  value={[minTemp]}
-                  onValueChange={(value) => setMinTemp(Math.min(value[0], maxTemp - 1))}
-                  min={16}
-                  max={30}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
-                  <Info className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
-                  <p className="text-xs text-muted-foreground">
-                    Quando a temperatura cair abaixo de <strong>{minTemp}°C</strong>, equipamentos com função de aquecimento serão ativados. Equipamentos sem essa função serão desligados.
-                  </p>
+                
+                {/* Cool Trigger */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm">Ligar quando acima de:</Label>
+                    <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{coolTriggerTemp}°C</span>
+                  </div>
+                  <Slider
+                    value={[coolTriggerTemp]}
+                    onValueChange={handleCoolTriggerChange}
+                    min={-30}
+                    max={50}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Cool Target */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm">Resfriar até:</Label>
+                    <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{coolTargetTemp}°C</span>
+                  </div>
+                  <Slider
+                    value={[coolTargetTemp]}
+                    onValueChange={handleCoolTargetChange}
+                    min={-30}
+                    max={coolTriggerTemp - 1}
+                    step={1}
+                    className="w-full"
+                  />
                 </div>
               </div>
 
-              {/* Max Temperature */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Temperatura Máxima</Label>
-                  <span className="text-lg font-bold text-heating">{maxTemp}°C</span>
+              {/* Aquecimento */}
+              <div className="p-4 rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-950/20 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Sun className="h-5 w-5 text-orange-500" />
+                  <h3 className="font-semibold text-orange-700 dark:text-orange-300">Aquecimento</h3>
                 </div>
-                <Slider
-                  value={[maxTemp]}
-                  onValueChange={(value) => setMaxTemp(Math.max(value[0], minTemp + 1))}
-                  min={16}
-                  max={30}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex items-start gap-2 p-3 bg-orange-50 dark:bg-orange-950/30 rounded-lg">
-                  <Info className="h-4 w-4 text-orange-500 mt-0.5 shrink-0" />
-                  <p className="text-xs text-muted-foreground">
-                    Quando a temperatura subir acima de <strong>{maxTemp}°C</strong>, os equipamentos serão ativados para resfriar o ambiente.
-                  </p>
+                
+                {/* Heat Trigger */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm">Ligar quando abaixo de:</Label>
+                    <span className="text-lg font-bold text-orange-600 dark:text-orange-400">{heatTriggerTemp}°C</span>
+                  </div>
+                  <Slider
+                    value={[heatTriggerTemp]}
+                    onValueChange={handleHeatTriggerChange}
+                    min={-30}
+                    max={50}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Heat Target */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm">Aquecer até:</Label>
+                    <span className="text-lg font-bold text-orange-600 dark:text-orange-400">{heatTargetTemp}°C</span>
+                  </div>
+                  <Slider
+                    value={[heatTargetTemp]}
+                    onValueChange={handleHeatTargetChange}
+                    min={heatTriggerTemp + 1}
+                    max={50}
+                    step={1}
+                    className="w-full"
+                  />
                 </div>
               </div>
 
-              {/* Summary */}
-              <div className="p-4 bg-muted/50 rounded-lg text-center">
-                <p className="text-sm text-muted-foreground">
-                  O sistema manterá automaticamente a temperatura entre{" "}
-                  <strong className="text-cooling">{minTemp}°C</strong> e{" "}
-                  <strong className="text-heating">{maxTemp}°C</strong>
+              {/* Zona de Conforto */}
+              <div className="p-4 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <Thermometer className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <span className="font-medium text-green-700 dark:text-green-300">Zona de Conforto</span>
+                </div>
+                <p className="text-sm text-green-600 dark:text-green-400">
+                  Entre <strong>{heatTargetTemp}°C</strong> e <strong>{coolTargetTemp}°C</strong>, os equipamentos permanecerão desligados.
+                </p>
+              </div>
+
+              {/* Info */}
+              <div className="flex items-start gap-2 p-3 bg-muted/50 rounded-lg">
+                <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  O sistema ativará automaticamente o modo apropriado (aquecimento ou refrigeração) com base na temperatura atual do ambiente.
                 </p>
               </div>
             </div>
