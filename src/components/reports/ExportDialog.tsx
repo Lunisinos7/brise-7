@@ -21,6 +21,7 @@ interface ExportDialogProps {
     totalConsumption: number;
     totalSpent: number;
   };
+  environmentName?: string;
 }
 
 export const ExportDialog = ({
@@ -28,6 +29,7 @@ export const ExportDialog = ({
   temperatureData,
   equipmentEfficiency,
   summary,
+  environmentName = "Todos os Ambientes",
 }: ExportDialogProps) => {
   const [open, setOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
@@ -53,6 +55,7 @@ export const ExportDialog = ({
         equipmentEfficiency,
         summary,
         dateRange,
+        environmentName,
       });
       toast({
         title: "Exportação concluída",
@@ -79,6 +82,7 @@ export const ExportDialog = ({
         equipmentEfficiency,
         summary,
         dateRange,
+        environmentName,
       });
       toast({
         title: "Exportação concluída",
