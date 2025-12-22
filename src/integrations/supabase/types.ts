@@ -14,6 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_settings: {
+        Row: {
+          created_at: string | null
+          efficiency_threshold: number | null
+          email_notifications: boolean | null
+          id: string
+          notifications_enabled: boolean | null
+          temp_alert_max: number | null
+          temp_alert_min: number | null
+          updated_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          efficiency_threshold?: number | null
+          email_notifications?: boolean | null
+          id?: string
+          notifications_enabled?: boolean | null
+          temp_alert_max?: number | null
+          temp_alert_min?: number | null
+          updated_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string | null
+          efficiency_threshold?: number | null
+          email_notifications?: boolean | null
+          id?: string
+          notifications_enabled?: boolean | null
+          temp_alert_max?: number | null
+          temp_alert_min?: number | null
+          updated_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      alerts: {
+        Row: {
+          created_at: string | null
+          dismissed_at: string | null
+          dismissed_by: string | null
+          equipment_id: string | null
+          id: string
+          is_dismissed: boolean | null
+          message: string
+          type: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          dismissed_at?: string | null
+          dismissed_by?: string | null
+          equipment_id?: string | null
+          id?: string
+          is_dismissed?: boolean | null
+          message: string
+          type: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string | null
+          dismissed_at?: string | null
+          dismissed_by?: string | null
+          equipment_id?: string | null
+          id?: string
+          is_dismissed?: boolean | null
+          message?: string
+          type?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       energy_history: {
         Row: {
           created_at: string

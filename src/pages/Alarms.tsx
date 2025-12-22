@@ -5,50 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertTriangle,
   Bell,
   BellOff,
   Check,
   Clock,
-  Filter,
   Settings,
   Thermometer,
   Trash2,
   Zap,
+  Loader2,
 } from "lucide-react";
-import { mockAlerts } from "@/data/mockData";
-import { useToast } from "@/hooks/use-toast";
+import { useAlerts } from "@/hooks/useAlerts";
+import { useAlertSettings } from "@/hooks/useAlertSettings";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 
 const Alarms = () => {
-  const { toast } = useToast();
-  const [alerts, setAlerts] = useState(mockAlerts);
+  const { alerts, isLoading: alertsLoading, dismissAlert, clearAllAlerts } = useAlerts();
+  const { settings, isLoading: settingsLoading, isSaving, updateSettings } = useAlertSettings();
+  const { canManageWorkspace } = useWorkspaceContext();
   const [filter, setFilter] = useState<string>("all");
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [tempAlertMin, setTempAlertMin] = useState(16);
-  const [tempAlertMax, setTempAlertMax] = useState(28);
 
   const filteredAlerts = alerts.filter((alert) => {
     if (filter === "all") return true;
     return alert.type === filter;
   });
-
-  const handleDismissAlert = (id: string) => {
-    setAlerts((prev) => prev.filter((alert) => alert.id !== id));
-    toast({
-      title: "Alerta Dispensado",
-      description: "O alerta foi removido da lista.",
-    });
-  };
-
-  const handleClearAll = () => {
-    setAlerts([]);
-    toast({
-      title: "Alertas Limpos",
-      description: "Todos os alertas foram removidos.",
-    });
-  };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
@@ -61,6 +44,10 @@ const Alarms = () => {
     }
   };
 
+  const handleSettingsChange = (key: string, value: boolean | number) => {
+    updateSettings({ [key]: value });
+  };
+
   return (
     <div className="p-6 space-y-6 bg-gradient-dashboard min-h-screen">
       <div className="flex items-center justify-between">
@@ -71,13 +58,13 @@ const Alarms = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant={notificationsEnabled ? "default" : "secondary"}>
-            {notificationsEnabled ? (
+          <Badge variant={settings.notifications_enabled ? "default" : "secondary"}>
+            {settings.notifications_enabled ? (
               <Bell className="h-3 w-3 mr-1" />
             ) : (
               <BellOff className="h-3 w-3 mr-1" />
             )}
-            {notificationsEnabled ? "Notificações Ativas" : "Notificações Pausadas"}
+            {settings.notifications_enabled ? "Notificações Ativas" : "Notificações Pausadas"}
           </Badge>
         </div>
       </div>
@@ -118,7 +105,13 @@ const Alarms = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {filteredAlerts.length === 0 ? (
+              {alertsLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-20 w-full" />
+                  ))}
+                </div>
+              ) : filteredAlerts.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Check className="h-12 w-12 mx-auto mb-2 text-green-500" />
                   <p>Nenhum alerta ativo</p>
@@ -153,26 +146,30 @@ const Alarms = () => {
                           <p className="text-sm mt-1">{alert.message}</p>
                           <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                             <Clock className="h-3 w-3" />
-                            {new Date(alert.timestamp).toLocaleString()}
+                            {new Date(alert.created_at).toLocaleString()}
                           </p>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDismissAlert(alert.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {canManageWorkspace && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => dismissAlert(alert.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   ))}
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleClearAll}
-                  >
-                    Limpar Todos os Alertas
-                  </Button>
+                  {canManageWorkspace && (
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={clearAllAlerts}
+                    >
+                      Limpar Todos os Alertas
+                    </Button>
+                  )}
                 </>
               )}
             </CardContent>
@@ -187,29 +184,45 @@ const Alarms = () => {
               <CardTitle className="flex items-center gap-2 text-base">
                 <Settings className="h-4 w-4" />
                 Configurações de Notificação
+                {isSaving && <Loader2 className="h-3 w-3 animate-spin" />}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="notifications" className="text-sm">
-                  Notificações Push
-                </Label>
-                <Switch
-                  id="notifications"
-                  checked={notificationsEnabled}
-                  onCheckedChange={setNotificationsEnabled}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="email" className="text-sm">
-                  Alertas por Email
-                </Label>
-                <Switch
-                  id="email"
-                  checked={emailNotifications}
-                  onCheckedChange={setEmailNotifications}
-                />
-              </div>
+              {settingsLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-full" />
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="notifications" className="text-sm">
+                      Notificações Push
+                    </Label>
+                    <Switch
+                      id="notifications"
+                      checked={settings.notifications_enabled}
+                      onCheckedChange={(checked) =>
+                        handleSettingsChange("notifications_enabled", checked)
+                      }
+                      disabled={!canManageWorkspace || isSaving}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="email" className="text-sm">
+                      Alertas por Email
+                    </Label>
+                    <Switch
+                      id="email"
+                      checked={settings.email_notifications}
+                      onCheckedChange={(checked) =>
+                        handleSettingsChange("email_notifications", checked)
+                      }
+                      disabled={!canManageWorkspace || isSaving}
+                    />
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -222,32 +235,47 @@ const Alarms = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-sm">Temperatura Mínima (°C)</Label>
-                <Input
-                  type="number"
-                  value={tempAlertMin}
-                  onChange={(e) => setTempAlertMin(Number(e.target.value))}
-                  min={10}
-                  max={25}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Alerta se temperatura cair abaixo deste valor
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm">Temperatura Máxima (°C)</Label>
-                <Input
-                  type="number"
-                  value={tempAlertMax}
-                  onChange={(e) => setTempAlertMax(Number(e.target.value))}
-                  min={20}
-                  max={35}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Alerta se temperatura subir acima deste valor
-                </p>
-              </div>
+              {settingsLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-16 w-full" />
+                  <Skeleton className="h-16 w-full" />
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label className="text-sm">Temperatura Mínima (°C)</Label>
+                    <Input
+                      type="number"
+                      value={settings.temp_alert_min}
+                      onChange={(e) =>
+                        handleSettingsChange("temp_alert_min", Number(e.target.value))
+                      }
+                      min={10}
+                      max={25}
+                      disabled={!canManageWorkspace || isSaving}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Alerta se temperatura cair abaixo deste valor
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm">Temperatura Máxima (°C)</Label>
+                    <Input
+                      type="number"
+                      value={settings.temp_alert_max}
+                      onChange={(e) =>
+                        handleSettingsChange("temp_alert_max", Number(e.target.value))
+                      }
+                      min={20}
+                      max={35}
+                      disabled={!canManageWorkspace || isSaving}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Alerta se temperatura subir acima deste valor
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
