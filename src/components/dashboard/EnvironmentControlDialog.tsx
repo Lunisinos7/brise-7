@@ -374,7 +374,7 @@ const EnvironmentControlDialog = ({
                     min={-30}
                     max={50}
                     step={1}
-                    className="w-full [&_[role=slider]]:bg-red-500 [&_[role=slider]]:border-red-500 [&_.bg-primary]:bg-red-500"
+                    className="w-full [&_[role=slider]]:border-red-500 [&_.bg-primary]:bg-red-500"
                     disabled={!heatingEnabled}
                   />
                 </div>
@@ -391,7 +391,7 @@ const EnvironmentControlDialog = ({
                     min={heatTriggerTemp + 1}
                     max={50}
                     step={1}
-                    className="w-full [&_[role=slider]]:bg-red-500 [&_[role=slider]]:border-red-500 [&_.bg-primary]:bg-red-500"
+                    className="w-full [&_[role=slider]]:border-red-500 [&_.bg-primary]:bg-red-500"
                     disabled={!heatingEnabled}
                   />
                 </div>
