@@ -64,25 +64,23 @@ export const useWorkspaces = (userId: string | undefined) => {
     mutationFn: async ({ name }: { name: string }) => {
       if (!userId) throw new Error('User not authenticated');
 
-      // Create the workspace
-      const { data: workspace, error: workspaceError } = await supabase
-        .from('workspaces')
-        .insert({ name, owner_id: userId })
-        .select()
-        .single();
-
-      if (workspaceError) throw workspaceError;
-
-      // Add the user as owner
-      const { error: memberError } = await supabase
-        .from('workspace_members')
-        .insert({
-          workspace_id: workspace.id,
-          user_id: userId,
-          role: 'owner',
+      // Use the SECURITY DEFINER function to create workspace and add owner atomically
+      const { data: workspaceId, error } = await supabase
+        .rpc('create_workspace_with_owner', {
+          _name: name,
+          _owner_id: userId,
         });
 
-      if (memberError) throw memberError;
+      if (error) throw error;
+
+      // Fetch the created workspace
+      const { data: workspace, error: fetchError } = await supabase
+        .from('workspaces')
+        .select('*')
+        .eq('id', workspaceId)
+        .single();
+
+      if (fetchError) throw fetchError;
 
       return workspace;
     },
