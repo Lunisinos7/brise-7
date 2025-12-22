@@ -293,7 +293,7 @@ const EnvironmentControlDialog = ({
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 coolingEnabled 
-                  ? "border-blue-300 dark:border-blue-700/50 bg-blue-50/80 dark:bg-blue-900/30" 
+                  ? "border-blue-300 dark:border-blue-700/50 bg-muted/80 dark:bg-white/5" 
                   : "border-muted bg-muted/30 opacity-60"
               )}>
                 <div className="flex items-center justify-between">
@@ -346,7 +346,7 @@ const EnvironmentControlDialog = ({
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 heatingEnabled 
-                  ? "border-orange-300 dark:border-orange-700/50 bg-orange-50/80 dark:bg-orange-900/30" 
+                  ? "border-orange-300 dark:border-orange-700/50 bg-muted/80 dark:bg-white/5" 
                   : "border-muted bg-muted/30 opacity-60"
               )}>
                 <div className="flex items-center justify-between">
