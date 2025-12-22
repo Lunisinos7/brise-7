@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { BarChart3, Calendar, Zap, Building2, Check } from "lucide-react";
+import { BarChart3, Calendar, Zap, Building2 } from "lucide-react";
 import { PeriodSelector } from "@/components/reports/PeriodSelector";
 import { ExportDialog } from "@/components/reports/ExportDialog";
 import { EnergyConsumptionChart } from "@/components/reports/EnergyConsumptionChart";
@@ -24,8 +24,10 @@ import { useEquipments } from "@/hooks/useEquipments";
 import { useWorkspaceSettings } from "@/hooks/useWorkspaceSettings";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTranslation } from "react-i18next";
 
 const Reports = () => {
+  const { t } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
   const [customRange, setCustomRange] = useState<DateRange | undefined>();
   const [periodPopoverOpen, setPeriodPopoverOpen] = useState(false);
@@ -47,10 +49,10 @@ const Reports = () => {
     : equipments.map(eq => eq.id);
 
   const selectedEnvironmentName = selectedEnvironmentIds.length === 0
-    ? "Todos os Ambientes"
+    ? t('reports.allEnvironments')
     : selectedEnvironmentIds.length === 1
-      ? environments.find(e => e.id === selectedEnvironmentIds[0])?.name || "Ambiente"
-      : `${selectedEnvironmentIds.length} ambientes`;
+      ? environments.find(e => e.id === selectedEnvironmentIds[0])?.name || t('dashboard.environments')
+      : `${selectedEnvironmentIds.length} ${t('reports.environments')}`;
 
   const dateRange = getDateRangeFromPeriod(selectedPeriod, customRange);
 
@@ -90,18 +92,18 @@ const Reports = () => {
   };
 
   const periodLabels: Record<PeriodType, string> = {
-    "24h": "Últimas 24h",
-    week: "Última Semana",
-    month: "Último Mês",
-    quarter: "Último Trimestre",
-    semester: "Último Semestre",
-    year: "Último Ano",
-    custom: "Período Customizado",
+    "24h": t('reports.periods.24h'),
+    week: t('reports.periods.week'),
+    month: t('reports.periods.month'),
+    quarter: t('reports.periods.quarter'),
+    semester: t('reports.periods.semester'),
+    year: t('reports.periods.year'),
+    custom: t('reports.periods.custom'),
   };
 
   // Gerar nome do ambiente para export
   const getEnvironmentNameForExport = () => {
-    if (selectedEnvironmentIds.length === 0) return "Todos os Ambientes";
+    if (selectedEnvironmentIds.length === 0) return t('reports.allEnvironments');
     const selectedNames = environments
       .filter(e => selectedEnvironmentIds.includes(e.id))
       .map(e => e.name);
@@ -112,9 +114,9 @@ const Reports = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Relatórios</h1>
+          <h1 className="text-3xl font-bold">{t('reports.title')}</h1>
           <p className="text-muted-foreground">
-            Análises e insights do sistema de climatização
+            {t('reports.subtitle')}
           </p>
         </div>
         <div className="flex gap-2">
@@ -127,7 +129,7 @@ const Reports = () => {
             </PopoverTrigger>
             <PopoverContent className="w-64" align="start">
               <div className="space-y-3">
-                <h4 className="font-medium text-sm">Selecione os Ambientes</h4>
+                <h4 className="font-medium text-sm">{t('reports.selectEnvironments')}</h4>
                 <div className="space-y-2">
                   <div 
                     className="flex items-center space-x-2 py-1.5 px-2 rounded hover:bg-muted cursor-pointer"
@@ -138,7 +140,7 @@ const Reports = () => {
                       className="pointer-events-none"
                     />
                     <span className="text-sm font-medium">
-                      {selectedEnvironmentIds.length === 0 ? "Todos os Ambientes" : "Selecionar Todos"}
+                      {selectedEnvironmentIds.length === 0 ? t('reports.allEnvironments') : t('reports.selectAll')}
                     </span>
                   </div>
                   <div className="border-t pt-2">
@@ -169,7 +171,7 @@ const Reports = () => {
             </PopoverTrigger>
             <PopoverContent className="w-96" align="end">
               <div className="space-y-2">
-                <h4 className="font-medium text-sm">Selecione o Período</h4>
+                <h4 className="font-medium text-sm">{t('reports.selectPeriod')}</h4>
                 <PeriodSelector
                   selectedPeriod={selectedPeriod}
                   customRange={customRange}
@@ -194,12 +196,12 @@ const Reports = () => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-4 w-4" />
-              Consumo Total
+              {t('reports.totalConsumption')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summary.totalConsumption.toFixed(2)} kWh</div>
-            <p className="text-sm text-muted-foreground">Período selecionado</p>
+            <p className="text-sm text-muted-foreground">{t('reports.selectedPeriod')}</p>
           </CardContent>
         </Card>
 
@@ -207,14 +209,14 @@ const Reports = () => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              Gasto ({summary.currencySymbol})
+              {t('reports.spending')} ({summary.currencySymbol})
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {summary.currencySymbol} {summary.totalSpent.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <p className="text-sm text-muted-foreground">Período selecionado</p>
+            <p className="text-sm text-muted-foreground">{t('reports.selectedPeriod')}</p>
           </CardContent>
         </Card>
       </div>
