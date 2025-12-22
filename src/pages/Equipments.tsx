@@ -156,7 +156,7 @@ const Equipments = () => {
                     <p className="text-sm text-muted-foreground">Consumo</p>
                     <p className="font-medium">{equipment.energyConsumption}W</p>
                   </div>
-                  <div className="flex gap-2 items-center justify-end">
+                  <div className="flex gap-2 items-center justify-end md:col-span-2">
                     <Button
                       variant="outline"
                       size="sm"
