@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import type { SmartThingsConfig, SmartThingsLocation } from "@/lib/smartthings";
+import i18n from "@/lib/i18n";
 
 export function useSmartThingsConfig() {
   const [config, setConfig] = useState<SmartThingsConfig | null>(null);
@@ -68,8 +69,8 @@ export function useSmartThingsConfig() {
   const saveConfig = async (token: string, locationId?: string): Promise<boolean> => {
     if (!currentWorkspaceId) {
       toast({
-        title: "Erro",
-        description: "Nenhum workspace selecionado.",
+        title: i18n.t("common.error"),
+        description: i18n.t("hooks.smartThingsConfig.noWorkspace"),
         variant: "destructive",
       });
       return false;
@@ -81,8 +82,8 @@ export function useSmartThingsConfig() {
       
       if (!validation.valid) {
         toast({
-          title: "Token inválido",
-          description: validation.error || "Verifique o token e tente novamente.",
+          title: i18n.t("hooks.smartThingsConfig.tokenInvalid"),
+          description: validation.error || i18n.t("hooks.smartThingsConfig.tokenInvalidDesc"),
           variant: "destructive",
         });
         return false;
@@ -101,22 +102,22 @@ export function useSmartThingsConfig() {
       if (error) throw error;
 
       if (!data.success) {
-        throw new Error(data.error || "Erro ao salvar configuração");
+        throw new Error(data.error || i18n.t("hooks.smartThingsConfig.saveError"));
       }
 
       await fetchConfig();
       
       toast({
-        title: "Configuração salva",
-        description: "SmartThings configurado com sucesso!",
+        title: i18n.t("hooks.smartThingsConfig.saved"),
+        description: i18n.t("hooks.smartThingsConfig.savedDesc"),
       });
 
       return true;
     } catch (error: any) {
       console.error("Error saving config:", error);
       toast({
-        title: "Erro ao salvar",
-        description: error.message || "Tente novamente.",
+        title: i18n.t("hooks.smartThingsConfig.saveError"),
+        description: error.message || i18n.t("hooks.smartThingsControl.tryAgain"),
         variant: "destructive",
       });
       return false;
@@ -138,15 +139,15 @@ export function useSmartThingsConfig() {
       setIsConfigured(false);
 
       toast({
-        title: "Desconectado",
-        description: "SmartThings foi desconectado.",
+        title: i18n.t("hooks.smartThingsConfig.disconnected"),
+        description: i18n.t("hooks.smartThingsConfig.disconnectedDesc"),
       });
 
       return true;
     } catch (error: any) {
       console.error("Error disconnecting:", error);
       toast({
-        title: "Erro ao desconectar",
+        title: i18n.t("hooks.smartThingsConfig.disconnectError"),
         description: error.message,
         variant: "destructive",
       });

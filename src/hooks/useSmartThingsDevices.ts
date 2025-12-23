@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import type { SmartThingsDevice } from "@/lib/smartthings";
+import i18n from "@/lib/i18n";
 
 export function useSmartThingsDevices() {
   const [devices, setDevices] = useState<SmartThingsDevice[]>([]);
@@ -13,8 +14,8 @@ export function useSmartThingsDevices() {
   const discoverDevices = async (): Promise<SmartThingsDevice[]> => {
     if (!currentWorkspaceId) {
       toast({
-        title: "Erro",
-        description: "Nenhum workspace selecionado.",
+        title: i18n.t("common.error"),
+        description: i18n.t("hooks.smartThingsDevices.noWorkspace"),
         variant: "destructive",
       });
       return [];
@@ -38,8 +39,8 @@ export function useSmartThingsDevices() {
     } catch (error: any) {
       console.error("Error discovering devices:", error);
       toast({
-        title: "Erro ao buscar dispositivos",
-        description: error.message || "Verifique a configuração do SmartThings.",
+        title: i18n.t("hooks.smartThingsDevices.discoverError"),
+        description: error.message || i18n.t("hooks.smartThingsDevices.checkConfig"),
         variant: "destructive",
       });
       return [];
@@ -51,8 +52,8 @@ export function useSmartThingsDevices() {
   const syncDevice = async (equipmentId: string): Promise<boolean> => {
     if (!currentWorkspaceId) {
       toast({
-        title: "Erro",
-        description: "Nenhum workspace selecionado.",
+        title: i18n.t("common.error"),
+        description: i18n.t("hooks.smartThingsDevices.noWorkspace"),
         variant: "destructive",
       });
       return false;
@@ -70,15 +71,15 @@ export function useSmartThingsDevices() {
       }
 
       toast({
-        title: "Sincronizado",
-        description: "Dispositivo sincronizado com sucesso!",
+        title: i18n.t("hooks.smartThingsDevices.synced"),
+        description: i18n.t("hooks.smartThingsDevices.syncedDesc"),
       });
 
       return true;
     } catch (error: any) {
       console.error("Error syncing device:", error);
       toast({
-        title: "Erro ao sincronizar",
+        title: i18n.t("hooks.smartThingsDevices.syncError"),
         description: error.message,
         variant: "destructive",
       });
@@ -89,8 +90,8 @@ export function useSmartThingsDevices() {
   const syncAllDevices = async (): Promise<boolean> => {
     if (!currentWorkspaceId) {
       toast({
-        title: "Erro",
-        description: "Nenhum workspace selecionado.",
+        title: i18n.t("common.error"),
+        description: i18n.t("hooks.smartThingsDevices.noWorkspace"),
         variant: "destructive",
       });
       return false;
@@ -110,15 +111,15 @@ export function useSmartThingsDevices() {
       const successCount = data.results?.filter((r: any) => r.success).length || 0;
       
       toast({
-        title: "Sincronização concluída",
-        description: `${successCount} dispositivo(s) sincronizado(s).`,
+        title: i18n.t("hooks.smartThingsDevices.syncComplete"),
+        description: i18n.t("hooks.smartThingsDevices.syncCompleteDesc", { count: successCount }),
       });
 
       return true;
     } catch (error: any) {
       console.error("Error syncing all devices:", error);
       toast({
-        title: "Erro ao sincronizar",
+        title: i18n.t("hooks.smartThingsDevices.syncAllError"),
         description: error.message,
         variant: "destructive",
       });

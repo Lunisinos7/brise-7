@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { subHours, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
+import i18n from "@/lib/i18n";
 
 export type PeriodType = "24h" | "week" | "month" | "quarter" | "semester" | "year" | "custom";
 
@@ -232,7 +233,19 @@ export const useUsagePatterns = (dateRange: DateRange, equipmentIds?: string[]) 
   const { data: rawData, ...rest } = useEnergyHistory(dateRange, equipmentIds);
 
   const patterns: UsagePattern[] = [];
-  const daysOfWeek = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+  
+  // Use translated weekday names
+  const getDaysOfWeek = () => [
+    i18n.t("weekdays.short.sun"),
+    i18n.t("weekdays.short.mon"),
+    i18n.t("weekdays.short.tue"),
+    i18n.t("weekdays.short.wed"),
+    i18n.t("weekdays.short.thu"),
+    i18n.t("weekdays.short.fri"),
+    i18n.t("weekdays.short.sat"),
+  ];
+  
+  const daysOfWeek = getDaysOfWeek();
   
   if (rawData) {
     const usageMap = new Map<string, number[]>();

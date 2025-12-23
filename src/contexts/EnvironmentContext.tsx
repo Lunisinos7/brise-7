@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useWorkspaceContext } from "./WorkspaceContext";
+import i18n from "@/lib/i18n";
 
 export interface Environment {
   id: string;
@@ -84,14 +85,14 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error("Error fetching environments:", error);
-        toast.error("Erro ao carregar ambientes");
+        toast.error(i18n.t("hooks.environments.loadError"));
         return;
       }
 
       setEnvironments((data || []).map(mapDbToEnvironment));
     } catch (error) {
       console.error("Error fetching environments:", error);
-      toast.error("Erro ao carregar ambientes");
+      toast.error(i18n.t("hooks.environments.loadError"));
     } finally {
       setIsLoading(false);
     }
@@ -103,7 +104,7 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
 
   const addEnvironment = async (environment: Omit<Environment, "id">): Promise<Environment | null> => {
     if (!currentWorkspaceId) {
-      toast.error("Selecione um workspace");
+      toast.error(i18n.t("hooks.environments.selectWorkspace"));
       return null;
     }
 
@@ -120,7 +121,7 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error("Error adding environment:", error);
-        toast.error("Erro ao criar ambiente");
+        toast.error(i18n.t("hooks.environments.createError"));
         return null;
       }
 
@@ -129,7 +130,7 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
       return newEnvironment;
     } catch (error) {
       console.error("Error adding environment:", error);
-      toast.error("Erro ao criar ambiente");
+      toast.error(i18n.t("hooks.environments.createError"));
       return null;
     }
   };
@@ -143,14 +144,14 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error("Error removing environment:", error);
-        toast.error("Erro ao excluir ambiente");
+        toast.error(i18n.t("hooks.environments.deleteError"));
         return;
       }
 
       setEnvironments(prev => prev.filter(env => env.id !== id));
     } catch (error) {
       console.error("Error removing environment:", error);
-      toast.error("Erro ao excluir ambiente");
+      toast.error(i18n.t("hooks.environments.deleteError"));
     }
   };
 
@@ -175,7 +176,7 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) {
         console.error("Error updating environment:", error);
-        toast.error("Erro ao atualizar ambiente");
+        toast.error(i18n.t("hooks.environments.updateError"));
         return;
       }
 
@@ -184,7 +185,7 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
       );
     } catch (error) {
       console.error("Error updating environment:", error);
-      toast.error("Erro ao atualizar ambiente");
+      toast.error(i18n.t("hooks.environments.updateError"));
     }
   };
 

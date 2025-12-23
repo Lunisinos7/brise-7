@@ -666,6 +666,80 @@
       "inviteDeclinedDesc": "O convite foi removido.",
       "inviteDeclineError": "Erro ao recusar",
       "inviteDeclineErrorDesc": "Não foi possível recusar o convite."
+    },
+    "alertSettings": {
+      "loadError": "Não foi possível carregar as configurações de alerta.",
+      "saved": "Configurações Salvas",
+      "savedDesc": "As configurações de alerta foram atualizadas.",
+      "saveError": "Não foi possível salvar as configurações."
+    },
+    "timeRoutines": {
+      "created": "Rotina criada!",
+      "createdDesc": "A rotina foi salva com sucesso.",
+      "createError": "Erro ao criar rotina",
+      "updated": "Rotina atualizada!",
+      "updatedDesc": "As alterações foram salvas com sucesso.",
+      "updateError": "Erro ao atualizar rotina",
+      "deleted": "Rotina excluída",
+      "deletedDesc": "A rotina foi removida com sucesso.",
+      "deleteError": "Erro ao excluir rotina"
+    },
+    "smartThingsControl": {
+      "noWorkspace": "Nenhum workspace selecionado.",
+      "sendError": "Erro ao enviar comando",
+      "tryAgain": "Tente novamente."
+    },
+    "smartThingsDevices": {
+      "noWorkspace": "Nenhum workspace selecionado.",
+      "discoverError": "Erro ao buscar dispositivos",
+      "checkConfig": "Verifique a configuração do SmartThings.",
+      "synced": "Sincronizado",
+      "syncedDesc": "Dispositivo sincronizado com sucesso!",
+      "syncError": "Erro ao sincronizar",
+      "syncComplete": "Sincronização concluída",
+      "syncCompleteDesc": "{{count}} dispositivo(s) sincronizado(s).",
+      "syncAllError": "Erro ao sincronizar"
+    },
+    "smartThingsConfig": {
+      "noWorkspace": "Nenhum workspace selecionado.",
+      "tokenInvalid": "Token inválido",
+      "tokenInvalidDesc": "Verifique o token e tente novamente.",
+      "saved": "Configuração salva",
+      "savedDesc": "SmartThings configurado com sucesso!",
+      "saveError": "Erro ao salvar",
+      "disconnected": "Desconectado",
+      "disconnectedDesc": "SmartThings foi desconectado.",
+      "disconnectError": "Erro ao desconectar"
+    },
+    "environments": {
+      "loadError": "Erro ao carregar ambientes",
+      "selectWorkspace": "Selecione um workspace",
+      "createError": "Erro ao criar ambiente",
+      "deleteError": "Erro ao excluir ambiente",
+      "updateError": "Erro ao atualizar ambiente"
+    }
+  },
+  "dashboard": {
+    "equipmentCard": {
+      "currentTemp": "Temperatura atual",
+      "consumption": "Consumo",
+      "control": "Controlar"
+    },
+    "accumulatedExpense": {
+      "title": "Gasto Acumulado",
+      "loading": "Carregando...",
+      "since": "Desde 00:00"
+    }
+  },
+  "weekdays": {
+    "short": {
+      "sun": "Dom",
+      "mon": "Seg",
+      "tue": "Ter",
+      "wed": "Qua",
+      "thu": "Qui",
+      "fri": "Sex",
+      "sat": "Sáb"
     }
   }
 }
