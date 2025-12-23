@@ -491,6 +491,17 @@
       "remove": "Remover"
     }
   },
+  "export": {
+    "export": "Exportar",
+    "exportReport": "Exportar Relatório",
+    "exportFormat": "Formato de Exportação",
+    "exportComplete": "Exportação concluída",
+    "exportError": "Erro na exportação",
+    "pdfSuccess": "O relatório PDF foi gerado com sucesso.",
+    "pdfError": "Não foi possível gerar o relatório PDF.",
+    "excelSuccess": "O relatório Excel foi gerado com sucesso.",
+    "excelError": "Não foi possível gerar o relatório Excel."
+  },
   "energyRate": {
     "title": "Configurações de Tarifa de Energia",
     "description": "Configure o valor do kWh e a moeda para cálculo de custos do workspace atual",

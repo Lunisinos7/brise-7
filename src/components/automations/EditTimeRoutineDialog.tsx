@@ -12,6 +12,7 @@ import { useEnvironments } from "@/contexts/EnvironmentContext";
 import { useTimeRoutines, type TimeRoutine, type DaySchedule, type TimeSlot, type RoutineException } from "@/hooks/useTimeRoutines";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import ExceptionsSection from "./ExceptionsSection";
+import { useTranslation } from "react-i18next";
 
 interface EditTimeRoutineDialogProps {
   routine: TimeRoutine;
@@ -19,6 +20,7 @@ interface EditTimeRoutineDialogProps {
 }
 
 const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps) => {
+  const { t } = useTranslation();
   const { environments } = useEnvironments();
   const { currentWorkspaceId } = useWorkspaceContext();
   const { updateRoutine } = useTimeRoutines(currentWorkspaceId || undefined);
@@ -30,13 +32,13 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
   const [exceptions, setExceptions] = useState<RoutineException[]>([]);
 
   const daysOfWeek = [
-    { id: "monday", label: "Seg", name: "Segunda-feira" },
-    { id: "tuesday", label: "Ter", name: "Terça-feira" },
-    { id: "wednesday", label: "Qua", name: "Quarta-feira" },
-    { id: "thursday", label: "Qui", name: "Quinta-feira" },
-    { id: "friday", label: "Sex", name: "Sexta-feira" },
-    { id: "saturday", label: "Sáb", name: "Sábado" },
-    { id: "sunday", label: "Dom", name: "Domingo" }
+    { id: "monday", label: t('automations.days.monday'), name: t('automations.daysLong.monday') },
+    { id: "tuesday", label: t('automations.days.tuesday'), name: t('automations.daysLong.tuesday') },
+    { id: "wednesday", label: t('automations.days.wednesday'), name: t('automations.daysLong.wednesday') },
+    { id: "thursday", label: t('automations.days.thursday'), name: t('automations.daysLong.thursday') },
+    { id: "friday", label: t('automations.days.friday'), name: t('automations.daysLong.friday') },
+    { id: "saturday", label: t('automations.days.saturday'), name: t('automations.daysLong.saturday') },
+    { id: "sunday", label: t('automations.days.sunday'), name: t('automations.daysLong.sunday') }
   ];
 
   // Load routine data when dialog opens
@@ -156,20 +158,20 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Pencil className="h-5 w-5 text-cooling" />
-            Editar Rotina
+            {t('automations.dialog.editTitle')}
           </DialogTitle>
           <DialogDescription>
-            Modifique as configurações da rotina
+            {t('automations.dialog.editDescription')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Nome da Rotina */}
           <div className="space-y-2">
-            <Label htmlFor="routine-name">Nome da Rotina</Label>
+            <Label htmlFor="routine-name">{t('automations.dialog.routineName')}</Label>
             <Input
               id="routine-name"
-              placeholder="Ex: Economia Noturna"
+              placeholder={t('automations.dialog.routineNamePlaceholder')}
               value={routineName}
               onChange={(e) => setRoutineName(e.target.value)}
             />
@@ -179,7 +181,7 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
           <div className="space-y-4">
             <Label className="flex items-center gap-2">
               <CalendarDays className="h-4 w-4" />
-              Configuração por Dia da Semana
+              {t('automations.dialog.dayConfig')}
             </Label>
             
             <Accordion type="multiple" className="w-full" value={openAccordions} onValueChange={setOpenAccordions}>
@@ -210,7 +212,7 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
                         </div>
                         {isSelected && (
                           <span className="text-xs text-muted-foreground">
-                            {daySchedule.timeSlots.length} horário(s) configurado(s)
+                            {daySchedule.timeSlots.length} {t('automations.dialog.timeSlotsConfigured')}
                           </span>
                         )}
                       </div>
@@ -223,7 +225,7 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
                             <div className="flex items-center justify-between">
                               <Label className="flex items-center gap-2 text-sm">
                                 <Clock className="h-4 w-4" />
-                                Horários de Funcionamento
+                                {t('automations.dialog.operatingHours')}
                               </Label>
                               <Button
                                 type="button"
@@ -232,7 +234,7 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
                                 onClick={() => addTimeSlot(day.id)}
                               >
                                 <Plus className="h-4 w-4 mr-1" />
-                                Adicionar Horário
+                                {t('automations.dialog.addTime')}
                               </Button>
                             </div>
                             
@@ -242,7 +244,7 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
                                   <div className="grid grid-cols-2 gap-4 flex-1">
                                     <div className="space-y-2">
                                       <Label htmlFor={`start-time-${day.id}-${slot.id}`} className="text-xs">
-                                        Horário de Início
+                                        {t('automations.dialog.startTime')}
                                       </Label>
                                       <Input
                                         id={`start-time-${day.id}-${slot.id}`}
@@ -253,7 +255,7 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
                                     </div>
                                     <div className="space-y-2">
                                       <Label htmlFor={`end-time-${day.id}-${slot.id}`} className="text-xs">
-                                        Horário de Término
+                                        {t('automations.dialog.endTime')}
                                       </Label>
                                       <Input
                                         id={`end-time-${day.id}-${slot.id}`}
@@ -288,13 +290,13 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
 
           {/* Seleção de Ambientes */}
           <div className="space-y-3">
-            <Label>Ambientes</Label>
+            <Label>{t('automations.environments')}</Label>
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="w-full justify-between">
                   {selectedEnvironments.length === 0 
-                    ? "Selecionar ambientes" 
-                    : `${selectedEnvironments.length} ambiente(s) selecionado(s)`
+                    ? t('automations.dialog.selectEnvironments') 
+                    : `${selectedEnvironments.length} ${t('automations.dialog.environmentsSelected')}`
                   }
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -328,10 +330,10 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
           {routineName && daySchedules.length > 0 && selectedEnvironments.length > 0 && (
             <Card className="bg-cooling/5 border-cooling/20">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-sm mb-2">Resumo da Rotina:</h4>
+                <h4 className="font-semibold text-sm mb-2">{t('automations.dialog.routineSummary')}</h4>
                 <div className="text-sm text-muted-foreground space-y-2">
                   <p>
-                    <strong>{routineName}</strong> será executada nos seguintes dias:
+                    <strong>{routineName}</strong> {t('automations.dialog.willExecuteOn')}
                   </p>
                   {daySchedules.map((daySchedule) => {
                     const day = daysOfWeek.find(d => d.id === daySchedule.dayId);
@@ -340,14 +342,14 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
                         <strong>{day?.name}:</strong> 
                         {daySchedule.timeSlots.map((slot, index) => (
                           <span key={slot.id}>
-                            {index > 0 && " e "}das <strong>{slot.startTime}</strong> às <strong>{slot.endTime}</strong>
+                            {index > 0 && ` ${t('automations.dialog.and')} `}{t('automations.dialog.from')} <strong>{slot.startTime}</strong> {t('automations.dialog.to')} <strong>{slot.endTime}</strong>
                           </span>
                         ))}
                       </div>
                     );
                   })}
                   <p>
-                    Aplicando em <strong>{selectedEnvironments.length} ambiente(s)</strong>.
+                    {t('automations.dialog.applyingTo')} <strong>{selectedEnvironments.length} {t('automations.dialog.environmentsSelected')}</strong>.
                   </p>
                 </div>
               </CardContent>
@@ -356,13 +358,13 @@ const EditTimeRoutineDialog = ({ routine, children }: EditTimeRoutineDialogProps
         </div>
 
         <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>{t('common.cancel')}</Button>
           <Button 
             className="bg-cooling hover:bg-cooling-dark text-white"
             disabled={!routineName || daySchedules.length === 0 || selectedEnvironments.length === 0 || updateRoutine.isPending}
             onClick={handleUpdateRoutine}
           >
-            {updateRoutine.isPending ? "Salvando..." : "Salvar Alterações"}
+            {updateRoutine.isPending ? t('common.saving') : t('common.saveChanges')}
           </Button>
         </div>
       </DialogContent>

@@ -30,6 +30,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 const formSchema = z.object({
   role: z.enum(['owner', 'admin', 'viewer']),
@@ -43,13 +44,14 @@ interface EditMemberDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const roleLabels: Record<WorkspaceRole, string> = {
-  owner: 'Proprietário',
-  admin: 'Administrador',
-  viewer: 'Visualizador',
-};
-
 const EditMemberDialog = ({ member, open, onOpenChange }: EditMemberDialogProps) => {
+  const { t } = useTranslation();
+  
+  const roleLabels: Record<WorkspaceRole, string> = {
+    owner: t('users.roles.owner'),
+    admin: t('users.roles.admin'),
+    viewer: t('users.roles.viewer'),
+  };
   const { currentWorkspaceId, canManageWorkspace, isWorkspaceOwner, currentWorkspace } = useWorkspaceContext();
   const { user } = useAuthContext();
   const { updateMemberRole, removeMember } = useWorkspaceMembers(currentWorkspaceId);
@@ -94,23 +96,23 @@ const EditMemberDialog = ({ member, open, onOpenChange }: EditMemberDialogProps)
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar Membro</DialogTitle>
+          <DialogTitle>{t('workspace.editMember.title')}</DialogTitle>
           <DialogDescription>
             {isOwnProfile
-              ? 'Visualize suas permissões no workspace'
-              : 'Gerencie as permissões deste membro'}
+              ? t('workspace.editMember.viewPermissions')
+              : t('workspace.editMember.managePermissions')}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <FormLabel>Nome</FormLabel>
-              <Input value={member?.profile?.full_name || 'Sem nome'} disabled />
+              <FormLabel>{t('workspace.editMember.name')}</FormLabel>
+              <Input value={member?.profile?.full_name || t('workspace.editMember.noName')} disabled />
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('users.email')}</FormLabel>
               <Input value={member?.profile?.email || ''} disabled />
             </div>
 
@@ -119,7 +121,7 @@ const EditMemberDialog = ({ member, open, onOpenChange }: EditMemberDialogProps)
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tipo de acesso</FormLabel>
+                  <FormLabel>{t('workspace.accessType')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
@@ -127,22 +129,22 @@ const EditMemberDialog = ({ member, open, onOpenChange }: EditMemberDialogProps)
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione o perfil" />
+                        <SelectValue placeholder={t('workspace.editMember.selectRole')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {isWorkspaceOwner && (
-                        <SelectItem value="owner">Proprietário</SelectItem>
+                        <SelectItem value="owner">{t('users.roles.owner')}</SelectItem>
                       )}
-                      <SelectItem value="admin">Administrador</SelectItem>
-                      <SelectItem value="viewer">Visualizador</SelectItem>
+                      <SelectItem value="admin">{t('users.roles.admin')}</SelectItem>
+                      <SelectItem value="viewer">{t('users.roles.viewer')}</SelectItem>
                     </SelectContent>
                   </Select>
                   {!canEdit && (
                     <p className="text-xs text-muted-foreground">
                       {isOwnerMember 
-                        ? 'O proprietário não pode ter seu acesso alterado'
-                        : 'Apenas administradores podem alterar acessos'}
+                        ? t('workspace.editMember.ownerCannotChange')
+                        : t('workspace.editMember.onlyAdmins')}
                     </p>
                   )}
                   <FormMessage />
@@ -158,7 +160,7 @@ const EditMemberDialog = ({ member, open, onOpenChange }: EditMemberDialogProps)
                     variant="destructive"
                     onClick={handleRemove}
                   >
-                    Remover
+                    {t('workspace.editMember.remove')}
                   </Button>
                 )}
               </div>
@@ -168,10 +170,10 @@ const EditMemberDialog = ({ member, open, onOpenChange }: EditMemberDialogProps)
                   variant="outline"
                   onClick={() => onOpenChange(false)}
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={!canEdit}>
-                  Salvar
+                  {t('common.save')}
                 </Button>
               </div>
             </div>
