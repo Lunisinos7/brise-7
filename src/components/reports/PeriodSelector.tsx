@@ -3,11 +3,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { PeriodType, DateRange } from "@/hooks/useReportData";
 import { useState } from "react";
 import { DateRange as DayPickerDateRange } from "react-day-picker";
+import { useTranslation } from "react-i18next";
 
 interface PeriodSelectorProps {
   selectedPeriod: PeriodType;
@@ -15,24 +16,33 @@ interface PeriodSelectorProps {
   onPeriodChange: (period: PeriodType, customRange?: DateRange) => void;
 }
 
-const periodOptions: { value: PeriodType; label: string }[] = [
-  { value: "24h", label: "Últimas 24h" },
-  { value: "week", label: "Última Semana" },
-  { value: "month", label: "Último Mês" },
-  { value: "quarter", label: "Último Trimestre" },
-  { value: "semester", label: "Último Semestre" },
-  { value: "year", label: "Último Ano" },
-];
-
 export const PeriodSelector = ({
   selectedPeriod,
   customRange,
   onPeriodChange,
 }: PeriodSelectorProps) => {
+  const { t, i18n } = useTranslation();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DayPickerDateRange | undefined>(
     customRange ? { from: customRange.from, to: customRange.to } : undefined
   );
+
+  const periodOptions: { value: PeriodType; label: string }[] = [
+    { value: "24h", label: t('reports.periods.24h') },
+    { value: "week", label: t('reports.periods.week') },
+    { value: "month", label: t('reports.periods.month') },
+    { value: "quarter", label: t('reports.periods.quarter') },
+    { value: "semester", label: t('reports.periods.semester') },
+    { value: "year", label: t('reports.periods.year') },
+  ];
+
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'en-US': return enUS;
+      case 'es-ES': return es;
+      default: return ptBR;
+    }
+  };
 
   const handleDateRangeSelect = (range: DayPickerDateRange | undefined) => {
     setDateRange(range);
@@ -67,14 +77,14 @@ export const PeriodSelector = ({
               selectedPeriod !== "custom" && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+          <CalendarIcon className="mr-2 h-4 w-4" />
             {selectedPeriod === "custom" && customRange ? (
               <>
-                {format(customRange.from, "dd/MM/yyyy", { locale: ptBR })} -{" "}
-                {format(customRange.to, "dd/MM/yyyy", { locale: ptBR })}
+                {format(customRange.from, "dd/MM/yyyy", { locale: getDateLocale() })} -{" "}
+                {format(customRange.to, "dd/MM/yyyy", { locale: getDateLocale() })}
               </>
             ) : (
-              "Período Customizado"
+              t('reports.periods.custom')
             )}
           </Button>
         </PopoverTrigger>
@@ -86,7 +96,7 @@ export const PeriodSelector = ({
             selected={dateRange}
             onSelect={handleDateRangeSelect}
             numberOfMonths={2}
-            locale={ptBR}
+            locale={getDateLocale()}
             className="pointer-events-auto"
           />
         </PopoverContent>

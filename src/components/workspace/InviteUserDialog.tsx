@@ -21,19 +21,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserPlus, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface InviteUserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const roleOptions: { value: WorkspaceRole; label: string; description: string }[] = [
-  { value: 'viewer', label: 'Visualizador', description: 'Pode visualizar dados' },
-  { value: 'admin', label: 'Administrador', description: 'Pode gerenciar membros e dados' },
-  { value: 'owner', label: 'Proprietário', description: 'Controle total do workspace' },
-];
-
 const InviteUserDialog = ({ open, onOpenChange }: InviteUserDialogProps) => {
+  const { t } = useTranslation();
+  
+  const roleOptions: { value: WorkspaceRole; label: string; description: string }[] = [
+    { value: 'viewer', label: t('workspace.roles.viewer'), description: t('workspace.roles.viewerDesc') },
+    { value: 'admin', label: t('workspace.roles.admin'), description: t('workspace.roles.adminDesc') },
+    { value: 'owner', label: t('workspace.roles.owner'), description: t('workspace.roles.ownerDesc') },
+  ];
   const { user } = useAuthContext();
   const { currentWorkspaceId } = useWorkspaceContext();
   const { createInvitation, isCreating } = useWorkspaceInvitations(currentWorkspaceId);
@@ -63,20 +65,20 @@ const InviteUserDialog = ({ open, onOpenChange }: InviteUserDialogProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5" />
-            Convidar usuário
+            {t('workspace.inviteUser')}
           </DialogTitle>
           <DialogDescription>
-            Envie um convite para adicionar um novo membro ao workspace.
+            {t('workspace.inviteDesc')}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('workspace.inviteEmail')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="usuario@exemplo.com"
+              placeholder={t('workspace.inviteEmailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -84,7 +86,7 @@ const InviteUserDialog = ({ open, onOpenChange }: InviteUserDialogProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="role">Tipo de acesso</Label>
+            <Label htmlFor="role">{t('workspace.accessType')}</Label>
             <Select value={role} onValueChange={(v) => setRole(v as WorkspaceRole)}>
               <SelectTrigger>
                 <SelectValue />
@@ -110,16 +112,16 @@ const InviteUserDialog = ({ open, onOpenChange }: InviteUserDialogProps) => {
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Cancelar
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isCreating || !email.trim()}>
               {isCreating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Enviando...
+                  {t('common.sending')}
                 </>
               ) : (
-                "Enviar convite"
+                t('workspace.sendInvite')
               )}
             </Button>
           </DialogFooter>

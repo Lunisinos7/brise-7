@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useWorkspaces } from "@/hooks/useWorkspaces";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 interface CreateWorkspaceDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface CreateWorkspaceDialogProps {
 }
 
 const CreateWorkspaceDialog = ({ open, onOpenChange }: CreateWorkspaceDialogProps) => {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const { user } = useAuthContext();
   const { createWorkspace, isCreating } = useWorkspaces(user?.id);
@@ -52,9 +54,9 @@ const CreateWorkspaceDialog = ({ open, onOpenChange }: CreateWorkspaceDialogProp
               <Building2 className="h-5 w-5 text-white" />
             </div>
             <div>
-              <DialogTitle>Criar novo workspace</DialogTitle>
+              <DialogTitle>{t('workspace.createTitle')}</DialogTitle>
               <DialogDescription>
-                Crie um workspace para organizar seus equipamentos e equipe.
+                {t('workspace.createDesc')}
               </DialogDescription>
             </div>
           </div>
@@ -63,10 +65,10 @@ const CreateWorkspaceDialog = ({ open, onOpenChange }: CreateWorkspaceDialogProp
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Nome do workspace</Label>
+              <Label htmlFor="name">{t('workspace.name')}</Label>
               <Input
                 id="name"
-                placeholder="Ex: Escritório, Casa, Filial SP..."
+                placeholder={t('workspace.namePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoFocus
@@ -81,7 +83,7 @@ const CreateWorkspaceDialog = ({ open, onOpenChange }: CreateWorkspaceDialogProp
               onClick={() => onOpenChange(false)}
               disabled={isCreating}
             >
-              Cancelar
+              {t('common.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -91,10 +93,10 @@ const CreateWorkspaceDialog = ({ open, onOpenChange }: CreateWorkspaceDialogProp
               {isCreating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Criando...
+                  {t('common.creating')}
                 </>
               ) : (
-                "Criar workspace"
+                t('workspace.createButton')
               )}
             </Button>
           </DialogFooter>

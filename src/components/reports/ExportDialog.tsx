@@ -12,6 +12,7 @@ import { PeriodSelector } from "./PeriodSelector";
 import { PeriodType, DateRange, getDateRangeFromPeriod } from "@/hooks/useReportData";
 import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface ExportDialogProps {
   energyData: any[];
@@ -31,6 +32,7 @@ export const ExportDialog = ({
   summary,
   environmentName = "Todos os Ambientes",
 }: ExportDialogProps) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
   const [customRange, setCustomRange] = useState<DateRange | undefined>();
@@ -58,14 +60,14 @@ export const ExportDialog = ({
         environmentName,
       });
       toast({
-        title: "Exportação concluída",
-        description: "O relatório PDF foi gerado com sucesso.",
+        title: t('export.exportComplete'),
+        description: t('export.pdfSuccess'),
       });
       setOpen(false);
     } catch (error) {
       toast({
-        title: "Erro na exportação",
-        description: "Não foi possível gerar o relatório PDF.",
+        title: t('export.exportError'),
+        description: t('export.pdfError'),
         variant: "destructive",
       });
     } finally {
@@ -85,14 +87,14 @@ export const ExportDialog = ({
         environmentName,
       });
       toast({
-        title: "Exportação concluída",
-        description: "O relatório Excel foi gerado com sucesso.",
+        title: t('export.exportComplete'),
+        description: t('export.excelSuccess'),
       });
       setOpen(false);
     } catch (error) {
       toast({
-        title: "Erro na exportação",
-        description: "Não foi possível gerar o relatório Excel.",
+        title: t('export.exportError'),
+        description: t('export.excelError'),
         variant: "destructive",
       });
     } finally {
@@ -105,17 +107,17 @@ export const ExportDialog = ({
       <DialogTrigger asChild>
         <Button variant="energy" className="gap-2">
           <Download className="h-4 w-4" />
-          Exportar
+          {t('export.export')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Exportar Relatório</DialogTitle>
+          <DialogTitle>{t('export.exportReport')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           <div>
-            <h4 className="text-sm font-medium mb-3">Selecione o Período</h4>
+            <h4 className="text-sm font-medium mb-3">{t('reports.selectPeriod')}</h4>
             <PeriodSelector
               selectedPeriod={selectedPeriod}
               customRange={customRange}
@@ -124,7 +126,7 @@ export const ExportDialog = ({
           </div>
 
           <div>
-            <h4 className="text-sm font-medium mb-3">Formato de Exportação</h4>
+            <h4 className="text-sm font-medium mb-3">{t('export.exportFormat')}</h4>
             <div className="grid grid-cols-2 gap-3">
               <Button
                 variant="outline"

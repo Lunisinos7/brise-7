@@ -21,8 +21,10 @@ import { useWorkspaces } from "@/hooks/useWorkspaces";
 import { useAuthContext } from "@/contexts/AuthContext";
 import CreateWorkspaceDialog from "./CreateWorkspaceDialog";
 import EditWorkspaceDialog from "./EditWorkspaceDialog";
+import { useTranslation } from "react-i18next";
 
 const WorkspaceSelector = () => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -67,9 +69,9 @@ const WorkspaceSelector = () => {
                 <Building2 className="h-4 w-4 text-white" />
               </div>
               <div className="flex flex-col items-start min-w-0 overflow-hidden">
-                <span className="text-xs text-muted-foreground">Workspace</span>
+                <span className="text-xs text-muted-foreground">{t('workspace.label')}</span>
                 <span className="font-medium truncate w-full">
-                  {currentWorkspace?.name || "Selecionar..."}
+                  {currentWorkspace?.name || t('workspace.select')}
                 </span>
               </div>
             </div>
@@ -78,10 +80,10 @@ const WorkspaceSelector = () => {
         </PopoverTrigger>
         <PopoverContent className="w-[240px] p-0" align="start">
           <Command>
-            <CommandInput placeholder="Buscar workspace..." />
+            <CommandInput placeholder={t('workspace.searchPlaceholder')} />
             <CommandList>
-              <CommandEmpty>Nenhum workspace encontrado.</CommandEmpty>
-              <CommandGroup heading="Seus workspaces">
+              <CommandEmpty>{t('workspace.noResults')}</CommandEmpty>
+              <CommandGroup heading={t('workspace.yourWorkspaces')}>
                 {workspaces.map((workspace) => (
                   <CommandItem
                     key={workspace.id}
@@ -118,7 +120,7 @@ const WorkspaceSelector = () => {
                   className="cursor-pointer"
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Criar novo workspace
+                  {t('workspace.create')}
                 </CommandItem>
                 {currentWorkspace && isWorkspaceOwner && (
                   <CommandItem
@@ -129,7 +131,7 @@ const WorkspaceSelector = () => {
                     className="cursor-pointer"
                   >
                     <Settings className="mr-2 h-4 w-4" />
-                    Configurações do workspace
+                    {t('workspace.settings')}
                   </CommandItem>
                 )}
               </CommandGroup>

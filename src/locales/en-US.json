@@ -491,6 +491,17 @@
       "remove": "Remove"
     }
   },
+  "export": {
+    "export": "Export",
+    "exportReport": "Export Report",
+    "exportFormat": "Export Format",
+    "exportComplete": "Export complete",
+    "exportError": "Export error",
+    "pdfSuccess": "PDF report was generated successfully.",
+    "pdfError": "Could not generate PDF report.",
+    "excelSuccess": "Excel report was generated successfully.",
+    "excelError": "Could not generate Excel report."
+  },
   "energyRate": {
     "title": "Energy Rate Settings",
     "description": "Configure kWh value and currency for cost calculation in current workspace",
