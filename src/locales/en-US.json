@@ -559,5 +559,113 @@
     "expires": "Expires",
     "accept": "Accept",
     "decline": "Decline"
+  },
+  "charts": {
+    "energyConsumption": "Energy Consumption",
+    "temperatureByLocation": "Temperature by Location",
+    "efficiencyByEquipment": "Efficiency by Equipment",
+    "usagePatternsByHour": "Usage Patterns by Hour",
+    "noData": "No data available for selected period",
+    "consumption": "Consumption",
+    "date": "Date",
+    "currentTemp": "Current Temperature",
+    "targetTemp": "Target Temperature",
+    "efficiency": "Efficiency",
+    "usage": "Usage",
+    "activations": "activations",
+    "time": "Time"
+  },
+  "editUser": {
+    "title": "Edit User",
+    "ownProfileDesc": "Edit your profile information",
+    "otherProfileDesc": "View and edit user information",
+    "fullName": "Full name",
+    "namePlaceholder": "User name",
+    "email": "Email",
+    "emailCannotChange": "Email cannot be changed",
+    "profileType": "Profile type",
+    "selectProfile": "Select profile",
+    "onlyAdminsCanChange": "Only administrators can change profiles",
+    "activeUser": "Active user",
+    "inactiveUserDesc": "Inactive users cannot access the system",
+    "roles": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "viewer": "Viewer"
+    },
+    "validation": {
+      "nameMinLength": "Name must be at least 2 characters"
+    }
+  },
+  "hooks": {
+    "auth": {
+      "signInError": "Sign in error",
+      "invalidCredentials": "Invalid email or password.",
+      "welcome": "Welcome!",
+      "signInSuccess": "Successfully signed in.",
+      "signUpError": "Sign up error",
+      "emailAlreadyRegistered": "This email is already registered.",
+      "accountCreated": "Account created!",
+      "signUpSuccess": "Successfully registered.",
+      "signOutError": "Sign out error",
+      "goodbye": "Goodbye!",
+      "signOutSuccess": "You have signed out."
+    },
+    "equipments": {
+      "loadError": "Error loading equipment",
+      "tryAgainLater": "Please try again later."
+    },
+    "alerts": {
+      "loadError": "Could not load alerts.",
+      "alertDismissed": "Alert Dismissed",
+      "alertDismissedDesc": "Alert was removed from list.",
+      "dismissError": "Could not dismiss alert.",
+      "alertsCleared": "Alerts Cleared",
+      "alertsClearedDesc": "All alerts were removed.",
+      "clearError": "Could not clear alerts.",
+      "criticalAlert": "Critical Alert!",
+      "newAlert": "New Alert"
+    },
+    "workspace": {
+      "created": "Workspace created!",
+      "createdDesc": "New workspace was created successfully.",
+      "createError": "Error creating workspace",
+      "createErrorDesc": "Could not create workspace.",
+      "updated": "Workspace updated!",
+      "updatedDesc": "Name was changed successfully.",
+      "updateError": "Error updating",
+      "updateErrorDesc": "Could not update workspace.",
+      "deleted": "Workspace deleted",
+      "deletedDesc": "Workspace was removed successfully.",
+      "deleteError": "Error deleting",
+      "deleteErrorDesc": "Could not delete workspace.",
+      "roleUpdated": "Profile updated!",
+      "roleUpdatedDesc": "Access type was changed.",
+      "roleUpdateError": "Error updating",
+      "roleUpdateErrorDesc": "Could not change profile.",
+      "memberRemoved": "Member removed",
+      "memberRemovedDesc": "User was removed from workspace.",
+      "memberRemoveError": "Error removing",
+      "memberRemoveErrorDesc": "Could not remove member.",
+      "inviteSent": "Invite sent!",
+      "inviteSentDesc": "User will receive an email with the invite.",
+      "inviteExists": "Invite already exists",
+      "inviteExistsDesc": "This email was already invited to this workspace.",
+      "inviteError": "Error inviting",
+      "inviteErrorDesc": "Could not send invite.",
+      "inviteCancelled": "Invite cancelled",
+      "inviteCancelledDesc": "Invite was removed.",
+      "inviteCancelError": "Error cancelling",
+      "inviteCancelErrorDesc": "Could not cancel invite.",
+      "inviteNotFound": "Invite not found",
+      "inviteAccepted": "Invite accepted!",
+      "inviteAcceptedDesc": "You are now part of the workspace.",
+      "inviteAcceptError": "Error accepting invite",
+      "inviteAcceptErrorDesc": "Could not accept invite.",
+      "inviteDeclined": "Invite declined",
+      "inviteDeclinedDesc": "Invite was removed.",
+      "inviteDeclineError": "Error declining",
+      "inviteDeclineErrorDesc": "Could not decline invite."
+    }
   }
 }

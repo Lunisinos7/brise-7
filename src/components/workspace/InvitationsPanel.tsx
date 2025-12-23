@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Mail, Clock, X, Send } from "lucide-react";
-import { format, formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR, enUS, es, Locale } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
-const roleLabels: Record<WorkspaceRole, string> = {
-  owner: "Proprietário",
-  admin: "Administrador",
-  viewer: "Visualizador",
+const localeMap: Record<string, Locale> = {
+  'pt-BR': ptBR,
+  'en-US': enUS,
+  'es-ES': es,
 };
 
 const roleBadgeVariants: Record<WorkspaceRole, "default" | "secondary" | "outline"> = {
@@ -21,8 +22,16 @@ const roleBadgeVariants: Record<WorkspaceRole, "default" | "secondary" | "outlin
 };
 
 const InvitationsPanel = () => {
+  const { t, i18n } = useTranslation();
+  const currentLocale = localeMap[i18n.language] || ptBR;
   const { currentWorkspaceId, canManageWorkspace } = useWorkspaceContext();
   const { invitations, isLoading, cancelInvitation } = useWorkspaceInvitations(currentWorkspaceId);
+
+  const roleLabels: Record<WorkspaceRole, string> = {
+    owner: t('workspace.roles.owner'),
+    admin: t('workspace.roles.admin'),
+    viewer: t('workspace.roles.viewer'),
+  };
 
   if (!canManageWorkspace) return null;
 
@@ -50,7 +59,7 @@ const InvitationsPanel = () => {
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center gap-2">
           <Send className="h-4 w-4" />
-          Convites pendentes
+          {t('workspace.pendingInvitations')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -68,9 +77,9 @@ const InvitationsPanel = () => {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />
                   <span>
-                    Expira {formatDistanceToNow(new Date(invitation.expires_at), {
+                    {t('invitations.expires')} {formatDistanceToNow(new Date(invitation.expires_at), {
                       addSuffix: true,
-                      locale: ptBR,
+                      locale: currentLocale,
                     })}
                   </span>
                 </div>

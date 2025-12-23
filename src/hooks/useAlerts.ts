@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import i18n from "@/lib/i18n";
 
 export interface Alert {
   id: string;
@@ -42,8 +43,8 @@ export const useAlerts = () => {
     } catch (error) {
       console.error("Error fetching alerts:", error);
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar os alertas.",
+        title: i18n.t('common.error'),
+        description: i18n.t('hooks.alerts.loadError'),
         variant: "destructive",
       });
     } finally {
@@ -68,14 +69,14 @@ export const useAlerts = () => {
 
       setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
       toast({
-        title: "Alerta Dispensado",
-        description: "O alerta foi removido da lista.",
+        title: i18n.t('hooks.alerts.alertDismissed'),
+        description: i18n.t('hooks.alerts.alertDismissedDesc'),
       });
     } catch (error) {
       console.error("Error dismissing alert:", error);
       toast({
-        title: "Erro",
-        description: "Não foi possível dispensar o alerta.",
+        title: i18n.t('common.error'),
+        description: i18n.t('hooks.alerts.dismissError'),
         variant: "destructive",
       });
     }
@@ -101,14 +102,14 @@ export const useAlerts = () => {
 
       setAlerts([]);
       toast({
-        title: "Alertas Limpos",
-        description: "Todos os alertas foram removidos.",
+        title: i18n.t('hooks.alerts.alertsCleared'),
+        description: i18n.t('hooks.alerts.alertsClearedDesc'),
       });
     } catch (error) {
       console.error("Error clearing alerts:", error);
       toast({
-        title: "Erro",
-        description: "Não foi possível limpar os alertas.",
+        title: i18n.t('common.error'),
+        description: i18n.t('hooks.alerts.clearError'),
         variant: "destructive",
       });
     }
@@ -133,7 +134,7 @@ export const useAlerts = () => {
           if (!newAlert.is_dismissed) {
             setAlerts((prev) => [newAlert, ...prev]);
             toast({
-              title: newAlert.type === "critical" ? "Alerta Crítico!" : "Novo Alerta",
+              title: newAlert.type === "critical" ? i18n.t('hooks.alerts.criticalAlert') : i18n.t('hooks.alerts.newAlert'),
               description: newAlert.message,
               variant: newAlert.type === "critical" ? "destructive" : "default",
             });

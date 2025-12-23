@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import i18n from '@/lib/i18n';
 
 export type WorkspaceRole = 'owner' | 'admin' | 'viewer';
 
@@ -87,15 +88,15 @@ export const useWorkspaces = (userId: string | undefined) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       toast({
-        title: 'Workspace criado!',
-        description: 'O novo workspace foi criado com sucesso.',
+        title: i18n.t('hooks.workspace.created'),
+        description: i18n.t('hooks.workspace.createdDesc'),
       });
     },
     onError: (error) => {
       console.error('Error creating workspace:', error);
       toast({
-        title: 'Erro ao criar workspace',
-        description: 'Não foi possível criar o workspace.',
+        title: i18n.t('hooks.workspace.createError'),
+        description: i18n.t('hooks.workspace.createErrorDesc'),
         variant: 'destructive',
       });
     },
@@ -113,15 +114,15 @@ export const useWorkspaces = (userId: string | undefined) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       toast({
-        title: 'Workspace atualizado!',
-        description: 'O nome foi alterado com sucesso.',
+        title: i18n.t('hooks.workspace.updated'),
+        description: i18n.t('hooks.workspace.updatedDesc'),
       });
     },
     onError: (error) => {
       console.error('Error updating workspace:', error);
       toast({
-        title: 'Erro ao atualizar',
-        description: 'Não foi possível atualizar o workspace.',
+        title: i18n.t('hooks.workspace.updateError'),
+        description: i18n.t('hooks.workspace.updateErrorDesc'),
         variant: 'destructive',
       });
     },
@@ -139,15 +140,15 @@ export const useWorkspaces = (userId: string | undefined) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       toast({
-        title: 'Workspace excluído',
-        description: 'O workspace foi removido com sucesso.',
+        title: i18n.t('hooks.workspace.deleted'),
+        description: i18n.t('hooks.workspace.deletedDesc'),
       });
     },
     onError: (error) => {
       console.error('Error deleting workspace:', error);
       toast({
-        title: 'Erro ao excluir',
-        description: 'Não foi possível excluir o workspace.',
+        title: i18n.t('hooks.workspace.deleteError'),
+        description: i18n.t('hooks.workspace.deleteErrorDesc'),
         variant: 'destructive',
       });
     },
@@ -218,15 +219,15 @@ export const useWorkspaceMembers = (workspaceId: string | null) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspace-members', workspaceId] });
       toast({
-        title: 'Perfil atualizado!',
-        description: 'O tipo de acesso foi alterado.',
+        title: i18n.t('hooks.workspace.roleUpdated'),
+        description: i18n.t('hooks.workspace.roleUpdatedDesc'),
       });
     },
     onError: (error) => {
       console.error('Error updating member role:', error);
       toast({
-        title: 'Erro ao atualizar',
-        description: 'Não foi possível alterar o perfil.',
+        title: i18n.t('hooks.workspace.roleUpdateError'),
+        description: i18n.t('hooks.workspace.roleUpdateErrorDesc'),
         variant: 'destructive',
       });
     },
@@ -244,15 +245,15 @@ export const useWorkspaceMembers = (workspaceId: string | null) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspace-members', workspaceId] });
       toast({
-        title: 'Membro removido',
-        description: 'O usuário foi removido do workspace.',
+        title: i18n.t('hooks.workspace.memberRemoved'),
+        description: i18n.t('hooks.workspace.memberRemovedDesc'),
       });
     },
     onError: (error) => {
       console.error('Error removing member:', error);
       toast({
-        title: 'Erro ao remover',
-        description: 'Não foi possível remover o membro.',
+        title: i18n.t('hooks.workspace.memberRemoveError'),
+        description: i18n.t('hooks.workspace.memberRemoveErrorDesc'),
         variant: 'destructive',
       });
     },
@@ -320,22 +321,22 @@ export const useWorkspaceInvitations = (workspaceId: string | null) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspace-invitations', workspaceId] });
       toast({
-        title: 'Convite enviado!',
-        description: 'O usuário receberá um email com o convite.',
+        title: i18n.t('hooks.workspace.inviteSent'),
+        description: i18n.t('hooks.workspace.inviteSentDesc'),
       });
     },
     onError: (error: any) => {
       console.error('Error creating invitation:', error);
       if (error.code === '23505') {
         toast({
-          title: 'Convite já existe',
-          description: 'Este email já foi convidado para este workspace.',
+          title: i18n.t('hooks.workspace.inviteExists'),
+          description: i18n.t('hooks.workspace.inviteExistsDesc'),
           variant: 'destructive',
         });
       } else {
         toast({
-          title: 'Erro ao convidar',
-          description: 'Não foi possível enviar o convite.',
+          title: i18n.t('hooks.workspace.inviteError'),
+          description: i18n.t('hooks.workspace.inviteErrorDesc'),
           variant: 'destructive',
         });
       }
@@ -354,15 +355,15 @@ export const useWorkspaceInvitations = (workspaceId: string | null) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspace-invitations', workspaceId] });
       toast({
-        title: 'Convite cancelado',
-        description: 'O convite foi removido.',
+        title: i18n.t('hooks.workspace.inviteCancelled'),
+        description: i18n.t('hooks.workspace.inviteCancelledDesc'),
       });
     },
     onError: (error) => {
       console.error('Error canceling invitation:', error);
       toast({
-        title: 'Erro ao cancelar',
-        description: 'Não foi possível cancelar o convite.',
+        title: i18n.t('hooks.workspace.inviteCancelError'),
+        description: i18n.t('hooks.workspace.inviteCancelErrorDesc'),
         variant: 'destructive',
       });
     },
@@ -416,7 +417,7 @@ export const usePendingInvitations = (userEmail: string | undefined) => {
         .single();
 
       if (fetchError) throw fetchError;
-      if (!invitation) throw new Error('Convite não encontrado');
+      if (!invitation) throw new Error(i18n.t('hooks.workspace.inviteNotFound'));
 
       // Add user to workspace
       const { error: memberError } = await supabase
@@ -443,15 +444,15 @@ export const usePendingInvitations = (userEmail: string | undefined) => {
       queryClient.invalidateQueries({ queryKey: ['pending-invitations'] });
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       toast({
-        title: 'Convite aceito!',
-        description: 'Você agora faz parte do workspace.',
+        title: i18n.t('hooks.workspace.inviteAccepted'),
+        description: i18n.t('hooks.workspace.inviteAcceptedDesc'),
       });
     },
     onError: (error) => {
       console.error('Error accepting invitation:', error);
       toast({
-        title: 'Erro ao aceitar convite',
-        description: 'Não foi possível aceitar o convite.',
+        title: i18n.t('hooks.workspace.inviteAcceptError'),
+        description: i18n.t('hooks.workspace.inviteAcceptErrorDesc'),
         variant: 'destructive',
       });
     },
@@ -469,15 +470,15 @@ export const usePendingInvitations = (userEmail: string | undefined) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pending-invitations'] });
       toast({
-        title: 'Convite recusado',
-        description: 'O convite foi removido.',
+        title: i18n.t('hooks.workspace.inviteDeclined'),
+        description: i18n.t('hooks.workspace.inviteDeclinedDesc'),
       });
     },
     onError: (error) => {
       console.error('Error declining invitation:', error);
       toast({
-        title: 'Erro ao recusar',
-        description: 'Não foi possível recusar o convite.',
+        title: i18n.t('hooks.workspace.inviteDeclineError'),
+        description: i18n.t('hooks.workspace.inviteDeclineErrorDesc'),
         variant: 'destructive',
       });
     },

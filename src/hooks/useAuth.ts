@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import i18n from '@/lib/i18n';
 
 export type AppRole = 'admin' | 'manager' | 'viewer';
 
@@ -90,13 +91,13 @@ export const useAuth = () => {
       if (error) {
         if (error.message === 'Invalid login credentials') {
           toast({
-            title: 'Erro ao entrar',
-            description: 'Email ou senha incorretos.',
+            title: i18n.t('hooks.auth.signInError'),
+            description: i18n.t('hooks.auth.invalidCredentials'),
             variant: 'destructive',
           });
         } else {
           toast({
-            title: 'Erro ao entrar',
+            title: i18n.t('hooks.auth.signInError'),
             description: error.message,
             variant: 'destructive',
           });
@@ -105,8 +106,8 @@ export const useAuth = () => {
       }
 
       toast({
-        title: 'Bem-vindo!',
-        description: 'Login realizado com sucesso.',
+        title: i18n.t('hooks.auth.welcome'),
+        description: i18n.t('hooks.auth.signInSuccess'),
       });
 
       return { error: null };
@@ -134,13 +135,13 @@ export const useAuth = () => {
       if (error) {
         if (error.message.includes('already registered')) {
           toast({
-            title: 'Erro ao cadastrar',
-            description: 'Este email já está cadastrado.',
+            title: i18n.t('hooks.auth.signUpError'),
+            description: i18n.t('hooks.auth.emailAlreadyRegistered'),
             variant: 'destructive',
           });
         } else {
           toast({
-            title: 'Erro ao cadastrar',
+            title: i18n.t('hooks.auth.signUpError'),
             description: error.message,
             variant: 'destructive',
           });
@@ -149,8 +150,8 @@ export const useAuth = () => {
       }
 
       toast({
-        title: 'Conta criada!',
-        description: 'Cadastro realizado com sucesso.',
+        title: i18n.t('hooks.auth.accountCreated'),
+        description: i18n.t('hooks.auth.signUpSuccess'),
       });
 
       return { error: null };
@@ -166,7 +167,7 @@ export const useAuth = () => {
 
       if (error) {
         toast({
-          title: 'Erro ao sair',
+          title: i18n.t('hooks.auth.signOutError'),
           description: error.message,
           variant: 'destructive',
         });
@@ -174,8 +175,8 @@ export const useAuth = () => {
       }
 
       toast({
-        title: 'Até logo!',
-        description: 'Você saiu da sua conta.',
+        title: i18n.t('hooks.auth.goodbye'),
+        description: i18n.t('hooks.auth.signOutSuccess'),
       });
 
       return { error: null };

@@ -1,9 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es, Locale } from "date-fns/locale";
 import { Thermometer, Loader2 } from "lucide-react";
 import { TemperatureData } from "@/hooks/useReportData";
+import { useTranslation } from "react-i18next";
+
+const localeMap: Record<string, Locale> = {
+  'pt-BR': ptBR,
+  'en-US': enUS,
+  'es-ES': es,
+};
 
 interface TemperatureChartProps {
   data: TemperatureData[];
@@ -11,9 +18,12 @@ interface TemperatureChartProps {
 }
 
 export const TemperatureChart = ({ data, isLoading }: TemperatureChartProps) => {
+  const { t, i18n } = useTranslation();
+  const currentLocale = localeMap[i18n.language] || ptBR;
+
   const formattedData = data.map((item) => ({
     ...item,
-    dateFormatted: format(new Date(item.date), "dd/MM", { locale: ptBR }),
+    dateFormatted: format(new Date(item.date), "dd/MM", { locale: currentLocale }),
   }));
 
   return (
@@ -21,7 +31,7 @@ export const TemperatureChart = ({ data, isLoading }: TemperatureChartProps) => 
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Thermometer className="h-5 w-5 text-cooling" />
-          Temperatura por Local
+          {t('charts.temperatureByLocation')}
         </CardTitle>
       </CardHeader>
       <CardContent className="h-80">
@@ -31,7 +41,7 @@ export const TemperatureChart = ({ data, isLoading }: TemperatureChartProps) => 
           </div>
         ) : data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground">
-            Nenhum dado disponível para o período selecionado
+            {t('charts.noData')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
@@ -60,13 +70,13 @@ export const TemperatureChart = ({ data, isLoading }: TemperatureChartProps) => 
                 }}
                 formatter={(value: number, name: string) => [
                   `${value.toFixed(1)}°C`,
-                  name === "current_temp" ? "Temperatura Atual" : "Temperatura Alvo",
+                  name === "current_temp" ? t('charts.currentTemp') : t('charts.targetTemp'),
                 ]}
-                labelFormatter={(label) => `Data: ${label}`}
+                labelFormatter={(label) => `${t('charts.date')}: ${label}`}
               />
               <Legend
                 formatter={(value) =>
-                  value === "current_temp" ? "Temperatura Atual" : "Temperatura Alvo"
+                  value === "current_temp" ? t('charts.currentTemp') : t('charts.targetTemp')
                 }
               />
               <Line

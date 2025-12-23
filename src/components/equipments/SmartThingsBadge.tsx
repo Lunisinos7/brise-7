@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Wifi, WifiOff, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface SmartThingsBadgeProps {
   isSmartThings: boolean;
@@ -15,10 +16,20 @@ export function SmartThingsBadge({
   showSyncStatus = false,
   className 
 }: SmartThingsBadgeProps) {
+  const { i18n } = useTranslation();
+  
   if (!isSmartThings) return null;
 
   const isRecentlySync = lastSyncedAt && 
     (Date.now() - new Date(lastSyncedAt).getTime()) < 5 * 60 * 1000; // 5 minutes
+
+  const localeMap: Record<string, string> = {
+    'pt-BR': 'pt-BR',
+    'en-US': 'en-US',
+    'es-ES': 'es-ES',
+  };
+
+  const locale = localeMap[i18n.language] || 'pt-BR';
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
@@ -37,7 +48,7 @@ export function SmartThingsBadge({
           ) : (
             <WifiOff className="h-3 w-3 text-yellow-500" />
           )}
-          {new Date(lastSyncedAt).toLocaleTimeString('pt-BR', { 
+          {new Date(lastSyncedAt).toLocaleTimeString(locale, { 
             hour: '2-digit', 
             minute: '2-digit' 
           })}

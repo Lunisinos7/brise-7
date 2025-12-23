@@ -6,9 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Building2, Check, X, Clock, Bell } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es, Locale } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+
+const localeMap: Record<string, Locale> = {
+  'pt-BR': ptBR,
+  'en-US': enUS,
+  'es-ES': es,
+};
 
 const PendingInvitationsNotification = () => {
+  const { t, i18n } = useTranslation();
+  const currentLocale = localeMap[i18n.language] || ptBR;
   const { user } = useAuthContext();
   const { pendingInvitations, isLoading, acceptInvitation, declineInvitation } = 
     usePendingInvitations(user?.email);
@@ -35,7 +44,7 @@ const PendingInvitationsNotification = () => {
       <CardHeader className="pb-2">
         <CardTitle className="text-base flex items-center gap-2">
           <Bell className="h-4 w-4 text-primary" />
-          Convites pendentes
+          {t('invitations.pending')}
           <Badge variant="secondary" className="ml-auto">
             {pendingInvitations.length}
           </Badge>
@@ -58,9 +67,9 @@ const PendingInvitationsNotification = () => {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />
                   <span>
-                    Expira {formatDistanceToNow(new Date(invitation.expires_at), {
+                    {t('invitations.expires')} {formatDistanceToNow(new Date(invitation.expires_at), {
                       addSuffix: true,
-                      locale: ptBR,
+                      locale: currentLocale,
                     })}
                   </span>
                 </div>
@@ -74,7 +83,7 @@ const PendingInvitationsNotification = () => {
                 onClick={() => declineInvitation(invitation.id)}
               >
                 <X className="h-4 w-4 mr-1" />
-                Recusar
+                {t('invitations.decline')}
               </Button>
               <Button
                 size="sm"
@@ -86,7 +95,7 @@ const PendingInvitationsNotification = () => {
                 }}
               >
                 <Check className="h-4 w-4 mr-1" />
-                Aceitar
+                {t('invitations.accept')}
               </Button>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { TrendingUp, Loader2 } from "lucide-react";
 import { EquipmentEfficiency } from "@/hooks/useReportData";
+import { useTranslation } from "react-i18next";
 
 interface EfficiencyChartProps {
   data: EquipmentEfficiency[];
@@ -15,12 +16,14 @@ const getEfficiencyColor = (efficiency: number) => {
 };
 
 export const EfficiencyChart = ({ data, isLoading }: EfficiencyChartProps) => {
+  const { t } = useTranslation();
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-energy-efficient" />
-          Eficiência por Equipamento
+          {t('charts.efficiencyByEquipment')}
         </CardTitle>
       </CardHeader>
       <CardContent className="h-80">
@@ -30,7 +33,7 @@ export const EfficiencyChart = ({ data, isLoading }: EfficiencyChartProps) => {
           </div>
         ) : data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground">
-            Nenhum dado disponível para o período selecionado
+            {t('charts.noData')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
@@ -60,7 +63,7 @@ export const EfficiencyChart = ({ data, isLoading }: EfficiencyChartProps) => {
                   border: "1px solid hsl(var(--border))",
                   borderRadius: "8px",
                 }}
-                formatter={(value: number) => [`${value.toFixed(1)}%`, "Eficiência"]}
+                formatter={(value: number) => [`${value.toFixed(1)}%`, t('charts.efficiency')]}
               />
               <Bar dataKey="avg_efficiency" radius={[0, 4, 4, 0]}>
                 {data.map((entry, index) => (
