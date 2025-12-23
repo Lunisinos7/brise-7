@@ -9,6 +9,7 @@ import {
   Pencil
 } from "lucide-react";
 import { Equipment } from "@/data/mockData";
+import { useTranslation } from "react-i18next";
 
 interface EquipmentCardProps {
   equipment: Equipment;
@@ -18,6 +19,7 @@ interface EquipmentCardProps {
 }
 
 const EquipmentCard = ({ equipment, onToggle, onControl, onEdit }: EquipmentCardProps) => {
+  const { t } = useTranslation();
 
   return (
     <Card className={cn(
@@ -54,7 +56,7 @@ const EquipmentCard = ({ equipment, onToggle, onControl, onEdit }: EquipmentCard
                 "text-xs font-medium",
                 equipment.isOn ? "text-cooling" : "text-muted-foreground"
               )}>
-                {equipment.isOn ? "ON" : "OFF"}
+                {equipment.isOn ? t("equipmentControlDialog.on") : t("equipmentControlDialog.off")}
               </span>
             </div>
           </div>
@@ -64,12 +66,12 @@ const EquipmentCard = ({ equipment, onToggle, onControl, onEdit }: EquipmentCard
       <CardContent className="p-4 pt-2 flex flex-col flex-1">
         <div className="space-y-3 flex-1">
           <div>
-            <p className="text-sm text-muted-foreground">Temperatura atual</p>
+            <p className="text-sm text-muted-foreground">{t("equipments.currentTemp")}</p>
             <p className="text-2xl font-bold">{equipment.currentTemp}°C</p>
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground">Consumo</p>
+            <p className="text-sm text-muted-foreground">{t("equipments.consumption")}</p>
             <p className="text-xl font-bold text-cooling">{(equipment.energyConsumption / 1000).toFixed(1)} kW</p>
           </div>
         </div>
@@ -81,7 +83,7 @@ const EquipmentCard = ({ equipment, onToggle, onControl, onEdit }: EquipmentCard
           onClick={() => onControl(equipment.id)}
         >
           <Settings className="h-4 w-4" />
-          Controlar
+          {t("common.control")}
         </Button>
       </CardContent>
     </Card>

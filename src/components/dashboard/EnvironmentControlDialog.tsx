@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Power, Minus, Plus, Snowflake, Sun, Wind, Timer, Info, Thermometer } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Equipment } from "@/hooks/useEquipments";
 import { Environment } from "@/contexts/EnvironmentContext";
 
@@ -33,6 +34,7 @@ const EnvironmentControlDialog = ({
   onUpdateEquipments,
   onUpdateEnvironment,
 }: EnvironmentControlDialogProps) => {
+  const { t } = useTranslation();
   const [isManualMode, setIsManualMode] = useState(true);
   
   // Setpoints mode state - Opção C: configurações separadas para aquecimento e refrigeração
@@ -138,10 +140,10 @@ const EnvironmentControlDialog = ({
 
   const getModeLabel = () => {
     switch (mode) {
-      case "cool": return "COOL";
-      case "heat": return "HEAT";
-      case "fan": return "FAN";
-      default: return "COOL";
+      case "cool": return t("equipmentControlDialog.cool");
+      case "heat": return t("equipmentControlDialog.heat");
+      case "fan": return t("equipmentControlDialog.fan");
+      default: return t("equipmentControlDialog.cool");
     }
   };
 
@@ -249,20 +251,20 @@ const EnvironmentControlDialog = ({
   // Gerar texto da zona de conforto
   const getComfortZoneText = () => {
     if (coolingEnabled && heatingEnabled) {
-      return `Entre ${heatTargetTemp}°C e ${coolTargetTemp}°C, os equipamentos permanecerão desligados.`;
+      return t("environmentControlDialog.comfortZoneText", { min: heatTargetTemp, max: coolTargetTemp });
     } else if (coolingEnabled) {
-      return `Desliga quando a temperatura cair abaixo de ${coolTargetTemp}°C.`;
+      return t("environmentControlDialog.coolShutdownText", { temp: coolTargetTemp });
     } else if (heatingEnabled) {
-      return `Desliga quando a temperatura subir acima de ${heatTargetTemp}°C.`;
+      return t("environmentControlDialog.heatShutdownText", { temp: heatTargetTemp });
     }
-    return "Nenhum modo automático configurado.";
+    return t("environmentControlDialog.noAutoMode");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Controle - {environment?.name || ""}</DialogTitle>
+          <DialogTitle>{t("environmentControlDialog.control")} - {environment?.name || ""}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -272,7 +274,7 @@ const EnvironmentControlDialog = ({
               "text-sm font-medium transition-colors",
               !isManualMode ? "text-foreground" : "text-muted-foreground"
             )}>
-              Modo Automático
+              {t("environmentControlDialog.automaticMode")}
             </span>
             <Switch
               checked={isManualMode}
@@ -283,7 +285,7 @@ const EnvironmentControlDialog = ({
               "text-sm font-medium transition-colors",
               isManualMode ? "text-foreground" : "text-muted-foreground"
             )}>
-              Modo Manual
+              {t("environmentControlDialog.manualMode")}
             </span>
           </div>
 
@@ -300,7 +302,7 @@ const EnvironmentControlDialog = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Snowflake className={cn("h-5 w-5", coolingEnabled ? "text-blue-500" : "text-muted-foreground")} />
-                    <h3 className={cn("font-semibold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>Refrigeração</h3>
+                    <h3 className={cn("font-semibold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>{t("environmentControlDialog.cooling")}</h3>
                   </div>
                   <Switch
                     checked={coolingEnabled}
@@ -312,7 +314,7 @@ const EnvironmentControlDialog = ({
                 {/* Cool Trigger */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className={cn("text-sm", !coolingEnabled && "text-muted-foreground")}>Ligar quando acima de:</Label>
+                    <Label className={cn("text-sm", !coolingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.turnOnAbove")}</Label>
                     <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>{coolTriggerTemp}°C</span>
                   </div>
                   <Slider
@@ -329,7 +331,7 @@ const EnvironmentControlDialog = ({
                 {/* Cool Target */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className={cn("text-sm", !coolingEnabled && "text-muted-foreground")}>Resfriar até:</Label>
+                    <Label className={cn("text-sm", !coolingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.coolTo")}</Label>
                     <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>{coolTargetTemp}°C</span>
                   </div>
                   <Slider
@@ -354,7 +356,7 @@ const EnvironmentControlDialog = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sun className={cn("h-5 w-5", heatingEnabled ? "text-red-500" : "text-muted-foreground")} />
-                    <h3 className={cn("font-semibold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>Aquecimento</h3>
+                    <h3 className={cn("font-semibold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>{t("environmentControlDialog.heating")}</h3>
                   </div>
                   <Switch
                     checked={heatingEnabled}
@@ -366,7 +368,7 @@ const EnvironmentControlDialog = ({
                 {/* Heat Trigger */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className={cn("text-sm", !heatingEnabled && "text-muted-foreground")}>Ligar quando abaixo de:</Label>
+                    <Label className={cn("text-sm", !heatingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.turnOnBelow")}</Label>
                     <span className={cn("text-lg font-bold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>{heatTriggerTemp}°C</span>
                   </div>
                   <Slider
@@ -383,7 +385,7 @@ const EnvironmentControlDialog = ({
                 {/* Heat Target */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className={cn("text-sm", !heatingEnabled && "text-muted-foreground")}>Aquecer até:</Label>
+                    <Label className={cn("text-sm", !heatingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.heatTo")}</Label>
                     <span className={cn("text-lg font-bold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>{heatTargetTemp}°C</span>
                   </div>
                   <Slider
@@ -404,7 +406,7 @@ const EnvironmentControlDialog = ({
                   <div className="flex items-center gap-2 mb-2">
                     <Thermometer className="h-4 w-4 text-green-600 dark:text-green-400" />
                     <span className="font-medium text-green-700 dark:text-green-300">
-                      {coolingEnabled && heatingEnabled ? "Zona de Conforto" : "Condição de Desligamento"}
+                      {coolingEnabled && heatingEnabled ? t("environmentControlDialog.comfortZone") : t("environmentControlDialog.shutdownCondition")}
                     </span>
                   </div>
                   <p className="text-sm text-green-600 dark:text-green-400">
@@ -416,7 +418,7 @@ const EnvironmentControlDialog = ({
               {!coolingEnabled && !heatingEnabled && (
                 <div className="p-4 bg-yellow-50/90 dark:bg-yellow-900/30 rounded-lg border border-yellow-300 dark:border-yellow-700/50">
                   <p className="text-sm text-yellow-600 dark:text-yellow-400">
-                    ⚠️ Nenhum modo automático está ativo. Ative pelo menos um modo para o sistema funcionar automaticamente.
+                    ⚠️ {t("environmentControlDialog.noAutoModeWarning")}
                   </p>
                 </div>
               )}
@@ -425,7 +427,7 @@ const EnvironmentControlDialog = ({
               <div className="flex items-start gap-2 p-3 bg-muted/80 dark:bg-white/5 rounded-lg">
                 <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                 <p className="text-xs text-muted-foreground">
-                  O sistema ativará automaticamente o modo apropriado (aquecimento ou refrigeração) com base na temperatura atual do ambiente.
+                  {t("environmentControlDialog.autoModeInfo")}
                 </p>
               </div>
             </div>
@@ -435,7 +437,7 @@ const EnvironmentControlDialog = ({
               {/* Status Badges */}
               <div className="flex items-center justify-center gap-2">
                 <Badge variant={isAnyOn ? "default" : "secondary"}>
-                  {isAnyOn ? "LIGADO" : "DESLIGADO"}
+                  {isAnyOn ? t("environmentControlDialog.on") : t("environmentControlDialog.off")}
                 </Badge>
                 {isAnyOn && (
                   <Badge variant="outline" className="gap-1">
@@ -449,7 +451,7 @@ const EnvironmentControlDialog = ({
               <div className="text-center">
                 <p className="text-5xl font-bold">{targetTemp}°C</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Atual: {avgCurrentTemp}°C
+                  {t("environmentControlDialog.current")}: {avgCurrentTemp}°C
                 </p>
               </div>
 
@@ -498,7 +500,7 @@ const EnvironmentControlDialog = ({
                   disabled={!isAnyOn}
                 >
                   <Snowflake className="h-4 w-4 mr-2" />
-                  FRIO
+                  {t("equipmentControlDialog.cool")}
                 </Button>
                 <Button
                   variant={mode === "heat" ? "default" : "outline"}
@@ -507,7 +509,7 @@ const EnvironmentControlDialog = ({
                   disabled={!isAnyOn}
                 >
                   <Sun className="h-4 w-4 mr-2" />
-                  QUENTE
+                  {t("equipmentControlDialog.heat")}
                 </Button>
                 <Button
                   variant={mode === "fan" ? "default" : "outline"}
@@ -515,13 +517,13 @@ const EnvironmentControlDialog = ({
                   disabled={!isAnyOn}
                 >
                   <Wind className="h-4 w-4 mr-2" />
-                  VENTO
+                  {t("equipmentControlDialog.fan")}
                 </Button>
               </div>
 
               {/* Fan Speed */}
               <div className="space-y-2">
-                <Label className="text-sm">Velocidade do Ventilador</Label>
+                <Label className="text-sm">{t("environmentControlDialog.fanSpeed")}</Label>
                 <div className="grid grid-cols-4 gap-2">
                   {[1, 2, 3, 4].map((speed) => (
                     <Button
@@ -541,7 +543,7 @@ const EnvironmentControlDialog = ({
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Timer className="h-4 w-4 text-muted-foreground" />
-                  <Label className="text-sm">Timer - Desligar em:</Label>
+                  <Label className="text-sm">{t("environmentControlDialog.timer")}</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <Input
@@ -570,7 +572,7 @@ const EnvironmentControlDialog = ({
                     onClick={handleSetTimer}
                     disabled={!isAnyOn}
                   >
-                    Definir
+                    {t("environmentControlDialog.setTimer")}
                   </Button>
                 </div>
               </div>
