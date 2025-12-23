@@ -104,7 +104,17 @@
     "deleteEnvironmentDesc": "Tem certeza que deseja excluir o ambiente \"{{name}}\"? Esta ação não pode ser desfeita. Os equipamentos vinculados não serão excluídos.",
     "errorToggleEquipment": "Não foi possível alterar o estado do equipamento.",
     "errorUpdateEquipment": "Não foi possível atualizar o equipamento.",
-    "errorUpdateEnvironment": "Não foi possível atualizar os equipamentos do ambiente."
+    "errorUpdateEnvironment": "Não foi possível atualizar os equipamentos do ambiente.",
+    "equipmentCard": {
+      "currentTemp": "Temperatura atual",
+      "consumption": "Consumo",
+      "control": "Controlar"
+    },
+    "accumulatedExpenseCard": {
+      "title": "Gasto Acumulado",
+      "loading": "Carregando...",
+      "since": "Desde 00:00"
+    }
   },
   "equipments": {
     "title": "Equipamentos",
@@ -717,18 +727,6 @@
       "createError": "Erro ao criar ambiente",
       "deleteError": "Erro ao excluir ambiente",
       "updateError": "Erro ao atualizar ambiente"
-    }
-  },
-  "dashboard": {
-    "equipmentCard": {
-      "currentTemp": "Temperatura atual",
-      "consumption": "Consumo",
-      "control": "Controlar"
-    },
-    "accumulatedExpense": {
-      "title": "Gasto Acumulado",
-      "loading": "Carregando...",
-      "since": "Desde 00:00"
     }
   },
   "weekdays": {

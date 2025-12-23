@@ -104,7 +104,17 @@
     "deleteEnvironmentDesc": "Are you sure you want to delete the environment \"{{name}}\"? This action cannot be undone. Linked equipment will not be deleted.",
     "errorToggleEquipment": "Could not change the equipment state.",
     "errorUpdateEquipment": "Could not update the equipment.",
-    "errorUpdateEnvironment": "Could not update the environment equipment."
+    "errorUpdateEnvironment": "Could not update the environment equipment.",
+    "equipmentCard": {
+      "currentTemp": "Current temperature",
+      "consumption": "Consumption",
+      "control": "Control"
+    },
+    "accumulatedExpenseCard": {
+      "title": "Accumulated Expense",
+      "loading": "Loading...",
+      "since": "Since 00:00"
+    }
   },
   "equipments": {
     "title": "Equipment",
@@ -717,18 +727,6 @@
       "createError": "Error creating environment",
       "deleteError": "Error deleting environment",
       "updateError": "Error updating environment"
-    }
-  },
-  "dashboard": {
-    "equipmentCard": {
-      "currentTemp": "Current temperature",
-      "consumption": "Consumption",
-      "control": "Control"
-    },
-    "accumulatedExpense": {
-      "title": "Accumulated Expense",
-      "loading": "Loading...",
-      "since": "Since 00:00"
     }
   },
   "weekdays": {
