@@ -559,5 +559,113 @@
     "expires": "Expira",
     "accept": "Aceitar",
     "decline": "Recusar"
+  },
+  "charts": {
+    "energyConsumption": "Consumo Energético",
+    "temperatureByLocation": "Temperatura por Local",
+    "efficiencyByEquipment": "Eficiência por Equipamento",
+    "usagePatternsByHour": "Padrões de Uso por Hora",
+    "noData": "Nenhum dado disponível para o período selecionado",
+    "consumption": "Consumo",
+    "date": "Data",
+    "currentTemp": "Temperatura Atual",
+    "targetTemp": "Temperatura Alvo",
+    "efficiency": "Eficiência",
+    "usage": "Uso",
+    "activations": "ativações",
+    "time": "Horário"
+  },
+  "editUser": {
+    "title": "Editar Usuário",
+    "ownProfileDesc": "Edite suas informações de perfil",
+    "otherProfileDesc": "Visualize e edite as informações do usuário",
+    "fullName": "Nome completo",
+    "namePlaceholder": "Nome do usuário",
+    "email": "Email",
+    "emailCannotChange": "O email não pode ser alterado",
+    "profileType": "Tipo de perfil",
+    "selectProfile": "Selecione o perfil",
+    "onlyAdminsCanChange": "Apenas administradores podem alterar perfis",
+    "activeUser": "Usuário ativo",
+    "inactiveUserDesc": "Usuários inativos não podem acessar o sistema",
+    "roles": {
+      "admin": "Administrador",
+      "manager": "Gerente",
+      "viewer": "Visualizador"
+    },
+    "validation": {
+      "nameMinLength": "O nome deve ter pelo menos 2 caracteres"
+    }
+  },
+  "hooks": {
+    "auth": {
+      "signInError": "Erro ao entrar",
+      "invalidCredentials": "Email ou senha incorretos.",
+      "welcome": "Bem-vindo!",
+      "signInSuccess": "Login realizado com sucesso.",
+      "signUpError": "Erro ao cadastrar",
+      "emailAlreadyRegistered": "Este email já está cadastrado.",
+      "accountCreated": "Conta criada!",
+      "signUpSuccess": "Cadastro realizado com sucesso.",
+      "signOutError": "Erro ao sair",
+      "goodbye": "Até logo!",
+      "signOutSuccess": "Você saiu da sua conta."
+    },
+    "equipments": {
+      "loadError": "Erro ao carregar equipamentos",
+      "tryAgainLater": "Tente novamente mais tarde."
+    },
+    "alerts": {
+      "loadError": "Não foi possível carregar os alertas.",
+      "alertDismissed": "Alerta Dispensado",
+      "alertDismissedDesc": "O alerta foi removido da lista.",
+      "dismissError": "Não foi possível dispensar o alerta.",
+      "alertsCleared": "Alertas Limpos",
+      "alertsClearedDesc": "Todos os alertas foram removidos.",
+      "clearError": "Não foi possível limpar os alertas.",
+      "criticalAlert": "Alerta Crítico!",
+      "newAlert": "Novo Alerta"
+    },
+    "workspace": {
+      "created": "Workspace criado!",
+      "createdDesc": "O novo workspace foi criado com sucesso.",
+      "createError": "Erro ao criar workspace",
+      "createErrorDesc": "Não foi possível criar o workspace.",
+      "updated": "Workspace atualizado!",
+      "updatedDesc": "O nome foi alterado com sucesso.",
+      "updateError": "Erro ao atualizar",
+      "updateErrorDesc": "Não foi possível atualizar o workspace.",
+      "deleted": "Workspace excluído",
+      "deletedDesc": "O workspace foi removido com sucesso.",
+      "deleteError": "Erro ao excluir",
+      "deleteErrorDesc": "Não foi possível excluir o workspace.",
+      "roleUpdated": "Perfil atualizado!",
+      "roleUpdatedDesc": "O tipo de acesso foi alterado.",
+      "roleUpdateError": "Erro ao atualizar",
+      "roleUpdateErrorDesc": "Não foi possível alterar o perfil.",
+      "memberRemoved": "Membro removido",
+      "memberRemovedDesc": "O usuário foi removido do workspace.",
+      "memberRemoveError": "Erro ao remover",
+      "memberRemoveErrorDesc": "Não foi possível remover o membro.",
+      "inviteSent": "Convite enviado!",
+      "inviteSentDesc": "O usuário receberá um email com o convite.",
+      "inviteExists": "Convite já existe",
+      "inviteExistsDesc": "Este email já foi convidado para este workspace.",
+      "inviteError": "Erro ao convidar",
+      "inviteErrorDesc": "Não foi possível enviar o convite.",
+      "inviteCancelled": "Convite cancelado",
+      "inviteCancelledDesc": "O convite foi removido.",
+      "inviteCancelError": "Erro ao cancelar",
+      "inviteCancelErrorDesc": "Não foi possível cancelar o convite.",
+      "inviteNotFound": "Convite não encontrado",
+      "inviteAccepted": "Convite aceito!",
+      "inviteAcceptedDesc": "Você agora faz parte do workspace.",
+      "inviteAcceptError": "Erro ao aceitar convite",
+      "inviteAcceptErrorDesc": "Não foi possível aceitar o convite.",
+      "inviteDeclined": "Convite recusado",
+      "inviteDeclinedDesc": "O convite foi removido.",
+      "inviteDeclineError": "Erro ao recusar",
+      "inviteDeclineErrorDesc": "Não foi possível recusar o convite."
+    }
   }
 }

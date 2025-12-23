@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Calendar, Loader2 } from "lucide-react";
 import { UsagePattern } from "@/hooks/useReportData";
+import { useTranslation } from "react-i18next";
 
 interface UsagePatternsChartProps {
   data: UsagePattern[];
@@ -9,6 +10,8 @@ interface UsagePatternsChartProps {
 }
 
 export const UsagePatternsChart = ({ data, isLoading }: UsagePatternsChartProps) => {
+  const { t } = useTranslation();
+
   // Aggregate usage by hour across all days
   const hourlyUsage = Array.from({ length: 24 }, (_, hour) => {
     const usageForHour = data.filter((item) => item.hour === hour);
@@ -24,7 +27,7 @@ export const UsagePatternsChart = ({ data, isLoading }: UsagePatternsChartProps)
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calendar className="h-5 w-5 text-primary" />
-          Padrões de Uso por Hora
+          {t('charts.usagePatternsByHour')}
         </CardTitle>
       </CardHeader>
       <CardContent className="h-80">
@@ -34,7 +37,7 @@ export const UsagePatternsChart = ({ data, isLoading }: UsagePatternsChartProps)
           </div>
         ) : data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground">
-            Nenhum dado disponível para o período selecionado
+            {t('charts.noData')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
@@ -66,8 +69,8 @@ export const UsagePatternsChart = ({ data, isLoading }: UsagePatternsChartProps)
                   border: "1px solid hsl(var(--border))",
                   borderRadius: "8px",
                 }}
-                formatter={(value: number) => [`${value} ativações`, "Uso"]}
-                labelFormatter={(label) => `Horário: ${label}`}
+                formatter={(value: number) => [`${value} ${t('charts.activations')}`, t('charts.usage')]}
+                labelFormatter={(label) => `${t('charts.time')}: ${label}`}
               />
               <Bar dataKey="usage" fill="url(#colorUsage)" radius={[4, 4, 0, 0]} />
             </BarChart>

@@ -1,9 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es, Locale } from "date-fns/locale";
 import { Zap, Loader2 } from "lucide-react";
 import { AggregatedEnergyData } from "@/hooks/useReportData";
+import { useTranslation } from "react-i18next";
+
+const localeMap: Record<string, Locale> = {
+  'pt-BR': ptBR,
+  'en-US': enUS,
+  'es-ES': es,
+};
 
 interface EnergyConsumptionChartProps {
   data: AggregatedEnergyData[];
@@ -11,9 +18,12 @@ interface EnergyConsumptionChartProps {
 }
 
 export const EnergyConsumptionChart = ({ data, isLoading }: EnergyConsumptionChartProps) => {
+  const { t, i18n } = useTranslation();
+  const currentLocale = localeMap[i18n.language] || ptBR;
+
   const formattedData = data.map((item) => ({
     ...item,
-    dateFormatted: format(new Date(item.date), "dd/MM", { locale: ptBR }),
+    dateFormatted: format(new Date(item.date), "dd/MM", { locale: currentLocale }),
   }));
 
   return (
@@ -21,7 +31,7 @@ export const EnergyConsumptionChart = ({ data, isLoading }: EnergyConsumptionCha
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-energy-warning" />
-          Consumo Energético
+          {t('charts.energyConsumption')}
         </CardTitle>
       </CardHeader>
       <CardContent className="h-80">
@@ -31,7 +41,7 @@ export const EnergyConsumptionChart = ({ data, isLoading }: EnergyConsumptionCha
           </div>
         ) : data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground">
-            Nenhum dado disponível para o período selecionado
+            {t('charts.noData')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
@@ -63,8 +73,8 @@ export const EnergyConsumptionChart = ({ data, isLoading }: EnergyConsumptionCha
                   border: "1px solid hsl(var(--border))",
                   borderRadius: "8px",
                 }}
-                formatter={(value: number) => [`${value.toFixed(2)} kWh`, "Consumo"]}
-                labelFormatter={(label) => `Data: ${label}`}
+                formatter={(value: number) => [`${value.toFixed(2)} kWh`, t('charts.consumption')]}
+                labelFormatter={(label) => `${t('charts.date')}: ${label}`}
               />
               <Area
                 type="monotone"

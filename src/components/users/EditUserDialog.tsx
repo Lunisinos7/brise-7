@@ -31,14 +31,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Loader2 } from 'lucide-react';
 import type { AppRole } from '@/hooks/useAuth';
-
-const formSchema = z.object({
-  fullName: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),
-  isActive: z.boolean(),
-  role: z.enum(['admin', 'manager', 'viewer']),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useTranslation } from 'react-i18next';
 
 interface EditUserDialogProps {
   user: UserProfile | null;
@@ -47,8 +40,17 @@ interface EditUserDialogProps {
 }
 
 const EditUserDialog = ({ user, open, onOpenChange }: EditUserDialogProps) => {
+  const { t } = useTranslation();
   const { updateUser, updateRole, isUpdating } = useUsers();
   const { isAdmin, user: currentUser } = useAuthContext();
+
+  const formSchema = z.object({
+    fullName: z.string().min(2, t('editUser.validation.nameMinLength')),
+    isActive: z.boolean(),
+    role: z.enum(['admin', 'manager', 'viewer']),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -96,11 +98,11 @@ const EditUserDialog = ({ user, open, onOpenChange }: EditUserDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar Usuário</DialogTitle>
+          <DialogTitle>{t('editUser.title')}</DialogTitle>
           <DialogDescription>
             {isOwnProfile
-              ? 'Edite suas informações de perfil'
-              : 'Visualize e edite as informações do usuário'}
+              ? t('editUser.ownProfileDesc')
+              : t('editUser.otherProfileDesc')}
           </DialogDescription>
         </DialogHeader>
 
@@ -111,10 +113,10 @@ const EditUserDialog = ({ user, open, onOpenChange }: EditUserDialogProps) => {
               name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome completo</FormLabel>
+                  <FormLabel>{t('editUser.fullName')}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Nome do usuário"
+                      placeholder={t('editUser.namePlaceholder')}
                       {...field}
                       disabled={!isAdmin && !isOwnProfile}
                     />
@@ -125,10 +127,10 @@ const EditUserDialog = ({ user, open, onOpenChange }: EditUserDialogProps) => {
             />
 
             <div className="space-y-2">
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('editUser.email')}</FormLabel>
               <Input value={user?.email || ''} disabled />
               <p className="text-xs text-muted-foreground">
-                O email não pode ser alterado
+                {t('editUser.emailCannotChange')}
               </p>
             </div>
 
@@ -137,7 +139,7 @@ const EditUserDialog = ({ user, open, onOpenChange }: EditUserDialogProps) => {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tipo de perfil</FormLabel>
+                  <FormLabel>{t('editUser.profileType')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
@@ -145,18 +147,18 @@ const EditUserDialog = ({ user, open, onOpenChange }: EditUserDialogProps) => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione o perfil" />
+                        <SelectValue placeholder={t('editUser.selectProfile')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="admin">Administrador</SelectItem>
-                      <SelectItem value="manager">Gerente</SelectItem>
-                      <SelectItem value="viewer">Visualizador</SelectItem>
+                      <SelectItem value="admin">{t('editUser.roles.admin')}</SelectItem>
+                      <SelectItem value="manager">{t('editUser.roles.manager')}</SelectItem>
+                      <SelectItem value="viewer">{t('editUser.roles.viewer')}</SelectItem>
                     </SelectContent>
                   </Select>
                   {!isAdmin && (
                     <p className="text-xs text-muted-foreground">
-                      Apenas administradores podem alterar perfis
+                      {t('editUser.onlyAdminsCanChange')}
                     </p>
                   )}
                   <FormMessage />
@@ -170,9 +172,9 @@ const EditUserDialog = ({ user, open, onOpenChange }: EditUserDialogProps) => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel>Usuário ativo</FormLabel>
+                    <FormLabel>{t('editUser.activeUser')}</FormLabel>
                     <p className="text-xs text-muted-foreground">
-                      Usuários inativos não podem acessar o sistema
+                      {t('editUser.inactiveUserDesc')}
                     </p>
                   </div>
                   <FormControl>
@@ -192,16 +194,16 @@ const EditUserDialog = ({ user, open, onOpenChange }: EditUserDialogProps) => {
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isUpdating || (!isAdmin && !isOwnProfile)}>
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Salvando...
+                    {t('common.saving')}
                   </>
                 ) : (
-                  'Salvar'
+                  t('common.save')
                 )}
               </Button>
             </div>

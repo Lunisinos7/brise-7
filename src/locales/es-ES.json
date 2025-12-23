@@ -559,5 +559,113 @@
     "expires": "Expira",
     "accept": "Aceptar",
     "decline": "Rechazar"
+  },
+  "charts": {
+    "energyConsumption": "Consumo Energético",
+    "temperatureByLocation": "Temperatura por Ubicación",
+    "efficiencyByEquipment": "Eficiencia por Equipo",
+    "usagePatternsByHour": "Patrones de Uso por Hora",
+    "noData": "No hay datos disponibles para el período seleccionado",
+    "consumption": "Consumo",
+    "date": "Fecha",
+    "currentTemp": "Temperatura Actual",
+    "targetTemp": "Temperatura Objetivo",
+    "efficiency": "Eficiencia",
+    "usage": "Uso",
+    "activations": "activaciones",
+    "time": "Horario"
+  },
+  "editUser": {
+    "title": "Editar Usuario",
+    "ownProfileDesc": "Edite su información de perfil",
+    "otherProfileDesc": "Visualice y edite la información del usuario",
+    "fullName": "Nombre completo",
+    "namePlaceholder": "Nombre del usuario",
+    "email": "Correo",
+    "emailCannotChange": "El correo no puede ser alterado",
+    "profileType": "Tipo de perfil",
+    "selectProfile": "Seleccione el perfil",
+    "onlyAdminsCanChange": "Solo los administradores pueden cambiar perfiles",
+    "activeUser": "Usuario activo",
+    "inactiveUserDesc": "Usuarios inactivos no pueden acceder al sistema",
+    "roles": {
+      "admin": "Administrador",
+      "manager": "Gerente",
+      "viewer": "Visualizador"
+    },
+    "validation": {
+      "nameMinLength": "El nombre debe tener al menos 2 caracteres"
+    }
+  },
+  "hooks": {
+    "auth": {
+      "signInError": "Error al iniciar sesión",
+      "invalidCredentials": "Correo o contraseña incorrectos.",
+      "welcome": "¡Bienvenido!",
+      "signInSuccess": "Sesión iniciada con éxito.",
+      "signUpError": "Error al registrar",
+      "emailAlreadyRegistered": "Este correo ya está registrado.",
+      "accountCreated": "¡Cuenta creada!",
+      "signUpSuccess": "Registro realizado con éxito.",
+      "signOutError": "Error al cerrar sesión",
+      "goodbye": "¡Hasta luego!",
+      "signOutSuccess": "Has cerrado sesión."
+    },
+    "equipments": {
+      "loadError": "Error al cargar equipos",
+      "tryAgainLater": "Intente nuevamente más tarde."
+    },
+    "alerts": {
+      "loadError": "No fue posible cargar las alertas.",
+      "alertDismissed": "Alerta Descartada",
+      "alertDismissedDesc": "La alerta fue removida de la lista.",
+      "dismissError": "No fue posible descartar la alerta.",
+      "alertsCleared": "Alertas Limpiadas",
+      "alertsClearedDesc": "Todas las alertas fueron removidas.",
+      "clearError": "No fue posible limpiar las alertas.",
+      "criticalAlert": "¡Alerta Crítica!",
+      "newAlert": "Nueva Alerta"
+    },
+    "workspace": {
+      "created": "¡Workspace creado!",
+      "createdDesc": "El nuevo workspace fue creado con éxito.",
+      "createError": "Error al crear workspace",
+      "createErrorDesc": "No fue posible crear el workspace.",
+      "updated": "¡Workspace actualizado!",
+      "updatedDesc": "El nombre fue cambiado con éxito.",
+      "updateError": "Error al actualizar",
+      "updateErrorDesc": "No fue posible actualizar el workspace.",
+      "deleted": "Workspace eliminado",
+      "deletedDesc": "El workspace fue removido con éxito.",
+      "deleteError": "Error al eliminar",
+      "deleteErrorDesc": "No fue posible eliminar el workspace.",
+      "roleUpdated": "¡Perfil actualizado!",
+      "roleUpdatedDesc": "El tipo de acceso fue cambiado.",
+      "roleUpdateError": "Error al actualizar",
+      "roleUpdateErrorDesc": "No fue posible cambiar el perfil.",
+      "memberRemoved": "Miembro removido",
+      "memberRemovedDesc": "El usuario fue removido del workspace.",
+      "memberRemoveError": "Error al remover",
+      "memberRemoveErrorDesc": "No fue posible remover el miembro.",
+      "inviteSent": "¡Invitación enviada!",
+      "inviteSentDesc": "El usuario recibirá un correo con la invitación.",
+      "inviteExists": "Invitación ya existe",
+      "inviteExistsDesc": "Este correo ya fue invitado a este workspace.",
+      "inviteError": "Error al invitar",
+      "inviteErrorDesc": "No fue posible enviar la invitación.",
+      "inviteCancelled": "Invitación cancelada",
+      "inviteCancelledDesc": "La invitación fue removida.",
+      "inviteCancelError": "Error al cancelar",
+      "inviteCancelErrorDesc": "No fue posible cancelar la invitación.",
+      "inviteNotFound": "Invitación no encontrada",
+      "inviteAccepted": "¡Invitación aceptada!",
+      "inviteAcceptedDesc": "Ahora eres parte del workspace.",
+      "inviteAcceptError": "Error al aceptar invitación",
+      "inviteAcceptErrorDesc": "No fue posible aceptar la invitación.",
+      "inviteDeclined": "Invitación rechazada",
+      "inviteDeclinedDesc": "La invitación fue removida.",
+      "inviteDeclineError": "Error al rechazar",
+      "inviteDeclineErrorDesc": "No fue posible rechazar la invitación."
+    }
   }
 }

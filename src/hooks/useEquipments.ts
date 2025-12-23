@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import i18n from "@/lib/i18n";
 
 export interface Equipment {
   id: string;
@@ -105,8 +106,8 @@ export function useEquipments(workspaceId: string | null) {
     } catch (error) {
       console.error("Error fetching equipments:", error);
       toast({
-        title: "Erro ao carregar equipamentos",
-        description: "Tente novamente mais tarde.",
+        title: i18n.t('hooks.equipments.loadError'),
+        description: i18n.t('hooks.equipments.tryAgainLater'),
         variant: "destructive",
       });
     } finally {
