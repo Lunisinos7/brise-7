@@ -666,6 +666,80 @@
       "inviteDeclinedDesc": "Invite was removed.",
       "inviteDeclineError": "Error declining",
       "inviteDeclineErrorDesc": "Could not decline invite."
+    },
+    "alertSettings": {
+      "loadError": "Could not load alert settings.",
+      "saved": "Settings Saved",
+      "savedDesc": "Alert settings were updated.",
+      "saveError": "Could not save settings."
+    },
+    "timeRoutines": {
+      "created": "Routine created!",
+      "createdDesc": "Routine was saved successfully.",
+      "createError": "Error creating routine",
+      "updated": "Routine updated!",
+      "updatedDesc": "Changes were saved successfully.",
+      "updateError": "Error updating routine",
+      "deleted": "Routine deleted",
+      "deletedDesc": "Routine was removed successfully.",
+      "deleteError": "Error deleting routine"
+    },
+    "smartThingsControl": {
+      "noWorkspace": "No workspace selected.",
+      "sendError": "Error sending command",
+      "tryAgain": "Please try again."
+    },
+    "smartThingsDevices": {
+      "noWorkspace": "No workspace selected.",
+      "discoverError": "Error discovering devices",
+      "checkConfig": "Check SmartThings configuration.",
+      "synced": "Synced",
+      "syncedDesc": "Device synced successfully!",
+      "syncError": "Error syncing",
+      "syncComplete": "Sync complete",
+      "syncCompleteDesc": "{{count}} device(s) synced.",
+      "syncAllError": "Error syncing"
+    },
+    "smartThingsConfig": {
+      "noWorkspace": "No workspace selected.",
+      "tokenInvalid": "Invalid token",
+      "tokenInvalidDesc": "Check the token and try again.",
+      "saved": "Configuration saved",
+      "savedDesc": "SmartThings configured successfully!",
+      "saveError": "Error saving",
+      "disconnected": "Disconnected",
+      "disconnectedDesc": "SmartThings was disconnected.",
+      "disconnectError": "Error disconnecting"
+    },
+    "environments": {
+      "loadError": "Error loading environments",
+      "selectWorkspace": "Select a workspace",
+      "createError": "Error creating environment",
+      "deleteError": "Error deleting environment",
+      "updateError": "Error updating environment"
+    }
+  },
+  "dashboard": {
+    "equipmentCard": {
+      "currentTemp": "Current temperature",
+      "consumption": "Consumption",
+      "control": "Control"
+    },
+    "accumulatedExpense": {
+      "title": "Accumulated Expense",
+      "loading": "Loading...",
+      "since": "Since 00:00"
+    }
+  },
+  "weekdays": {
+    "short": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
     }
   }
 }

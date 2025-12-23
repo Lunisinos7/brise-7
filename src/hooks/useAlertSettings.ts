@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import i18n from "@/lib/i18n";
 
 export interface AlertSettings {
   id: string;
@@ -51,8 +52,8 @@ export const useAlertSettings = () => {
     } catch (error) {
       console.error("Error fetching alert settings:", error);
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar as configurações de alerta.",
+        title: i18n.t("common.error"),
+        description: i18n.t("hooks.alertSettings.loadError"),
         variant: "destructive",
       });
     } finally {
@@ -94,14 +95,14 @@ export const useAlertSettings = () => {
       }
 
       toast({
-        title: "Configurações Salvas",
-        description: "As configurações de alerta foram atualizadas.",
+        title: i18n.t("hooks.alertSettings.saved"),
+        description: i18n.t("hooks.alertSettings.savedDesc"),
       });
     } catch (error) {
       console.error("Error updating alert settings:", error);
       toast({
-        title: "Erro",
-        description: "Não foi possível salvar as configurações.",
+        title: i18n.t("common.error"),
+        description: i18n.t("hooks.alertSettings.saveError"),
         variant: "destructive",
       });
     } finally {

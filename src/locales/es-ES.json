@@ -666,6 +666,80 @@
       "inviteDeclinedDesc": "La invitación fue removida.",
       "inviteDeclineError": "Error al rechazar",
       "inviteDeclineErrorDesc": "No fue posible rechazar la invitación."
+    },
+    "alertSettings": {
+      "loadError": "No fue posible cargar las configuraciones de alerta.",
+      "saved": "Configuración Guardada",
+      "savedDesc": "Las configuraciones de alerta fueron actualizadas.",
+      "saveError": "No fue posible guardar las configuraciones."
+    },
+    "timeRoutines": {
+      "created": "¡Rutina creada!",
+      "createdDesc": "La rutina fue guardada con éxito.",
+      "createError": "Error al crear rutina",
+      "updated": "¡Rutina actualizada!",
+      "updatedDesc": "Los cambios fueron guardados con éxito.",
+      "updateError": "Error al actualizar rutina",
+      "deleted": "Rutina eliminada",
+      "deletedDesc": "La rutina fue removida con éxito.",
+      "deleteError": "Error al eliminar rutina"
+    },
+    "smartThingsControl": {
+      "noWorkspace": "Ningún workspace seleccionado.",
+      "sendError": "Error al enviar comando",
+      "tryAgain": "Intente nuevamente."
+    },
+    "smartThingsDevices": {
+      "noWorkspace": "Ningún workspace seleccionado.",
+      "discoverError": "Error al buscar dispositivos",
+      "checkConfig": "Verifique la configuración de SmartThings.",
+      "synced": "Sincronizado",
+      "syncedDesc": "¡Dispositivo sincronizado con éxito!",
+      "syncError": "Error al sincronizar",
+      "syncComplete": "Sincronización completa",
+      "syncCompleteDesc": "{{count}} dispositivo(s) sincronizado(s).",
+      "syncAllError": "Error al sincronizar"
+    },
+    "smartThingsConfig": {
+      "noWorkspace": "Ningún workspace seleccionado.",
+      "tokenInvalid": "Token inválido",
+      "tokenInvalidDesc": "Verifique el token e intente nuevamente.",
+      "saved": "Configuración guardada",
+      "savedDesc": "¡SmartThings configurado con éxito!",
+      "saveError": "Error al guardar",
+      "disconnected": "Desconectado",
+      "disconnectedDesc": "SmartThings fue desconectado.",
+      "disconnectError": "Error al desconectar"
+    },
+    "environments": {
+      "loadError": "Error al cargar ambientes",
+      "selectWorkspace": "Seleccione un workspace",
+      "createError": "Error al crear ambiente",
+      "deleteError": "Error al eliminar ambiente",
+      "updateError": "Error al actualizar ambiente"
+    }
+  },
+  "dashboard": {
+    "equipmentCard": {
+      "currentTemp": "Temperatura actual",
+      "consumption": "Consumo",
+      "control": "Controlar"
+    },
+    "accumulatedExpense": {
+      "title": "Gasto Acumulado",
+      "loading": "Cargando...",
+      "since": "Desde 00:00"
+    }
+  },
+  "weekdays": {
+    "short": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
     }
   }
 }

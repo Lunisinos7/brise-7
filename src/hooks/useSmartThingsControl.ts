@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import type { SmartThingsAction } from "@/lib/smartthings";
+import i18n from "@/lib/i18n";
 
 export function useSmartThingsControl() {
   const { toast } = useToast();
@@ -14,8 +15,8 @@ export function useSmartThingsControl() {
   ): Promise<boolean> => {
     if (!currentWorkspaceId) {
       toast({
-        title: "Erro",
-        description: "Nenhum workspace selecionado.",
+        title: i18n.t("common.error"),
+        description: i18n.t("hooks.smartThingsControl.noWorkspace"),
         variant: "destructive",
       });
       return false;
@@ -36,8 +37,8 @@ export function useSmartThingsControl() {
     } catch (error: any) {
       console.error("Error sending command:", error);
       toast({
-        title: "Erro ao enviar comando",
-        description: error.message || "Tente novamente.",
+        title: i18n.t("hooks.smartThingsControl.sendError"),
+        description: error.message || i18n.t("hooks.smartThingsControl.tryAgain"),
         variant: "destructive",
       });
       return false;

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import i18n from "@/lib/i18n";
 
 export interface TimeSlot {
   id: string;
@@ -176,13 +177,13 @@ export const useTimeRoutines = (workspaceId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["time-routines", workspaceId] });
       toast({
-        title: "Rotina criada!",
-        description: "A rotina foi salva com sucesso.",
+        title: i18n.t("hooks.timeRoutines.created"),
+        description: i18n.t("hooks.timeRoutines.createdDesc"),
       });
     },
     onError: (error) => {
       toast({
-        title: "Erro ao criar rotina",
+        title: i18n.t("hooks.timeRoutines.createError"),
         description: error.message,
         variant: "destructive",
       });
@@ -271,13 +272,13 @@ export const useTimeRoutines = (workspaceId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["time-routines", workspaceId] });
       toast({
-        title: "Rotina atualizada!",
-        description: "As alterações foram salvas com sucesso.",
+        title: i18n.t("hooks.timeRoutines.updated"),
+        description: i18n.t("hooks.timeRoutines.updatedDesc"),
       });
     },
     onError: (error) => {
       toast({
-        title: "Erro ao atualizar rotina",
+        title: i18n.t("hooks.timeRoutines.updateError"),
         description: error.message,
         variant: "destructive",
       });
@@ -310,13 +311,13 @@ export const useTimeRoutines = (workspaceId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["time-routines", workspaceId] });
       toast({
-        title: "Rotina excluída",
-        description: "A rotina foi removida com sucesso.",
+        title: i18n.t("hooks.timeRoutines.deleted"),
+        description: i18n.t("hooks.timeRoutines.deletedDesc"),
       });
     },
     onError: (error) => {
       toast({
-        title: "Erro ao excluir rotina",
+        title: i18n.t("hooks.timeRoutines.deleteError"),
         description: error.message,
         variant: "destructive",
       });
