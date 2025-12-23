@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,7 @@ const CURRENCIES = [
 ];
 
 export const EnergyRateConfig = () => {
+  const { t } = useTranslation();
   const { currentWorkspaceId } = useWorkspaceContext();
   const { settings, isLoading, upsertSettings } = useWorkspaceSettings(currentWorkspaceId);
   const { toast } = useToast();
@@ -45,8 +47,8 @@ export const EnergyRateConfig = () => {
     const rate = parseFloat(kwhRate);
     if (isNaN(rate) || rate <= 0) {
       toast({
-        title: "Valor inválido",
-        description: "O valor do kWh deve ser um número maior que zero.",
+        title: t("energyRate.invalidValue"),
+        description: t("energyRate.invalidValueDesc"),
         variant: "destructive",
       });
       return;
@@ -63,13 +65,13 @@ export const EnergyRateConfig = () => {
         currency_code: currency.code,
       });
       toast({
-        title: "Configurações salvas",
-        description: "As configurações de tarifa foram atualizadas com sucesso.",
+        title: t("energyRate.savedSuccess"),
+        description: t("energyRate.savedSuccessDesc"),
       });
     } catch (error) {
       toast({
-        title: "Erro ao salvar",
-        description: "Não foi possível salvar as configurações. Tente novamente.",
+        title: t("energyRate.saveError"),
+        description: t("energyRate.saveErrorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -92,16 +94,16 @@ export const EnergyRateConfig = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Zap className="h-5 w-5" />
-          Configurações de Tarifa de Energia
+          {t("energyRate.title")}
         </CardTitle>
         <CardDescription>
-          Configure o valor do kWh e a moeda para cálculo de custos do workspace atual
+          {t("energyRate.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="kwh-rate">Valor do kWh</Label>
+            <Label htmlFor="kwh-rate">{t("energyRate.kwhValue")}</Label>
             <div className="relative">
               <Input
                 id="kwh-rate"
@@ -118,15 +120,15 @@ export const EnergyRateConfig = () => {
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
-              Valor cobrado por kWh pela sua concessionária
+              {t("energyRate.kwhDesc")}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currency">Moeda</Label>
+            <Label htmlFor="currency">{t("energyRate.currency")}</Label>
             <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
               <SelectTrigger id="currency">
-                <SelectValue placeholder="Selecione a moeda" />
+                <SelectValue placeholder={t("energyRate.currency")} />
               </SelectTrigger>
               <SelectContent>
                 {CURRENCIES.map((currency) => (
@@ -140,7 +142,7 @@ export const EnergyRateConfig = () => {
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Símbolo exibido nos relatórios e dashboard
+              {t("energyRate.currencyDesc")}
             </p>
           </div>
         </div>
@@ -150,12 +152,12 @@ export const EnergyRateConfig = () => {
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Salvando...
+                {t("common.saving")}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                Salvar Configurações
+                {t("energyRate.saveConfig")}
               </>
             )}
           </Button>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export function SmartThingsConfig() {
+  const { t } = useTranslation();
   const { config, isLoading, isConfigured, saveConfig, disconnectSmartThings } = useSmartThingsConfig();
   const { syncAllDevices, isLoading: isSyncing } = useSmartThingsDevices();
   
@@ -96,14 +98,14 @@ export function SmartThingsConfig() {
                 <WifiOff className="h-5 w-5 text-muted-foreground" />
               )}
               <div>
-                <CardTitle className="text-lg">Samsung SmartThings</CardTitle>
+                <CardTitle className="text-lg">{t("smartthings.title")}</CardTitle>
                 <CardDescription>
-                  Conecte seus ar-condicionados Samsung via SmartThings
+                  {t("smartthings.description")}
                 </CardDescription>
               </div>
             </div>
             <Badge variant={isConfigured ? "default" : "secondary"}>
-              {isConfigured ? "Conectado" : "Não Configurado"}
+              {isConfigured ? t("smartthings.connected") : t("smartthings.notConfigured")}
             </Badge>
           </div>
         </CardHeader>
@@ -112,13 +114,13 @@ export function SmartThingsConfig() {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium">Status da Conexão</p>
+                  <p className="text-sm font-medium">{t("smartthings.connectionStatus")}</p>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span>Token ativo</span>
+                    <span>{t("smartthings.tokenActive")}</span>
                     {config?.last_sync_at && (
                       <span className="text-xs">
-                        • Última sync: {new Date(config.last_sync_at).toLocaleString('pt-BR')}
+                        • {t("smartthings.lastSync")}: {new Date(config.last_sync_at).toLocaleString()}
                       </span>
                     )}
                   </div>
@@ -135,14 +137,14 @@ export function SmartThingsConfig() {
                     ) : (
                       <RefreshCw className="h-4 w-4" />
                     )}
-                    <span className="ml-2">Sincronizar</span>
+                    <span className="ml-2">{t("smartthings.sync")}</span>
                   </Button>
                   <Button 
                     variant="destructive" 
                     size="sm"
                     onClick={() => setShowDisconnectDialog(true)}
                   >
-                    Desconectar
+                    {t("smartthings.disconnect")}
                   </Button>
                 </div>
               </div>
@@ -150,13 +152,13 @@ export function SmartThingsConfig() {
           ) : (
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="pat">Personal Access Token (PAT)</Label>
+                <Label htmlFor="pat">{t("smartthings.pat")}</Label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Input
                       id="pat"
                       type={showToken ? "text" : "password"}
-                      placeholder="Cole seu token aqui..."
+                      placeholder={t("smartthings.tokenPlaceholder")}
                       value={token}
                       onChange={(e) => {
                         setToken(e.target.value);
@@ -185,30 +187,30 @@ export function SmartThingsConfig() {
                     {isTesting ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      "Testar"
+                      t("smartthings.test")
                     )}
                   </Button>
                 </div>
                 {testResult === "success" && (
                   <p className="text-sm text-green-600 flex items-center gap-1">
                     <CheckCircle className="h-4 w-4" />
-                    Token válido! Você pode salvar a configuração.
+                    {t("smartthings.tokenValid")}
                   </p>
                 )}
                 {testResult === "error" && (
                   <p className="text-sm text-destructive">
-                    Token inválido ou expirado. Verifique e tente novamente.
+                    {t("smartthings.tokenInvalid")}
                   </p>
                 )}
               </div>
 
               <div className="p-4 bg-muted/50 rounded-lg space-y-2">
-                <p className="text-sm font-medium">Como obter o Personal Access Token:</p>
+                <p className="text-sm font-medium">{t("smartthings.howToGetToken")}</p>
                 <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                  <li>Acesse o painel de desenvolvedores SmartThings</li>
-                  <li>Clique em "Generate new token"</li>
-                  <li>Selecione as permissões de dispositivos (r:devices:*, x:devices:*)</li>
-                  <li>Copie e cole o token acima</li>
+                  <li>{t("smartthings.step1")}</li>
+                  <li>{t("smartthings.step2")}</li>
+                  <li>{t("smartthings.step3")}</li>
+                  <li>{t("smartthings.step4")}</li>
                 </ol>
                 <a
                   href="https://account.smartthings.com/tokens"
@@ -216,7 +218,7 @@ export function SmartThingsConfig() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-2"
                 >
-                  Abrir painel SmartThings
+                  {t("smartthings.openPanel")}
                   <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
@@ -229,10 +231,10 @@ export function SmartThingsConfig() {
                 {isSaving ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    Salvando...
+                    {t("common.saving")}
                   </>
                 ) : (
-                  "Salvar Configuração"
+                  t("smartthings.saveConfig")
                 )}
               </Button>
             </div>
@@ -243,15 +245,15 @@ export function SmartThingsConfig() {
       <AlertDialog open={showDisconnectDialog} onOpenChange={setShowDisconnectDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Desconectar SmartThings?</AlertDialogTitle>
+            <AlertDialogTitle>{t("smartthings.disconnectTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Os equipamentos SmartThings permanecerão no sistema, mas não serão mais sincronizados automaticamente.
+              {t("smartthings.disconnectDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDisconnect}>
-              Desconectar
+              {t("smartthings.disconnect")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

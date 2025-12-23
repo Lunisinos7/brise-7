@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { CalendarOff, Plus, Trash2, CalendarIcon, RefreshCw, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 export interface RoutineException {
@@ -30,20 +31,30 @@ interface ExceptionsSectionProps {
 }
 
 const COMMON_HOLIDAYS = [
-  { name: "Ano Novo", date: "01-01", recurring: true },
-  { name: "Carnaval", date: "02-12", recurring: false }, // Varies each year
-  { name: "Sexta-feira Santa", date: "03-29", recurring: false }, // Varies each year
-  { name: "Tiradentes", date: "04-21", recurring: true },
-  { name: "Dia do Trabalhador", date: "05-01", recurring: true },
-  { name: "Corpus Christi", date: "05-30", recurring: false }, // Varies each year
-  { name: "Independência", date: "09-07", recurring: true },
-  { name: "Nossa Senhora Aparecida", date: "10-12", recurring: true },
-  { name: "Finados", date: "11-02", recurring: true },
-  { name: "Proclamação da República", date: "11-15", recurring: true },
-  { name: "Natal", date: "12-25", recurring: true },
+  { key: "newYear", date: "01-01", recurring: true },
+  { key: "carnival", date: "02-12", recurring: false },
+  { key: "goodFriday", date: "03-29", recurring: false },
+  { key: "tiradentes", date: "04-21", recurring: true },
+  { key: "laborDay", date: "05-01", recurring: true },
+  { key: "corpusChristi", date: "05-30", recurring: false },
+  { key: "independence", date: "09-07", recurring: true },
+  { key: "ourLady", date: "10-12", recurring: true },
+  { key: "allSouls", date: "11-02", recurring: true },
+  { key: "republic", date: "11-15", recurring: true },
+  { key: "christmas", date: "12-25", recurring: true },
 ];
 
 const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSectionProps) => {
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'en-US': return enUS;
+      case 'es-ES': return es;
+      default: return ptBR;
+    }
+  };
+
   const addException = () => {
     const newException: RoutineException = {
       id: Date.now().toString(),
@@ -62,7 +73,7 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
       exception_date: `${currentYear}-${month}-${day}`,
       is_recurring: holiday.recurring,
       exception_type: 'closed',
-      description: holiday.name,
+      description: t(`automations.exceptions.holidayNames.${holiday.key}`),
     };
     onExceptionsChange([...exceptions, newException]);
   };
@@ -82,27 +93,27 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
       <div className="flex items-center justify-between">
         <Label className="flex items-center gap-2">
           <CalendarOff className="h-4 w-4" />
-          Exceções (Feriados / Dias Fechados)
+          {t("automations.exceptions.title")}
         </Label>
         <div className="flex gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <CalendarIcon className="h-4 w-4 mr-1" />
-                Feriados
+                {t("automations.exceptions.holidays")}
                 <ChevronDown className="h-4 w-4 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Feriados Nacionais</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("automations.exceptions.nationalHolidays")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {COMMON_HOLIDAYS.map((holiday) => (
                 <DropdownMenuItem
-                  key={holiday.name}
+                  key={holiday.key}
                   onClick={() => addHoliday(holiday)}
                   className="flex items-center justify-between"
                 >
-                  <span>{holiday.name}</span>
+                  <span>{t(`automations.exceptions.holidayNames.${holiday.key}`)}</span>
                   {holiday.recurring && (
                     <RefreshCw className="h-3 w-3 text-muted-foreground" />
                   )}
@@ -112,14 +123,14 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
           </DropdownMenu>
           <Button variant="outline" size="sm" onClick={addException}>
             <Plus className="h-4 w-4 mr-1" />
-            Adicionar
+            {t("automations.exceptions.add")}
           </Button>
         </div>
       </div>
 
       {exceptions.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-4">
-          Nenhuma exceção configurada. Adicione feriados ou dias específicos.
+          {t("automations.exceptions.noExceptions")}
         </p>
       ) : (
         <div className="space-y-3">
@@ -139,8 +150,8 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {exception.exception_date 
-                          ? format(new Date(exception.exception_date + 'T12:00:00'), "dd/MM/yyyy", { locale: ptBR })
-                          : "Selecionar data"
+                          ? format(new Date(exception.exception_date + 'T12:00:00'), "dd/MM/yyyy", { locale: getDateLocale() })
+                          : t("automations.exceptions.selectDate")
                         }
                       </Button>
                     </PopoverTrigger>
@@ -152,6 +163,7 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
                           exception_date: format(date, "yyyy-MM-dd") 
                         })}
                         initialFocus
+                        locale={getDateLocale()}
                         className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
@@ -164,13 +176,13 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
                     />
                     <Label className="text-sm flex items-center gap-1">
                       <RefreshCw className="h-3 w-3" />
-                      Repetir anualmente
+                      {t("automations.exceptions.repeatAnnually")}
                     </Label>
                   </div>
 
                   {exception.is_recurring && (
                     <Badge variant="secondary" className="bg-cooling/10 text-cooling">
-                      Todo ano
+                      {t("automations.exceptions.everyYear")}
                     </Badge>
                   )}
 
@@ -187,7 +199,7 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
                 {/* Row 2: Type and Description */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-xs">Tipo</Label>
+                    <Label className="text-xs">{t("automations.exceptions.type")}</Label>
                     <Select
                       value={exception.exception_type}
                       onValueChange={(value: 'closed' | 'custom_hours') => 
@@ -198,15 +210,15 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="closed">Fechado</SelectItem>
-                        <SelectItem value="custom_hours">Horário Especial</SelectItem>
+                        <SelectItem value="closed">{t("automations.exceptions.closed")}</SelectItem>
+                        <SelectItem value="custom_hours">{t("automations.exceptions.customHours")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs">Descrição (opcional)</Label>
+                    <Label className="text-xs">{t("automations.exceptions.description")}</Label>
                     <Input
-                      placeholder="Ex: Natal, Consulta médica..."
+                      placeholder={t("automations.exceptions.descriptionPlaceholder")}
                       value={exception.description || ""}
                       onChange={(e) => updateException(exception.id, { description: e.target.value })}
                     />
@@ -217,7 +229,7 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
                 {exception.exception_type === 'custom_hours' && (
                   <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border">
                     <div className="space-y-2">
-                      <Label className="text-xs">Horário de Início</Label>
+                      <Label className="text-xs">{t("automations.dialog.startTime")}</Label>
                       <Input
                         type="time"
                         value={exception.custom_start_time || "09:00"}
@@ -225,7 +237,7 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs">Horário de Término</Label>
+                      <Label className="text-xs">{t("automations.dialog.endTime")}</Label>
                       <Input
                         type="time"
                         value={exception.custom_end_time || "12:00"}
@@ -245,13 +257,13 @@ const ExceptionsSection = ({ exceptions, onExceptionsChange }: ExceptionsSection
           {exceptions.filter(e => e.is_recurring).length > 0 && (
             <Badge variant="outline" className="text-xs">
               <RefreshCw className="h-3 w-3 mr-1" />
-              {exceptions.filter(e => e.is_recurring).length} recorrente(s)
+              {exceptions.filter(e => e.is_recurring).length} {t("automations.exceptions.recurring")}
             </Badge>
           )}
           {exceptions.filter(e => !e.is_recurring).length > 0 && (
             <Badge variant="outline" className="text-xs">
               <CalendarIcon className="h-3 w-3 mr-1" />
-              {exceptions.filter(e => !e.is_recurring).length} pontual(is)
+              {exceptions.filter(e => !e.is_recurring).length} {t("automations.exceptions.oneTime")}
             </Badge>
           )}
         </div>
