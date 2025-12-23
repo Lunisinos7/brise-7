@@ -24,6 +24,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'pt-BR',
+    lng: localStorage.getItem('brise-language') || 'pt-BR',
     debug: false,
     interpolation: {
       escapeValue: false,
@@ -32,6 +33,9 @@ i18n
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
       lookupLocalStorage: 'brise-language',
+    },
+    react: {
+      useSuspense: false,
     },
   });
 
