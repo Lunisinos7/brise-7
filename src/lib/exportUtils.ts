@@ -1,9 +1,36 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { format, Locale } from "date-fns";
 import { DateRange } from "@/hooks/useReportData";
+
+export interface ExportTranslations {
+  reportTitle: string;
+  environment: string;
+  allEnvironments: string;
+  period: string;
+  executiveSummary: string;
+  metric: string;
+  value: string;
+  totalConsumption: string;
+  totalSpending: string;
+  efficiencyByEquipment: string;
+  equipment: string;
+  avgEfficiency: string;
+  energyConsumptionByDate: string;
+  date: string;
+  consumption: string;
+  efficiency: string;
+  pageOf: string;
+  generatedAt: string;
+  sheetSummary: string;
+  sheetEnergyConsumption: string;
+  sheetTemperature: string;
+  sheetEfficiency: string;
+  currentTemp: string;
+  targetTemp: string;
+  currencySymbol: string;
+}
 
 interface ExportData {
   energyData: any[];
@@ -15,10 +42,23 @@ interface ExportData {
   };
   dateRange: DateRange;
   environmentName?: string;
+  translations: ExportTranslations;
+  dateLocale?: Locale;
 }
 
 export const exportToPDF = async (data: ExportData): Promise<void> => {
-  const { energyData, temperatureData, equipmentEfficiency, summary, dateRange, environmentName = "Todos os Ambientes" } = data;
+  const { 
+    energyData, 
+    temperatureData, 
+    equipmentEfficiency, 
+    summary, 
+    dateRange, 
+    environmentName,
+    translations: t,
+    dateLocale
+  } = data;
+  
+  const displayEnvironmentName = environmentName || t.allEnvironments;
   
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -34,37 +74,43 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
     }
     return currentY;
   };
+
+  const formatDate = (date: Date, formatStr: string) => {
+    return dateLocale 
+      ? format(date, formatStr, { locale: dateLocale })
+      : format(date, formatStr);
+  };
   
   // Header
   doc.setFontSize(20);
   doc.setTextColor(40, 40, 40);
-  doc.text("Relatório de Climatização", pageWidth / 2, 20, { align: "center" });
+  doc.text(t.reportTitle, pageWidth / 2, 20, { align: "center" });
   
   // Environment name
   doc.setFontSize(12);
   doc.setTextColor(60, 60, 60);
-  doc.text(`Ambiente: ${environmentName}`, pageWidth / 2, 28, { align: "center" });
+  doc.text(`${t.environment}: ${displayEnvironmentName}`, pageWidth / 2, 28, { align: "center" });
   
   // Date range
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
-  const periodText = `Período: ${format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })} - ${format(dateRange.to, "dd/MM/yyyy", { locale: ptBR })}`;
+  const periodText = `${t.period}: ${formatDate(dateRange.from, "dd/MM/yyyy")} - ${formatDate(dateRange.to, "dd/MM/yyyy")}`;
   doc.text(periodText, pageWidth / 2, 35, { align: "center" });
   
   // Summary section
   let currentY = 48;
   doc.setFontSize(14);
   doc.setTextColor(40, 40, 40);
-  doc.text("Resumo Executivo", margin, currentY);
+  doc.text(t.executiveSummary, margin, currentY);
   
   const summaryData = [
-    ["Consumo Total", `${summary.totalConsumption.toFixed(2)} kWh`],
-    ["Gasto Total", `R$ ${summary.totalSpent.toFixed(2)}`],
+    [t.totalConsumption, `${summary.totalConsumption.toFixed(2)} kWh`],
+    [t.totalSpending, `${t.currencySymbol} ${summary.totalSpent.toFixed(2)}`],
   ];
   
   autoTable(doc, {
     startY: currentY + 6,
-    head: [["Métrica", "Valor"]],
+    head: [[t.metric, t.value]],
     body: summaryData,
     theme: "striped",
     headStyles: { fillColor: [0, 150, 136] },
@@ -78,7 +124,7 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   
   doc.setFontSize(14);
   doc.setTextColor(40, 40, 40);
-  doc.text("Eficiência por Equipamento", margin, currentY);
+  doc.text(t.efficiencyByEquipment, margin, currentY);
   
   if (equipmentEfficiency.length > 0) {
     const efficiencyTableData = equipmentEfficiency.map((eq) => [
@@ -89,7 +135,7 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
     
     autoTable(doc, {
       startY: currentY + 8,
-      head: [["Equipamento", "Eficiência Média", "Consumo Total"]],
+      head: [[t.equipment, t.avgEfficiency, t.totalConsumption]],
       body: efficiencyTableData,
       theme: "striped",
       headStyles: { fillColor: [0, 150, 136] },
@@ -110,18 +156,18 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   
   doc.setFontSize(14);
   doc.setTextColor(40, 40, 40);
-  doc.text("Consumo Energético por Data", margin, currentY);
+  doc.text(t.energyConsumptionByDate, margin, currentY);
   
   if (energyData.length > 0) {
     const energyTableData = energyData.slice(0, 20).map((item) => [
-      format(new Date(item.date), "dd/MM/yyyy", { locale: ptBR }),
+      formatDate(new Date(item.date), "dd/MM/yyyy"),
       `${item.consumption.toFixed(2)} kWh`,
       `${item.efficiency.toFixed(1)}%`,
     ]);
     
     autoTable(doc, {
       startY: currentY + 8,
-      head: [["Data", "Consumo", "Eficiência"]],
+      head: [[t.date, t.consumption, t.efficiency]],
       body: energyTableData,
       theme: "striped",
       headStyles: { fillColor: [0, 150, 136] },
@@ -136,66 +182,88 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
+    
+    const pageText = t.pageOf
+      .replace("{{current}}", String(i))
+      .replace("{{total}}", String(pageCount));
+    
     doc.text(
-      `Página ${i} de ${pageCount} | Gerado em ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}`,
+      `${pageText} | ${t.generatedAt} ${formatDate(new Date(), "dd/MM/yyyy HH:mm")}`,
       pageWidth / 2,
       pageHeight - 10,
       { align: "center" }
     );
   }
   
-  doc.save(`relatorio-climatizacao-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+  doc.save(`report-${format(new Date(), "yyyy-MM-dd")}.pdf`);
 };
 
 export const exportToExcel = async (data: ExportData): Promise<void> => {
-  const { energyData, temperatureData, equipmentEfficiency, summary, dateRange, environmentName = "Todos os Ambientes" } = data;
+  const { 
+    energyData, 
+    temperatureData, 
+    equipmentEfficiency, 
+    summary, 
+    dateRange, 
+    environmentName,
+    translations: t,
+    dateLocale
+  } = data;
+  
+  const displayEnvironmentName = environmentName || t.allEnvironments;
+
+  const formatDate = (date: Date, formatStr: string) => {
+    return dateLocale 
+      ? format(date, formatStr, { locale: dateLocale })
+      : format(date, formatStr);
+  };
   
   const workbook = XLSX.utils.book_new();
   
   // Summary sheet
   const summarySheetData = [
-    ["Relatório de Climatização"],
-    [`Ambiente: ${environmentName}`],
-    [`Período: ${format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })} - ${format(dateRange.to, "dd/MM/yyyy", { locale: ptBR })}`],
+    [t.reportTitle],
+    [`${t.environment}: ${displayEnvironmentName}`],
+    [`${t.period}: ${formatDate(dateRange.from, "dd/MM/yyyy")} - ${formatDate(dateRange.to, "dd/MM/yyyy")}`],
     [],
-    ["Resumo Executivo"],
-    ["Métrica", "Valor"],
-    ["Consumo Total", `${summary.totalConsumption.toFixed(2)} kWh`],
-    ["Gasto Total", `R$ ${summary.totalSpent.toFixed(2)}`],
+    [t.executiveSummary],
+    [t.metric, t.value],
+    [t.totalConsumption, `${summary.totalConsumption.toFixed(2)} kWh`],
+    [t.totalSpending, `${t.currencySymbol} ${summary.totalSpent.toFixed(2)}`],
   ];
 
   const summarySheet = XLSX.utils.aoa_to_sheet(summarySheetData);
-  XLSX.utils.book_append_sheet(workbook, summarySheet, "Resumo");
+  XLSX.utils.book_append_sheet(workbook, summarySheet, t.sheetSummary);
   
   // Energy consumption sheet
   const energySheetData = [
-    ["Data", "Consumo (kWh)", "Eficiência (%)"],
+    [t.date, `${t.consumption} (kWh)`, `${t.efficiency} (%)`],
     ...energyData.map((item) => [
-      format(new Date(item.date), "dd/MM/yyyy", { locale: ptBR }),
+      formatDate(new Date(item.date), "dd/MM/yyyy"),
       item.consumption.toFixed(2),
       item.efficiency.toFixed(1),
     ]),
   ];
   
   const energySheet = XLSX.utils.aoa_to_sheet(energySheetData);
-  XLSX.utils.book_append_sheet(workbook, energySheet, "Consumo Energético");
+  XLSX.utils.book_append_sheet(workbook, energySheet, t.sheetEnergyConsumption);
   
   // Temperature sheet
   const temperatureSheetData = [
-    ["Data", "Temperatura Atual (°C)", "Temperatura Alvo (°C)"],
+    [t.date, t.currentTemp, t.targetTemp],
     ...temperatureData.map((item) => [
-      format(new Date(item.date), "dd/MM/yyyy", { locale: ptBR }),
+      formatDate(new Date(item.date), "dd/MM/yyyy"),
       item.current_temp.toFixed(1),
       item.target_temp.toFixed(1),
     ]),
   ];
   
   const temperatureSheet = XLSX.utils.aoa_to_sheet(temperatureSheetData);
-  XLSX.utils.book_append_sheet(workbook, temperatureSheet, "Temperatura");
+  XLSX.utils.book_append_sheet(workbook, temperatureSheet, t.sheetTemperature);
   
   // Equipment efficiency sheet
   const efficiencySheetData = [
-    ["Equipamento", "Eficiência Média (%)", "Consumo Total (kWh)"],
+    [t.equipment, `${t.avgEfficiency} (%)`, `${t.totalConsumption} (kWh)`],
     ...equipmentEfficiency.map((eq) => [
       eq.equipment_name,
       eq.avg_efficiency.toFixed(1),
@@ -204,7 +272,7 @@ export const exportToExcel = async (data: ExportData): Promise<void> => {
   ];
   
   const efficiencySheet = XLSX.utils.aoa_to_sheet(efficiencySheetData);
-  XLSX.utils.book_append_sheet(workbook, efficiencySheet, "Eficiência");
+  XLSX.utils.book_append_sheet(workbook, efficiencySheet, t.sheetEfficiency);
   
-  XLSX.writeFile(workbook, `relatorio-climatizacao-${format(new Date(), "yyyy-MM-dd")}.xlsx`);
+  XLSX.writeFile(workbook, `report-${format(new Date(), "yyyy-MM-dd")}.xlsx`);
 };

@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Download, FileSpreadsheet, FileText } from "lucide-react";
 import { PeriodSelector } from "./PeriodSelector";
 import { PeriodType, DateRange, getDateRangeFromPeriod } from "@/hooks/useReportData";
-import { exportToPDF, exportToExcel } from "@/lib/exportUtils";
+import { exportToPDF, exportToExcel, ExportTranslations } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { ptBR, enUS, es } from "date-fns/locale";
 
 interface ExportDialogProps {
   energyData: any[];
@@ -23,16 +24,29 @@ interface ExportDialogProps {
     totalSpent: number;
   };
   environmentName?: string;
+  currencySymbol?: string;
 }
+
+const getDateLocale = (language: string) => {
+  switch (language) {
+    case "pt-BR":
+      return ptBR;
+    case "es-ES":
+      return es;
+    default:
+      return enUS;
+  }
+};
 
 export const ExportDialog = ({
   energyData,
   temperatureData,
   equipmentEfficiency,
   summary,
-  environmentName = "Todos os Ambientes",
+  environmentName,
+  currencySymbol = "R$",
 }: ExportDialogProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
   const [customRange, setCustomRange] = useState<DateRange | undefined>();
@@ -47,6 +61,35 @@ export const ExportDialog = ({
   };
 
   const dateRange = getDateRangeFromPeriod(selectedPeriod, customRange);
+  const dateLocale = getDateLocale(i18n.language);
+
+  const getExportTranslations = (): ExportTranslations => ({
+    reportTitle: t("export.reportTitle"),
+    environment: t("export.environment"),
+    allEnvironments: t("export.allEnvironments"),
+    period: t("export.period"),
+    executiveSummary: t("export.executiveSummary"),
+    metric: t("export.metric"),
+    value: t("export.value"),
+    totalConsumption: t("export.totalConsumption"),
+    totalSpending: t("export.totalSpending"),
+    efficiencyByEquipment: t("export.efficiencyByEquipment"),
+    equipment: t("export.equipment"),
+    avgEfficiency: t("export.avgEfficiency"),
+    energyConsumptionByDate: t("export.energyConsumptionByDate"),
+    date: t("export.date"),
+    consumption: t("export.consumption"),
+    efficiency: t("export.efficiency"),
+    pageOf: t("export.pageOf"),
+    generatedAt: t("export.generatedAt"),
+    sheetSummary: t("export.sheetSummary"),
+    sheetEnergyConsumption: t("export.sheetEnergyConsumption"),
+    sheetTemperature: t("export.sheetTemperature"),
+    sheetEfficiency: t("export.sheetEfficiency"),
+    currentTemp: t("export.currentTemp"),
+    targetTemp: t("export.targetTemp"),
+    currencySymbol,
+  });
 
   const handleExportPDF = async () => {
     setIsExporting(true);
@@ -58,16 +101,18 @@ export const ExportDialog = ({
         summary,
         dateRange,
         environmentName,
+        translations: getExportTranslations(),
+        dateLocale,
       });
       toast({
-        title: t('export.exportComplete'),
-        description: t('export.pdfSuccess'),
+        title: t("export.exportComplete"),
+        description: t("export.pdfSuccess"),
       });
       setOpen(false);
     } catch (error) {
       toast({
-        title: t('export.exportError'),
-        description: t('export.pdfError'),
+        title: t("export.exportError"),
+        description: t("export.pdfError"),
         variant: "destructive",
       });
     } finally {
@@ -85,16 +130,18 @@ export const ExportDialog = ({
         summary,
         dateRange,
         environmentName,
+        translations: getExportTranslations(),
+        dateLocale,
       });
       toast({
-        title: t('export.exportComplete'),
-        description: t('export.excelSuccess'),
+        title: t("export.exportComplete"),
+        description: t("export.excelSuccess"),
       });
       setOpen(false);
     } catch (error) {
       toast({
-        title: t('export.exportError'),
-        description: t('export.excelError'),
+        title: t("export.exportError"),
+        description: t("export.excelError"),
         variant: "destructive",
       });
     } finally {
@@ -107,17 +154,17 @@ export const ExportDialog = ({
       <DialogTrigger asChild>
         <Button variant="energy" className="gap-2">
           <Download className="h-4 w-4" />
-          {t('export.export')}
+          {t("export.export")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t('export.exportReport')}</DialogTitle>
+          <DialogTitle>{t("export.exportReport")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           <div>
-            <h4 className="text-sm font-medium mb-3">{t('reports.selectPeriod')}</h4>
+            <h4 className="text-sm font-medium mb-3">{t("reports.selectPeriod")}</h4>
             <PeriodSelector
               selectedPeriod={selectedPeriod}
               customRange={customRange}
@@ -126,7 +173,7 @@ export const ExportDialog = ({
           </div>
 
           <div>
-            <h4 className="text-sm font-medium mb-3">{t('export.exportFormat')}</h4>
+            <h4 className="text-sm font-medium mb-3">{t("export.exportFormat")}</h4>
             <div className="grid grid-cols-2 gap-3">
               <Button
                 variant="outline"
