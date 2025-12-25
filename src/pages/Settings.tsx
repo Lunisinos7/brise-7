@@ -5,6 +5,7 @@ import { Palette, Monitor, Moon, Leaf, Heart, Crown, Plug, Zap, Sun } from "luci
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SmartThingsConfig } from "@/components/settings/SmartThingsConfig";
+import { BriseConfig } from "@/components/settings/BriseConfig";
 import { EnergyRateConfig } from "@/components/settings/EnergyRateConfig";
 import LanguageSelector from "@/components/settings/LanguageSelector";
 
@@ -154,7 +155,10 @@ const Settings = () => {
           <h2 className="text-xl font-semibold">{t('settings.integrations')}</h2>
         </div>
         
-        <SmartThingsConfig />
+        <div className="grid gap-4 md:grid-cols-2">
+          <BriseConfig />
+          <SmartThingsConfig />
+        </div>
       </div>
 
       <Card>

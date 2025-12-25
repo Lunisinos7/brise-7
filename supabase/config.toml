@@ -2,3 +2,12 @@ project_id = "gzpsjrfghqypgescloed"
 
 [functions.send-email]
 verify_jwt = false
+
+[functions.brise-auth]
+verify_jwt = false
+
+[functions.brise-devices]
+verify_jwt = false
+
+[functions.brise-control]
+verify_jwt = false

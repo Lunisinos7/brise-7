@@ -808,5 +808,37 @@
       "fri": "Fr",
       "sat": "Sa"
     }
+  },
+  "brise": {
+    "title": "BRISE",
+    "description": "Verbinden Sie Ihr BRISE-Konto, um Ihre Geräte zu steuern",
+    "connected": "Verbunden",
+    "notConfigured": "Nicht konfiguriert",
+    "connectedAs": "Verbunden als",
+    "email": "BRISE-Konto E-Mail",
+    "password": "Passwort",
+    "login": "Verbinden",
+    "disconnect": "Trennen",
+    "lastSync": "Letzte Synchronisierung",
+    "neverSynced": "Nie synchronisiert",
+    "syncDevices": "Geräte synchronisieren",
+    "loginError": "Verbindungsfehler",
+    "loginErrorDesc": "Überprüfen Sie Ihre E-Mail und Ihr Passwort",
+    "loginSuccess": "Erfolgreich verbunden!",
+    "loginSuccessDesc": "Ihr BRISE-Konto wurde verknüpft",
+    "disconnected": "Getrennt",
+    "disconnectedDesc": "Ihr BRISE-Konto wurde getrennt",
+    "disconnectTitle": "BRISE trennen?",
+    "disconnectDesc": "Sie werden von Ihrem BRISE-Konto getrennt. Importierte Geräte werden nicht gelöscht.",
+    "loginHint": "Verwenden Sie die gleichen Anmeldedaten wie in der BRISE-App",
+    "noWorkspace": "Wählen Sie zuerst einen Workspace",
+    "discoverError": "Fehler beim Suchen von Geräten",
+    "checkConfig": "Überprüfen Sie Ihre Konfiguration",
+    "sendError": "Fehler beim Senden des Befehls",
+    "tryAgain": "Versuchen Sie es erneut",
+    "selectDevice": "Wählen Sie ein BRISE-Gerät",
+    "searchingDevices": "Suche nach Geräten...",
+    "allImported": "Alle Geräte wurden importiert",
+    "noDevicesFound": "Keine BRISE-Geräte gefunden"
   }
 }
