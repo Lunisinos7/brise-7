@@ -92,7 +92,7 @@ const Automations = () => {
         </div>
         <div className="flex gap-2">
           <OccupancyAutomationDialog>
-            <Button variant="outline" className="gap-2">
+            <Button variant="control" className="gap-2">
               <Users className="h-4 w-4" />
               {t('automations.newOccupancyAutomation')}
             </Button>
