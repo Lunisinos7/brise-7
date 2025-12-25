@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { useWorkspaceInvitations, WorkspaceRole } from "@/hooks/useWorkspaces";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserPlus, Loader2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 interface InviteUserDialogProps {
   open: boolean;
@@ -29,7 +29,7 @@ interface InviteUserDialogProps {
 }
 
 const InviteUserDialog = ({ open, onOpenChange }: InviteUserDialogProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   const roleOptions: { value: WorkspaceRole; label: string; description: string }[] = [
     { value: 'viewer', label: t('workspace.roles.viewer'), description: t('workspace.roles.viewerDesc') },
@@ -37,7 +37,7 @@ const InviteUserDialog = ({ open, onOpenChange }: InviteUserDialogProps) => {
     { value: 'owner', label: t('workspace.roles.owner'), description: t('workspace.roles.ownerDesc') },
   ];
   const { user } = useAuthContext();
-  const { currentWorkspaceId } = useWorkspaceContext();
+  const { currentWorkspaceId, currentWorkspace } = useWorkspaceContext();
   const { createInvitation, isCreating } = useWorkspaceInvitations(currentWorkspaceId);
   
   const [email, setEmail] = useState("");
@@ -47,8 +47,19 @@ const InviteUserDialog = ({ open, onOpenChange }: InviteUserDialogProps) => {
     e.preventDefault();
     if (!email.trim() || !user?.id) return;
 
+    // Get current workspace name and inviter name for the email
+    const inviterName = user.user_metadata?.full_name || user.email || 'Um usuário';
+    const currentLanguage = i18n.language || 'pt-BR';
+
     createInvitation(
-      { email: email.trim(), role, invitedBy: user.id },
+      { 
+        email: email.trim(), 
+        role, 
+        invitedBy: user.id,
+        inviterName,
+        workspaceName: currentWorkspace?.name,
+        language: currentLanguage,
+      },
       {
         onSuccess: () => {
           setEmail("");
