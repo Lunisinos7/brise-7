@@ -10,14 +10,16 @@ import { useWorkspaceSettings } from "@/hooks/useWorkspaceSettings";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { useToast } from "@/hooks/use-toast";
 
-const CURRENCIES = [
-  { symbol: "R$", code: "BRL", name: "Real Brasileiro" },
-  { symbol: "$", code: "USD", name: "Dólar Americano" },
-  { symbol: "€", code: "EUR", name: "Euro" },
-  { symbol: "£", code: "GBP", name: "Libra Esterlina" },
-  { symbol: "¥", code: "JPY", name: "Iene Japonês" },
-  { symbol: "$", code: "ARS", name: "Peso Argentino" },
-];
+const CURRENCY_CODES = ["BRL", "USD", "EUR", "GBP", "JPY", "ARS"] as const;
+
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  BRL: "R$",
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  JPY: "¥",
+  ARS: "$",
+};
 
 export const EnergyRateConfig = () => {
   const { t } = useTranslation();
@@ -54,15 +56,15 @@ export const EnergyRateConfig = () => {
       return;
     }
 
-    const currency = CURRENCIES.find(c => c.code === selectedCurrency);
-    if (!currency) return;
+    const symbol = CURRENCY_SYMBOLS[selectedCurrency];
+    if (!symbol) return;
 
     setIsSaving(true);
     try {
       await upsertSettings.mutateAsync({
         kwh_rate: rate,
-        currency_symbol: currency.symbol,
-        currency_code: currency.code,
+        currency_symbol: symbol,
+        currency_code: selectedCurrency,
       });
       toast({
         title: t("energyRate.savedSuccess"),
@@ -131,11 +133,11 @@ export const EnergyRateConfig = () => {
                 <SelectValue placeholder={t("energyRate.currency")} />
               </SelectTrigger>
               <SelectContent>
-                {CURRENCIES.map((currency) => (
-                  <SelectItem key={currency.code} value={currency.code}>
+                {CURRENCY_CODES.map((code) => (
+                  <SelectItem key={code} value={code}>
                     <span className="flex items-center gap-2">
-                      <span className="font-medium">{currency.symbol}</span>
-                      <span>{currency.name}</span>
+                      <span className="font-medium">{CURRENCY_SYMBOLS[code]}</span>
+                      <span>{t(`currencies.${code}`)}</span>
                     </span>
                   </SelectItem>
                 ))}

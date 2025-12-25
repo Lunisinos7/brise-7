@@ -441,6 +441,23 @@
       "purpleDark": "Dark Purple"
     }
   },
+  "notFound": {
+    "title": "404",
+    "message": "Oops! Page not found",
+    "backHome": "Return to Home"
+  },
+  "currencies": {
+    "BRL": "Brazilian Real",
+    "USD": "US Dollar",
+    "EUR": "Euro",
+    "GBP": "British Pound",
+    "JPY": "Japanese Yen",
+    "ARS": "Argentine Peso"
+  },
+  "index": {
+    "welcome": "Welcome to Your App",
+    "startBuilding": "Start building your amazing project here!"
+  },
   "workspace": {
     "label": "Workspace",
     "select": "Select...",
