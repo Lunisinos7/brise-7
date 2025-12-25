@@ -12,7 +12,7 @@ type Theme = 'default' | 'dark' | 'green-light' | 'green-dark' | 'red' | 'red-da
 
 interface ThemeOption {
   id: Theme;
-  name: string;
+  nameKey: string;
   icon: React.ComponentType<{ className?: string }>;
   preview: string;
 }
@@ -20,25 +20,25 @@ interface ThemeOption {
 const lightThemes: ThemeOption[] = [
   {
     id: 'default',
-    name: 'Azul Claro',
+    nameKey: 'settings.themeNames.default',
     icon: Monitor,
     preview: 'bg-gradient-to-r from-blue-400 to-cyan-300'
   },
   {
     id: 'green-light',
-    name: 'Verde Claro',
+    nameKey: 'settings.themeNames.greenLight',
     icon: Leaf,
     preview: 'bg-gradient-to-r from-green-400 to-emerald-300'
   },
   {
     id: 'red',
-    name: 'Vermelho',
+    nameKey: 'settings.themeNames.red',
     icon: Heart,
     preview: 'bg-gradient-to-r from-red-400 to-pink-400'
   },
   {
     id: 'purple',
-    name: 'Roxo',
+    nameKey: 'settings.themeNames.purple',
     icon: Crown,
     preview: 'bg-gradient-to-r from-purple-400 to-indigo-400'
   }
@@ -47,25 +47,25 @@ const lightThemes: ThemeOption[] = [
 const darkThemes: ThemeOption[] = [
   {
     id: 'dark',
-    name: 'Azul Escuro',
+    nameKey: 'settings.themeNames.dark',
     icon: Moon,
     preview: 'bg-gradient-to-r from-blue-700 to-slate-800'
   },
   {
     id: 'green-dark',
-    name: 'Verde Escuro',
+    nameKey: 'settings.themeNames.greenDark',
     icon: Leaf,
     preview: 'bg-gradient-to-r from-green-600 to-green-800'
   },
   {
     id: 'red-dark',
-    name: 'Vermelho Escuro',
+    nameKey: 'settings.themeNames.redDark',
     icon: Heart,
     preview: 'bg-gradient-to-r from-red-600 to-red-900'
   },
   {
     id: 'purple-dark',
-    name: 'Roxo Escuro',
+    nameKey: 'settings.themeNames.purpleDark',
     icon: Crown,
     preview: 'bg-gradient-to-r from-purple-600 to-indigo-900'
   }
@@ -118,7 +118,7 @@ const Settings = () => {
       >
         <div className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted transition-colors">
           <theme.icon className="h-5 w-5 text-muted-foreground" />
-          <span className="font-medium flex-1">{theme.name}</span>
+          <span className="font-medium flex-1">{t(theme.nameKey)}</span>
           <div className={`w-6 h-6 rounded-full ${theme.preview}`} />
         </div>
       </Label>
@@ -161,10 +161,10 @@ const Settings = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Palette className="h-5 w-5" />
-            Temas de Aparência
+            {t('settings.themes')}
           </CardTitle>
           <CardDescription>
-            Escolha um tema para personalizar a interface
+            {t('settings.themesDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -177,7 +177,7 @@ const Settings = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-2 pb-2 border-b">
                 <Sun className="h-4 w-4 text-amber-500" />
-                <span className="font-medium text-sm text-muted-foreground">Temas Claros</span>
+                <span className="font-medium text-sm text-muted-foreground">{t('settings.lightThemes')}</span>
               </div>
               <div className="space-y-2">
                 {lightThemes.map(renderThemeOption)}
@@ -188,7 +188,7 @@ const Settings = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-2 pb-2 border-b">
                 <Moon className="h-4 w-4 text-indigo-400" />
-                <span className="font-medium text-sm text-muted-foreground">Temas Escuros</span>
+                <span className="font-medium text-sm text-muted-foreground">{t('settings.darkThemes')}</span>
               </div>
               <div className="space-y-2">
                 {darkThemes.map(renderThemeOption)}
@@ -200,23 +200,23 @@ const Settings = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Sobre o Sistema</CardTitle>
+          <CardTitle>{t('settings.about')}</CardTitle>
           <CardDescription>
-            Informações do sistema HVAC Smart
+            {t('settings.aboutDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Versão:</span>
+              <span className="text-muted-foreground">{t('settings.version')}:</span>
               <span>1.0.0</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Última atualização:</span>
+              <span className="text-muted-foreground">{t('settings.lastUpdate')}:</span>
               <span>22/12/2025</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Desenvolvido por:</span>
+              <span className="text-muted-foreground">{t('settings.developedBy')}:</span>
               <span>HVAC Smart Team</span>
             </div>
           </div>

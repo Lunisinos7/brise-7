@@ -441,6 +441,23 @@
       "purpleDark": "Roxo Escuro"
     }
   },
+  "notFound": {
+    "title": "404",
+    "message": "Oops! Página não encontrada",
+    "backHome": "Voltar ao Início"
+  },
+  "currencies": {
+    "BRL": "Real Brasileiro",
+    "USD": "Dólar Americano",
+    "EUR": "Euro",
+    "GBP": "Libra Esterlina",
+    "JPY": "Iene Japonês",
+    "ARS": "Peso Argentino"
+  },
+  "index": {
+    "welcome": "Bem-vindo ao Seu Aplicativo",
+    "startBuilding": "Comece a construir seu projeto incrível aqui!"
+  },
   "workspace": {
     "label": "Workspace",
     "select": "Selecionar...",

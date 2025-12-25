@@ -441,6 +441,23 @@
       "purpleDark": "Morado Oscuro"
     }
   },
+  "notFound": {
+    "title": "404",
+    "message": "¡Ups! Página no encontrada",
+    "backHome": "Volver al Inicio"
+  },
+  "currencies": {
+    "BRL": "Real Brasileño",
+    "USD": "Dólar Estadounidense",
+    "EUR": "Euro",
+    "GBP": "Libra Esterlina",
+    "JPY": "Yen Japonés",
+    "ARS": "Peso Argentino"
+  },
+  "index": {
+    "welcome": "Bienvenido a Tu Aplicación",
+    "startBuilding": "¡Comienza a construir tu increíble proyecto aquí!"
+  },
   "workspace": {
     "label": "Workspace",
     "select": "Seleccionar...",
