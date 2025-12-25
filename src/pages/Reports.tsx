@@ -186,6 +186,7 @@ const Reports = () => {
             equipmentEfficiency={equipmentEfficiency}
             summary={summary}
             environmentName={getEnvironmentNameForExport()}
+            currencySymbol={settings?.currency_symbol || "R$"}
           />
         </div>
       </div>
