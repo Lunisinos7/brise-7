@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Power, Minus, Plus, Snowflake, Sun, Wind, Timer, Info, Thermometer } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Equipment } from "@/hooks/useEquipments";
+import { Equipment, calculateEnergyConsumption } from "@/hooks/useEquipments";
 import { Environment } from "@/contexts/EnvironmentContext";
 
 interface EnvironmentControlDialogProps {
@@ -117,9 +117,13 @@ const EnvironmentControlDialog = ({
 
   const handlePowerToggle = async () => {
     const newState = !isAnyOn;
+    // Calculate average consumption from all equipments in this environment
+    const avgConsumption = equipments.length > 0
+      ? Math.round(equipments.reduce((sum, eq) => sum + calculateEnergyConsumption(eq), 0) / equipments.length)
+      : 0;
     await onUpdateEquipments({
       isOn: newState,
-      energyConsumption: newState ? 800 : 0,
+      energyConsumption: newState ? avgConsumption : 0,
     });
   };
 

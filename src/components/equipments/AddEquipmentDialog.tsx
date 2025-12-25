@@ -60,6 +60,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
     location: z.string().min(1, t("equipments.validation.locationRequired")),
     model: z.string().min(1, t("equipments.validation.modelRequired")),
     capacity: z.string().min(1, t("equipments.validation.capacityRequired")),
+    nominalPower: z.string().optional(),
     integration: z.enum(["BRISE", "SMART", "SMARTTHINGS"], {
       required_error: t("equipments.validation.integrationRequired"),
     }),
@@ -75,6 +76,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
       location: "",
       model: "",
       capacity: "",
+      nominalPower: "",
       integration: undefined,
       smartthingsDeviceId: undefined,
     },
@@ -113,6 +115,9 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
     setIsLoading(true);
     
     try {
+      const capacity = parseInt(data.capacity);
+      const nominalPower = data.nominalPower ? parseInt(data.nominalPower) : null;
+      
       const newEquipment: Omit<Equipment, "id"> & { 
         smartthings_device_id?: string;
         smartthings_capabilities?: any;
@@ -120,7 +125,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
         name: data.name,
         location: data.location,
         model: data.model,
-        capacity: parseInt(data.capacity),
+        capacity: capacity,
         integration: data.integration === "SMARTTHINGS" ? "SMART" : data.integration,
         isOn: false,
         currentTemp: 25,
@@ -128,6 +133,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
         mode: "cool",
         energyConsumption: 0,
         efficiency: 85,
+        nominalPower: nominalPower,
       };
 
       // Add SmartThings specific fields
@@ -363,6 +369,27 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="nominalPower"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("equipments.nominalPower")} (W)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder={t("equipments.placeholders.nominalPower")} 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        {t("equipments.nominalPowerHint")}
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </>
             )}
 

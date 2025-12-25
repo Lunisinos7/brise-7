@@ -136,6 +136,8 @@
     "equipmentName": "Equipment Name",
     "targetTemp": "Target temperature",
     "currentTemp": "Current temperature",
+    "nominalPower": "Nominal Power",
+    "nominalPowerHint": "Leave empty to auto-calculate (BTU/10)",
     "addDialog": {
       "title": "Add New Equipment",
       "description": "Fill in the information for the climate control equipment you want to add.",
@@ -176,7 +178,8 @@
       "name": "E.g.: Meeting Room A",
       "location": "E.g.: Ground Floor - North Wing",
       "model": "E.g.: Samsung AR12345",
-      "capacity": "E.g.: 12000"
+      "capacity": "E.g.: 12000",
+      "nominalPower": "E.g.: 1200"
     }
   },
   "environmentCard": {
