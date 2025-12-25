@@ -7,9 +7,8 @@ import EnvironmentControlDialog from "@/components/dashboard/EnvironmentControlD
 import CreateEnvironmentDialog from "@/components/dashboard/CreateEnvironmentDialog";
 import EditEnvironmentDialog from "@/components/dashboard/EditEnvironmentDialog";
 import EnvironmentCard from "@/components/dashboard/EnvironmentCard";
-import { mockAlerts } from "@/data/mockData";
 import { useEquipments } from "@/hooks/useEquipments";
-import { Wind, Zap, Thermometer, AlertTriangle, Plus } from "lucide-react";
+import { Wind, Zap, Thermometer, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
@@ -204,12 +203,11 @@ const Dashboard = () => {
       </div>
 
       {/* Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatusCard title={t('dashboard.activeEquipments')} value={`${activeEquipments}/${totalEquipments}`} description={t('dashboard.activeEquipmentsDesc')} icon={Wind} variant="cooling" />
         <StatusCard title={t('dashboard.totalConsumption')} value={`${(totalConsumption / 1000).toFixed(1)}kW`} description={t('dashboard.totalConsumptionDesc')} icon={Zap} variant="energy" />
         <StatusCard title={t('dashboard.averageTemperature')} value={`${avgTemp}°C`} description={t('dashboard.averageTemperatureDesc')} icon={Thermometer} variant="cooling" />
         <AccumulatedExpenseCard workspaceId={currentWorkspaceId} />
-        <StatusCard title={t('dashboard.activeAlerts')} value={mockAlerts.length} description={t('dashboard.activeAlertsDesc')} icon={AlertTriangle} variant="heating" />
       </div>
 
       <div className="space-y-4">
