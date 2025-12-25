@@ -198,6 +198,7 @@ export type Database = {
           mode: string
           model: string
           name: string
+          nominal_power: number | null
           smartthings_capabilities: Json | null
           smartthings_device_id: string | null
           target_temp: number
@@ -218,6 +219,7 @@ export type Database = {
           mode?: string
           model: string
           name: string
+          nominal_power?: number | null
           smartthings_capabilities?: Json | null
           smartthings_device_id?: string | null
           target_temp?: number
@@ -238,6 +240,7 @@ export type Database = {
           mode?: string
           model?: string
           name?: string
+          nominal_power?: number | null
           smartthings_capabilities?: Json | null
           smartthings_device_id?: string | null
           target_temp?: number

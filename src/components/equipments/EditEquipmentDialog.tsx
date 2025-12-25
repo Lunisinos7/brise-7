@@ -67,6 +67,7 @@ export function EditEquipmentDialog({
     location: z.string().min(1, t("equipments.validation.locationRequired")),
     model: z.string().min(1, t("equipments.validation.modelRequired")),
     capacity: z.string().min(1, t("equipments.validation.capacityRequired")),
+    nominalPower: z.string().optional(),
     integration: z.enum(["BRISE", "SMART"], {
       required_error: t("equipments.validation.integrationRequired"),
     }),
@@ -81,6 +82,7 @@ export function EditEquipmentDialog({
       location: "",
       model: "",
       capacity: "",
+      nominalPower: "",
       integration: undefined,
     },
   });
@@ -92,6 +94,7 @@ export function EditEquipmentDialog({
         location: equipment.location,
         model: equipment.model || "",
         capacity: equipment.capacity?.toString() || "",
+        nominalPower: equipment.nominalPower?.toString() || "",
         integration: equipment.integration || "SMART",
       });
     }
@@ -109,6 +112,7 @@ export function EditEquipmentDialog({
         location: data.location,
         model: data.model,
         capacity: parseInt(data.capacity),
+        nominalPower: data.nominalPower ? parseInt(data.nominalPower) : null,
         integration: data.integration,
       };
       
@@ -231,6 +235,27 @@ export function EditEquipmentDialog({
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="nominalPower"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("equipments.nominalPower")} (W)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      placeholder={t("equipments.placeholders.nominalPower")} 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">
+                    {t("equipments.nominalPowerHint")}
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

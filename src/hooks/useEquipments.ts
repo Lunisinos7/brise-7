@@ -16,11 +16,25 @@ export interface Equipment {
   mode: "cool" | "heat" | "auto" | "fan";
   energyConsumption: number;
   efficiency: number;
+  nominalPower?: number | null;
   smartthings_device_id?: string | null;
   smartthings_capabilities?: any;
   last_synced_at?: string | null;
   workspace_id?: string | null;
 }
+
+// Helper function to calculate energy consumption based on equipment data
+export const calculateEnergyConsumption = (equipment: Equipment): number => {
+  // Priority: nominalPower > estimated from capacity
+  if (equipment.nominalPower && equipment.nominalPower > 0) {
+    return equipment.nominalPower;
+  }
+  // Estimate: BTU/h ÷ 10 ≈ Watts (rough conversion)
+  if (equipment.capacity && equipment.capacity > 0) {
+    return Math.round(equipment.capacity / 10);
+  }
+  return 0;
+};
 
 interface DbEquipment {
   id: string;
@@ -35,6 +49,7 @@ interface DbEquipment {
   mode: string;
   energy_consumption: number;
   efficiency: number;
+  nominal_power?: number | null;
   created_at: string;
   updated_at: string;
   smartthings_device_id?: string | null;
@@ -56,6 +71,7 @@ const mapDbToEquipment = (db: DbEquipment): Equipment => ({
   mode: db.mode as "cool" | "heat" | "auto" | "fan",
   energyConsumption: db.energy_consumption,
   efficiency: db.efficiency,
+  nominalPower: db.nominal_power,
   smartthings_device_id: db.smartthings_device_id,
   smartthings_capabilities: db.smartthings_capabilities,
   last_synced_at: db.last_synced_at,
@@ -75,6 +91,7 @@ const mapEquipmentToDb = (eq: Equipment) => ({
   mode: eq.mode,
   energy_consumption: eq.energyConsumption,
   efficiency: eq.efficiency,
+  nominal_power: eq.nominalPower,
   smartthings_device_id: eq.smartthings_device_id,
   smartthings_capabilities: eq.smartthings_capabilities,
   last_synced_at: eq.last_synced_at,
@@ -131,6 +148,7 @@ export function useEquipments(workspaceId: string | null) {
         mode: equipment.mode,
         energy_consumption: equipment.energyConsumption,
         efficiency: equipment.efficiency,
+        nominal_power: equipment.nominalPower,
         workspace_id: workspaceId,
       };
 

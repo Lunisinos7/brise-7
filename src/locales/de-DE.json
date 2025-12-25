@@ -136,6 +136,8 @@
     "equipmentName": "Gerätename",
     "targetTemp": "Zieltemperatur",
     "currentTemp": "Aktuelle Temperatur",
+    "nominalPower": "Nennleistung",
+    "nominalPowerHint": "Leer lassen für automatische Berechnung (BTU/10)",
     "addDialog": {
       "title": "Neues Gerät hinzufügen",
       "description": "Füllen Sie die Informationen für das Klimagerät aus, das Sie hinzufügen möchten.",
@@ -176,7 +178,8 @@
       "name": "Z.B.: Besprechungsraum A",
       "location": "Z.B.: Erdgeschoss - Nordflügel",
       "model": "Z.B.: Samsung AR12345",
-      "capacity": "Z.B.: 12000"
+      "capacity": "Z.B.: 12000",
+      "nominalPower": "Z.B.: 1200"
     }
   },
   "environmentCard": {

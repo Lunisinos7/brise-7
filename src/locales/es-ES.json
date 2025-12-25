@@ -136,6 +136,8 @@
     "equipmentName": "Nombre del Equipo",
     "targetTemp": "Temperatura objetivo",
     "currentTemp": "Temperatura actual",
+    "nominalPower": "Potencia Nominal",
+    "nominalPowerHint": "Dejar vacío para calcular automáticamente (BTU/10)",
     "addDialog": {
       "title": "Añadir Nuevo Equipo",
       "description": "Complete la información del equipo de climatización que desea añadir.",
@@ -176,7 +178,8 @@
       "name": "Ej: Sala de Reuniones A",
       "location": "Ej: Planta Baja - Ala Norte",
       "model": "Ej: Samsung AR12345",
-      "capacity": "Ej: 12000"
+      "capacity": "Ej: 12000",
+      "nominalPower": "Ej: 1200"
     }
   },
   "environmentCard": {
