@@ -296,11 +296,17 @@ export const useWorkspaceInvitations = (workspaceId: string | null) => {
     mutationFn: async ({ 
       email, 
       role, 
-      invitedBy 
+      invitedBy,
+      inviterName,
+      workspaceName,
+      language,
     }: { 
       email: string; 
       role: WorkspaceRole; 
       invitedBy: string;
+      inviterName?: string;
+      workspaceName?: string;
+      language?: string;
     }) => {
       if (!workspaceId) throw new Error('No workspace selected');
 
@@ -316,6 +322,27 @@ export const useWorkspaceInvitations = (workspaceId: string | null) => {
         .single();
 
       if (error) throw error;
+
+      // Send invitation email
+      try {
+        await supabase.functions.invoke('send-email', {
+          body: {
+            type: 'workspace_invitation',
+            to: email,
+            language: language || 'pt-BR',
+            data: {
+              inviterName: inviterName || 'Um usuário',
+              workspaceName: workspaceName || 'Workspace',
+              role,
+            },
+          },
+        });
+        console.log('Invitation email sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send invitation email:', emailError);
+        // Don't throw - invitation was created, email failure is non-critical
+      }
+
       return data;
     },
     onSuccess: () => {
