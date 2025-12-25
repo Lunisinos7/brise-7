@@ -1,10 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Trash2, Plus, Pencil, CalendarOff, RefreshCw, CalendarIcon } from "lucide-react";
+import { Clock, Trash2, Plus, Pencil, CalendarOff, RefreshCw, CalendarIcon, Users } from "lucide-react";
 import TimeRoutineDialog from "@/components/automations/TimeRoutineDialog";
 import EditTimeRoutineDialog from "@/components/automations/EditTimeRoutineDialog";
+import OccupancyAutomationDialog from "@/components/automations/OccupancyAutomationDialog";
+import OccupancyAutomationCard from "@/components/automations/OccupancyAutomationCard";
 import { useTimeRoutines } from "@/hooks/useTimeRoutines";
+import { useOccupancyAutomations } from "@/hooks/useOccupancyAutomations";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { Switch } from "@/components/ui/switch";
@@ -18,10 +21,16 @@ const Automations = () => {
   } = useWorkspaceContext();
   const {
     routines,
-    isLoading,
+    isLoading: isLoadingRoutines,
     toggleRoutine,
     deleteRoutine
   } = useTimeRoutines(currentWorkspaceId || undefined);
+  const {
+    automations: occupancyAutomations,
+    isLoading: isLoadingOccupancy,
+    toggleAutomation,
+    deleteAutomation
+  } = useOccupancyAutomations(currentWorkspaceId || undefined);
   const {
     environments
   } = useEnvironments();
@@ -63,11 +72,15 @@ const Automations = () => {
     });
   };
 
-  const activeCount = routines.filter(r => r.is_active).length;
-  const inactiveCount = routines.filter(r => !r.is_active).length;
+  const activeRoutinesCount = routines.filter(r => r.is_active).length;
+  const inactiveRoutinesCount = routines.filter(r => !r.is_active).length;
+  const activeOccupancyCount = occupancyAutomations.filter(a => a.is_active).length;
+  const inactiveOccupancyCount = occupancyAutomations.filter(a => !a.is_active).length;
+
+  const isLoading = isLoadingRoutines || isLoadingOccupancy;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-cooling bg-clip-text text-transparent">
@@ -77,33 +90,84 @@ const Automations = () => {
             {t('automations.subtitle')}
           </p>
         </div>
-        <TimeRoutineDialog>
-          <Button variant="control" className="gap-2">
-            <Plus className="h-4 w-4" />
-            {t('automations.newAutomation')}
-          </Button>
-        </TimeRoutineDialog>
+        <div className="flex gap-2">
+          <OccupancyAutomationDialog>
+            <Button variant="outline" className="gap-2">
+              <Users className="h-4 w-4" />
+              {t('automations.newOccupancyAutomation')}
+            </Button>
+          </OccupancyAutomationDialog>
+          <TimeRoutineDialog>
+            <Button variant="control" className="gap-2">
+              <Plus className="h-4 w-4" />
+              {t('automations.newTimeRoutine')}
+            </Button>
+          </TimeRoutineDialog>
+        </div>
       </div>
 
+      {/* Occupancy Automations Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">{t('automations.configured')}</h2>
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-orange-500" />
+            <h2 className="text-xl font-semibold">{t('automations.occupancyAutomations')}</h2>
+          </div>
           <div className="flex gap-2">
             <Badge variant="secondary" className="bg-energy-efficient/10 text-energy-efficient">
-              {activeCount} {activeCount !== 1 ? t('automations.actives') : t('automations.active')}
+              {activeOccupancyCount} {activeOccupancyCount !== 1 ? t('automations.actives') : t('automations.active')}
             </Badge>
             <Badge variant="outline">
-              {inactiveCount} {inactiveCount !== 1 ? t('automations.inactives') : t('automations.inactive')}
+              {inactiveOccupancyCount} {inactiveOccupancyCount !== 1 ? t('automations.inactives') : t('automations.inactive')}
             </Badge>
           </div>
         </div>
 
-        {isLoading ? (
+        {isLoadingOccupancy ? (
+          <div className="text-center py-8 text-muted-foreground">{t('common.loading')}</div>
+        ) : occupancyAutomations.length === 0 ? (
+          <Card className="p-8 text-center">
+            <p className="text-muted-foreground">
+              {t('automations.noOccupancyAutomations')}
+            </p>
+          </Card>
+        ) : (
+          <div className="grid gap-4">
+            {occupancyAutomations.map(automation => (
+              <OccupancyAutomationCard
+                key={automation.id}
+                automation={automation}
+                onToggle={(id, isActive) => toggleAutomation.mutate({ id, is_active: isActive })}
+                onDelete={(id) => deleteAutomation.mutate(id)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Time Routines Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-cooling" />
+            <h2 className="text-xl font-semibold">{t('automations.timeRoutines')}</h2>
+          </div>
+          <div className="flex gap-2">
+            <Badge variant="secondary" className="bg-energy-efficient/10 text-energy-efficient">
+              {activeRoutinesCount} {activeRoutinesCount !== 1 ? t('automations.actives') : t('automations.active')}
+            </Badge>
+            <Badge variant="outline">
+              {inactiveRoutinesCount} {inactiveRoutinesCount !== 1 ? t('automations.inactives') : t('automations.inactive')}
+            </Badge>
+          </div>
+        </div>
+
+        {isLoadingRoutines ? (
           <div className="text-center py-8 text-muted-foreground">{t('automations.loadingRoutines')}</div>
         ) : routines.length === 0 ? (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground">
-              {t('automations.noAutomations')}
+              {t('automations.noTimeRoutines')}
             </p>
           </Card>
         ) : (

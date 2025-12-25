@@ -257,6 +257,128 @@ export type Database = {
           },
         ]
       }
+      occupancy_automation_environments: {
+        Row: {
+          automation_id: string
+          created_at: string
+          environment_id: string
+          id: string
+        }
+        Insert: {
+          automation_id: string
+          created_at?: string
+          environment_id: string
+          id?: string
+        }
+        Update: {
+          automation_id?: string
+          created_at?: string
+          environment_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "occupancy_automation_environments_automation_id_fkey"
+            columns: ["automation_id"]
+            isOneToOne: false
+            referencedRelation: "occupancy_automations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "occupancy_automation_environments_environment_id_fkey"
+            columns: ["environment_id"]
+            isOneToOne: false
+            referencedRelation: "environments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      occupancy_automations: {
+        Row: {
+          created_at: string
+          id: string
+          inactivity_timeout_minutes: number
+          is_active: boolean
+          name: string
+          reactivation_enabled: boolean
+          respect_time_routines: boolean
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inactivity_timeout_minutes?: number
+          is_active?: boolean
+          name: string
+          reactivation_enabled?: boolean
+          respect_time_routines?: boolean
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inactivity_timeout_minutes?: number
+          is_active?: boolean
+          name?: string
+          reactivation_enabled?: boolean
+          respect_time_routines?: boolean
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "occupancy_automations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      occupancy_events: {
+        Row: {
+          automation_id: string
+          created_at: string
+          environment_id: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          automation_id: string
+          created_at?: string
+          environment_id?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          automation_id?: string
+          created_at?: string
+          environment_id?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "occupancy_events_automation_id_fkey"
+            columns: ["automation_id"]
+            isOneToOne: false
+            referencedRelation: "occupancy_automations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "occupancy_events_environment_id_fkey"
+            columns: ["environment_id"]
+            isOneToOne: false
+            referencedRelation: "environments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

@@ -268,6 +268,12 @@
     "title": "Automações",
     "subtitle": "Crie e gerencie automações inteligentes para seus equipamentos",
     "newAutomation": "Nova Automação",
+    "newOccupancyAutomation": "Nova Automação por Ocupação",
+    "newTimeRoutine": "Nova Rotina por Horário",
+    "occupancyAutomations": "Automações por Ocupação",
+    "timeRoutines": "Rotinas por Horário",
+    "noOccupancyAutomations": "Nenhuma automação por ocupação configurada.",
+    "noTimeRoutines": "Nenhuma rotina por horário configurada.",
     "configured": "Automações Configuradas",
     "active": "Ativa",
     "inactive": "Inativa",
@@ -352,6 +358,33 @@
         "republic": "Proclamação da República",
         "christmas": "Natal"
       }
+    },
+    "occupancy": {
+      "dialogTitle": "Nova Automação por Ocupação",
+      "dialogDescription": "Configure uma automação baseada em detecção de presença",
+      "editTitle": "Editar Automação por Ocupação",
+      "editDescription": "Modifique as configurações da automação",
+      "name": "Nome da Automação",
+      "namePlaceholder": "Ex: Ocupação Escritório",
+      "inactivityTimeout": "Tempo de inatividade para desligar",
+      "minutes": "minutos",
+      "reactivation": "Religar ao detectar movimento",
+      "reactivationDesc": "Religa os equipamentos quando movimento é detectado novamente",
+      "respectTimeRoutines": "Respeitar horários das rotinas",
+      "respectTimeRoutinesDesc": "Se o ambiente tiver rotinas por horário, ocupação só opera durante os horários definidos",
+      "environments": "Ambientes controlados",
+      "noEnvironments": "Nenhum ambiente disponível",
+      "sensors": "sensor(es)",
+      "environmentsSelected": "ambiente(s) selecionado(s)",
+      "create": "Criar Automação",
+      "deleteTitle": "Excluir Automação?",
+      "deleteDescription": "Tem certeza que deseja excluir \"{{name}}\"? Esta ação não pode ser desfeita.",
+      "turnsOffAfter": "Desliga após {{minutes}} min de inatividade",
+      "trigger": "Gatilho",
+      "triggerType": "Detecção de Presença",
+      "sensorsLabel": "Sensores",
+      "reactivationBadge": "Religa",
+      "respectRoutinesBadge": "Horários"
     }
   },
   "reports": {
@@ -771,6 +804,17 @@
       "createError": "Erro ao criar ambiente",
       "deleteError": "Erro ao excluir ambiente",
       "updateError": "Erro ao atualizar ambiente"
+    },
+    "occupancyAutomations": {
+      "created": "Automação criada!",
+      "createdDesc": "A automação por ocupação foi salva com sucesso.",
+      "createError": "Erro ao criar automação",
+      "updated": "Automação atualizada!",
+      "updatedDesc": "As alterações foram salvas com sucesso.",
+      "updateError": "Erro ao atualizar automação",
+      "deleted": "Automação excluída",
+      "deletedDesc": "A automação foi removida com sucesso.",
+      "deleteError": "Erro ao excluir automação"
     }
   },
   "weekdays": {
