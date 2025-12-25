@@ -816,5 +816,37 @@
       "fri": "Vie",
       "sat": "Sáb"
     }
+  },
+  "brise": {
+    "title": "BRISE",
+    "description": "Conecte su cuenta BRISE para controlar sus dispositivos",
+    "connected": "Conectado",
+    "notConfigured": "No configurado",
+    "connectedAs": "Conectado como",
+    "email": "Email de la cuenta BRISE",
+    "password": "Contraseña",
+    "login": "Conectar",
+    "disconnect": "Desconectar",
+    "lastSync": "Última sincronización",
+    "neverSynced": "Nunca sincronizado",
+    "syncDevices": "Sincronizar Dispositivos",
+    "loginError": "Error de conexión",
+    "loginErrorDesc": "Verifique su email y contraseña",
+    "loginSuccess": "¡Conectado exitosamente!",
+    "loginSuccessDesc": "Su cuenta BRISE ha sido vinculada",
+    "disconnected": "Desconectado",
+    "disconnectedDesc": "Su cuenta BRISE ha sido desvinculada",
+    "disconnectTitle": "¿Desconectar BRISE?",
+    "disconnectDesc": "Se desconectará de su cuenta BRISE. Los equipos importados no serán eliminados.",
+    "loginHint": "Use las mismas credenciales de la app BRISE",
+    "noWorkspace": "Seleccione un workspace primero",
+    "discoverError": "Error al buscar dispositivos",
+    "checkConfig": "Verifique su configuración",
+    "sendError": "Error al enviar comando",
+    "tryAgain": "Intente de nuevo",
+    "selectDevice": "Seleccione un dispositivo BRISE",
+    "searchingDevices": "Buscando dispositivos...",
+    "allImported": "Todos los dispositivos han sido importados",
+    "noDevicesFound": "No se encontraron dispositivos BRISE"
   }
 }

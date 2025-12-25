@@ -32,8 +32,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Equipment } from "@/hooks/useEquipments";
 import { useSmartThingsConfig } from "@/hooks/useSmartThingsConfig";
 import { useSmartThingsDevices } from "@/hooks/useSmartThingsDevices";
+import { useBriseConfig } from "@/hooks/useBriseConfig";
+import { useBriseDevices } from "@/hooks/useBriseDevices";
 import { SmartThingsDevice } from "@/lib/smartthings";
-import { Loader2, Wifi, AlertCircle, RefreshCw, Settings } from "lucide-react";
+import { BriseDevice } from "@/lib/brise";
+import { Loader2, Wifi, AlertCircle, RefreshCw, Settings, Snowflake } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -44,6 +47,7 @@ interface AddEquipmentDialogProps {
   onAddEquipment: (equipment: Omit<Equipment, "id"> & { 
     smartthings_device_id?: string;
     smartthings_capabilities?: any;
+    brise_device_id?: string;
   }) => Promise<void>;
 }
 
@@ -51,9 +55,12 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
   const { t } = useTranslation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const { isConfigured, isLoading: isConfigLoading } = useSmartThingsConfig();
-  const { devices, isLoading: isDevicesLoading, discoverDevices } = useSmartThingsDevices();
+  const { isConfigured: isSmartThingsConfigured, isLoading: isConfigLoading } = useSmartThingsConfig();
+  const { devices: smartThingsDevices, isLoading: isDevicesLoading, discoverDevices: discoverSmartThingsDevices } = useSmartThingsDevices();
+  const { isConfigured: isBriseConfigured, isLoading: isBriseConfigLoading } = useBriseConfig();
+  const { devices: briseDevices, isLoading: isBriseDevicesLoading, discoverDevices: discoverBriseDevices } = useBriseDevices();
   const [selectedDevice, setSelectedDevice] = useState<SmartThingsDevice | null>(null);
+  const [selectedBriseDevice, setSelectedBriseDevice] = useState<BriseDevice | null>(null);
 
   const equipmentSchema = z.object({
     name: z.string().min(1, t("equipments.validation.nameRequired")),
@@ -84,18 +91,22 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
 
   const watchIntegration = form.watch("integration");
 
-  // Fetch SmartThings devices when integration is selected
+  // Fetch devices when integration is selected
   useEffect(() => {
-    if (watchIntegration === "SMARTTHINGS" && isConfigured && devices.length === 0) {
-      discoverDevices();
+    if (watchIntegration === "SMARTTHINGS" && isSmartThingsConfigured && smartThingsDevices.length === 0) {
+      discoverSmartThingsDevices();
     }
-  }, [watchIntegration, isConfigured]);
+    if (watchIntegration === "BRISE" && isBriseConfigured && briseDevices.length === 0) {
+      discoverBriseDevices();
+    }
+  }, [watchIntegration, isSmartThingsConfigured, isBriseConfigured]);
 
   // Reset form when dialog closes
   useEffect(() => {
     if (!open) {
       form.reset();
       setSelectedDevice(null);
+      setSelectedBriseDevice(null);
     }
   }, [open]);
 
@@ -111,6 +122,12 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
     }
   };
 
+  const handleBriseDeviceSelect = (device: BriseDevice) => {
+    setSelectedBriseDevice(device);
+    form.setValue("name", device.name);
+    form.setValue("model", device.model);
+  };
+
   const onSubmit = async (data: EquipmentFormData) => {
     setIsLoading(true);
     
@@ -121,6 +138,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
       const newEquipment: Omit<Equipment, "id"> & { 
         smartthings_device_id?: string;
         smartthings_capabilities?: any;
+        brise_device_id?: string;
       } = {
         name: data.name,
         location: data.location,
@@ -141,6 +159,11 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
         newEquipment.smartthings_device_id = selectedDevice.deviceId;
         newEquipment.smartthings_capabilities = selectedDevice.capabilities;
       }
+
+      // Add BRISE specific fields
+      if (data.integration === "BRISE" && selectedBriseDevice) {
+        newEquipment.brise_device_id = selectedBriseDevice.deviceId;
+      }
       
       await onAddEquipment(newEquipment);
 
@@ -151,6 +174,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
 
       form.reset();
       setSelectedDevice(null);
+      setSelectedBriseDevice(null);
       onOpenChange(false);
     } catch (error) {
       toast({
@@ -163,7 +187,8 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
     }
   };
 
-  const availableDevices = devices.filter(d => !d.isImported);
+  const availableSmartThingsDevices = smartThingsDevices.filter(d => !d.isImported);
+  const availableBriseDevices = briseDevices.filter(d => !d.isImported);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

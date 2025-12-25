@@ -816,5 +816,37 @@
       "fri": "Fri",
       "sat": "Sat"
     }
+  },
+  "brise": {
+    "title": "BRISE",
+    "description": "Connect your BRISE account to control your devices",
+    "connected": "Connected",
+    "notConfigured": "Not configured",
+    "connectedAs": "Connected as",
+    "email": "BRISE account email",
+    "password": "Password",
+    "login": "Connect",
+    "disconnect": "Disconnect",
+    "lastSync": "Last sync",
+    "neverSynced": "Never synced",
+    "syncDevices": "Sync Devices",
+    "loginError": "Connection error",
+    "loginErrorDesc": "Check your email and password",
+    "loginSuccess": "Connected successfully!",
+    "loginSuccessDesc": "Your BRISE account has been linked",
+    "disconnected": "Disconnected",
+    "disconnectedDesc": "Your BRISE account has been unlinked",
+    "disconnectTitle": "Disconnect BRISE?",
+    "disconnectDesc": "You will be disconnected from your BRISE account. Imported equipment will not be deleted.",
+    "loginHint": "Use the same credentials as the BRISE app",
+    "noWorkspace": "Select a workspace first",
+    "discoverError": "Error discovering devices",
+    "checkConfig": "Check your configuration",
+    "sendError": "Error sending command",
+    "tryAgain": "Try again",
+    "selectDevice": "Select a BRISE device",
+    "searchingDevices": "Searching for devices...",
+    "allImported": "All devices have been imported",
+    "noDevicesFound": "No BRISE devices found"
   }
 }

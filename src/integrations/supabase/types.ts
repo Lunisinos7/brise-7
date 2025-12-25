@@ -86,6 +86,53 @@ export type Database = {
         }
         Relationships: []
       }
+      brise_config: {
+        Row: {
+          access_token: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          last_sync_at: string | null
+          refresh_token: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_email: string
+          workspace_id: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_email: string
+          workspace_id?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_email?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brise_config_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       energy_history: {
         Row: {
           created_at: string
@@ -185,6 +232,7 @@ export type Database = {
       }
       equipments: {
         Row: {
+          brise_device_id: string | null
           capacity: number
           created_at: string
           current_temp: number
@@ -206,6 +254,7 @@ export type Database = {
           workspace_id: string | null
         }
         Insert: {
+          brise_device_id?: string | null
           capacity: number
           created_at?: string
           current_temp?: number
@@ -227,6 +276,7 @@ export type Database = {
           workspace_id?: string | null
         }
         Update: {
+          brise_device_id?: string | null
           capacity?: number
           created_at?: string
           current_temp?: number
