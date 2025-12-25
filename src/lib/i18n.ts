@@ -5,17 +5,20 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import ptBR from '@/locales/pt-BR.json';
 import enUS from '@/locales/en-US.json';
 import esES from '@/locales/es-ES.json';
+import deDE from '@/locales/de-DE.json';
 
 export const resources = {
   'pt-BR': { translation: ptBR },
   'en-US': { translation: enUS },
   'es-ES': { translation: esES },
+  'de-DE': { translation: deDE },
 };
 
 export const languages = [
   { code: 'pt-BR', name: 'Português (Brasil)', flag: '🇧🇷' },
   { code: 'en-US', name: 'English (US)', flag: '🇺🇸' },
   { code: 'es-ES', name: 'Español', flag: '🇪🇸' },
+  { code: 'de-DE', name: 'Deutsch', flag: '🇩🇪' },
 ];
 
 i18n
