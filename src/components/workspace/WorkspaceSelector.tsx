@@ -45,7 +45,7 @@ const WorkspaceSelector = () => {
         <PopoverTrigger asChild>
           <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between h-auto py-2 px-3">
             <div className="flex items-center gap-2 min-w-0 overflow-hidden">
-              <div className="h-8 w-8 rounded-md bg-gradient-cooling flex items-center justify-center flex-shrink-0 bg-primary">
+              <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center flex-shrink-0">
                 <Building2 className="h-4 w-4 text-white" />
               </div>
               <div className="flex flex-col items-start min-w-0 overflow-hidden">
