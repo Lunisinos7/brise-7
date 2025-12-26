@@ -15,13 +15,13 @@ export const AccumulatedExpenseCard = ({ workspaceId }: AccumulatedExpenseCardPr
   return (
     <Card className={cn(
       "transition-all duration-300 hover:shadow-elevated",
-      "border-energy-efficient/20 bg-gradient-to-br from-energy-efficient/10 to-transparent"
+      "border-primary/20 bg-gradient-to-br from-primary/10 to-transparent"
     )}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {t("dashboard.accumulatedExpense")}
         </CardTitle>
-        <DollarSign className="h-4 w-4 text-energy-efficient" />
+        <DollarSign className="h-4 w-4 text-primary" />
       </CardHeader>
       <CardContent>
         {isLoading ? (
