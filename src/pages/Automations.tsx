@@ -197,7 +197,7 @@ const Automations = () => {
                       />
                       <Badge 
                         variant={routine.is_active ? "default" : "secondary"} 
-                        className={routine.is_active ? "bg-energy-efficient text-white" : ""}
+                        className={routine.is_active ? "bg-primary text-primary-foreground" : ""}
                       >
                         {routine.is_active ? t('automations.active') : t('automations.inactive')}
                       </Badge>
