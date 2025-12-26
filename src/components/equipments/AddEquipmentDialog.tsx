@@ -232,7 +232,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                   <div className="flex items-center justify-center py-4">
                     <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                   </div>
-                ) : !isConfigured ? (
+                ) : !isSmartThingsConfigured ? (
                   <div className="flex flex-col items-center gap-3 py-4 text-center">
                     <AlertCircle className="h-8 w-8 text-yellow-500" />
                     <div>
@@ -256,7 +256,7 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => discoverDevices()}
+                        onClick={() => discoverSmartThingsDevices()}
                         disabled={isDevicesLoading}
                       >
                         {isDevicesLoading ? (
@@ -274,9 +274,9 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                           {t("equipments.addDialog.searchingDevices")}
                         </span>
                       </div>
-                    ) : availableDevices.length === 0 ? (
+                    ) : availableSmartThingsDevices.length === 0 ? (
                       <div className="text-center py-4 text-sm text-muted-foreground">
-                        {devices.length > 0 
+                        {smartThingsDevices.length > 0 
                           ? t("equipments.addDialog.allImported")
                           : t("equipments.addDialog.noDevicesFound")
                         }
@@ -285,12 +285,12 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
                       <RadioGroup
                         value={selectedDevice?.deviceId || ""}
                         onValueChange={(value) => {
-                          const device = availableDevices.find(d => d.deviceId === value);
+                          const device = availableSmartThingsDevices.find(d => d.deviceId === value);
                           if (device) handleDeviceSelect(device);
                         }}
                         className="space-y-2"
                       >
-                        {availableDevices.map((device) => (
+                        {availableSmartThingsDevices.map((device) => (
                           <div
                             key={device.deviceId}
                             className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer transition-colors ${
