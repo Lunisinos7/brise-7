@@ -19,6 +19,7 @@ export interface Equipment {
   nominalPower?: number | null;
   smartthings_device_id?: string | null;
   smartthings_capabilities?: any;
+  brise_device_id?: string | null;
   last_synced_at?: string | null;
   workspace_id?: string | null;
 }
@@ -54,6 +55,7 @@ interface DbEquipment {
   updated_at: string;
   smartthings_device_id?: string | null;
   smartthings_capabilities?: any;
+  brise_device_id?: string | null;
   last_synced_at?: string | null;
   workspace_id?: string | null;
 }
@@ -74,6 +76,7 @@ const mapDbToEquipment = (db: DbEquipment): Equipment => ({
   nominalPower: db.nominal_power,
   smartthings_device_id: db.smartthings_device_id,
   smartthings_capabilities: db.smartthings_capabilities,
+  brise_device_id: db.brise_device_id,
   last_synced_at: db.last_synced_at,
   workspace_id: db.workspace_id,
 });
@@ -94,6 +97,7 @@ const mapEquipmentToDb = (eq: Equipment) => ({
   nominal_power: eq.nominalPower,
   smartthings_device_id: eq.smartthings_device_id,
   smartthings_capabilities: eq.smartthings_capabilities,
+  brise_device_id: eq.brise_device_id,
   last_synced_at: eq.last_synced_at,
   workspace_id: eq.workspace_id,
 });
@@ -132,11 +136,15 @@ export function useEquipments(workspaceId: string | null) {
     }
   };
 
-  const addEquipment = async (equipment: Omit<Equipment, "id">) => {
+  const addEquipment = async (equipment: Omit<Equipment, "id"> & { 
+    smartthings_device_id?: string;
+    smartthings_capabilities?: any;
+    brise_device_id?: string;
+  }) => {
     if (!workspaceId) throw new Error("No workspace selected");
     
     try {
-      const dbEquipment = {
+      const dbEquipment: any = {
         name: equipment.name,
         location: equipment.location,
         model: equipment.model,
@@ -151,6 +159,17 @@ export function useEquipments(workspaceId: string | null) {
         nominal_power: equipment.nominalPower,
         workspace_id: workspaceId,
       };
+
+      // Add SmartThings fields if present
+      if (equipment.smartthings_device_id) {
+        dbEquipment.smartthings_device_id = equipment.smartthings_device_id;
+        dbEquipment.smartthings_capabilities = equipment.smartthings_capabilities;
+      }
+
+      // Add BRISE fields if present
+      if (equipment.brise_device_id) {
+        dbEquipment.brise_device_id = equipment.brise_device_id;
+      }
 
       const { data, error } = await supabase
         .from("equipments")

@@ -2,6 +2,7 @@ export interface BriseDevice {
   deviceId: string;
   name: string;
   model: string;
+  location?: string;
   isOnline: boolean;
   currentTemp?: number;
   targetTemp?: number;
