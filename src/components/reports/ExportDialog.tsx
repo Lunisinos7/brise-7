@@ -11,7 +11,7 @@ import { ptBR, enUS, es } from "date-fns/locale";
 interface ExportDialogProps {
   energyData: any[];
   temperatureData: any[];
-  equipmentEfficiency: any[];
+  equipmentExpense: any[];
   summary: {
     totalConsumption: number;
     totalSpent: number;
@@ -32,7 +32,7 @@ const getDateLocale = (language: string) => {
 export const ExportDialog = ({
   energyData,
   temperatureData,
-  equipmentEfficiency,
+  equipmentExpense,
   summary,
   environmentName,
   currencySymbol = "R$"
@@ -66,19 +66,18 @@ export const ExportDialog = ({
     value: t("export.value"),
     totalConsumption: t("export.totalConsumption"),
     totalSpending: t("export.totalSpending"),
-    efficiencyByEquipment: t("export.efficiencyByEquipment"),
+    expenseByEquipment: t("export.expenseByEquipment"),
     equipment: t("export.equipment"),
-    avgEfficiency: t("export.avgEfficiency"),
+    expense: t("export.expense"),
     energyConsumptionByDate: t("export.energyConsumptionByDate"),
     date: t("export.date"),
     consumption: t("export.consumption"),
-    efficiency: t("export.efficiency"),
     pageOf: t("export.pageOf"),
     generatedAt: t("export.generatedAt"),
     sheetSummary: t("export.sheetSummary"),
     sheetEnergyConsumption: t("export.sheetEnergyConsumption"),
     sheetTemperature: t("export.sheetTemperature"),
-    sheetEfficiency: t("export.sheetEfficiency"),
+    sheetExpense: t("export.sheetExpense"),
     currentTemp: t("export.currentTemp"),
     targetTemp: t("export.targetTemp"),
     currencySymbol
@@ -89,7 +88,7 @@ export const ExportDialog = ({
       await exportToPDF({
         energyData,
         temperatureData,
-        equipmentEfficiency,
+        equipmentExpense,
         summary,
         dateRange,
         environmentName,
@@ -117,7 +116,7 @@ export const ExportDialog = ({
       await exportToExcel({
         energyData,
         temperatureData,
-        equipmentEfficiency,
+        equipmentExpense,
         summary,
         dateRange,
         environmentName,

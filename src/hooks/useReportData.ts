@@ -15,7 +15,6 @@ export interface EnergyHistoryItem {
   id: string;
   equipment_id: string;
   energy_consumption: number;
-  efficiency: number;
   is_on: boolean;
   recorded_at: string;
 }
@@ -32,14 +31,13 @@ export interface TemperatureHistoryItem {
 export interface AggregatedEnergyData {
   date: string;
   consumption: number;
-  efficiency: number;
 }
 
-export interface EquipmentEfficiency {
+export interface EquipmentExpense {
   equipment_id: string;
   equipment_name: string;
-  avg_efficiency: number;
-  total_consumption: number;
+  total_kwh: number;
+  total_expense: number;
 }
 
 export interface TemperatureData {
@@ -136,18 +134,16 @@ export const useAggregatedEnergyData = (dateRange: DateRange, equipmentIds?: str
     const groupedByDate = rawData.reduce((acc, item) => {
       const date = startOfDay(new Date(item.recorded_at)).toISOString().split("T")[0];
       if (!acc[date]) {
-        acc[date] = { consumptions: [], efficiencies: [] };
+        acc[date] = { consumptions: [] };
       }
       acc[date].consumptions.push(Number(item.energy_consumption));
-      acc[date].efficiencies.push(Number(item.efficiency));
       return acc;
-    }, {} as Record<string, { consumptions: number[]; efficiencies: number[] }>);
+    }, {} as Record<string, { consumptions: number[] }>);
 
     Object.entries(groupedByDate).forEach(([date, values]) => {
       aggregatedData.push({
         date,
         consumption: values.consumptions.reduce((a, b) => a + b, 0),
-        efficiency: values.efficiencies.reduce((a, b) => a + b, 0) / values.efficiencies.length,
       });
     });
   }
@@ -155,11 +151,11 @@ export const useAggregatedEnergyData = (dateRange: DateRange, equipmentIds?: str
   return { data: aggregatedData, ...rest };
 };
 
-export const useEquipmentEfficiency = (dateRange: DateRange, equipmentIds?: string[]) => {
+export const useEquipmentExpense = (dateRange: DateRange, equipmentIds?: string[], kwhRate: number = 0.70) => {
   const { data: energyData, ...energyRest } = useEnergyHistory(dateRange, equipmentIds);
   
   return useQuery({
-    queryKey: ["equipment-efficiency", dateRange.from.toISOString(), dateRange.to.toISOString(), equipmentIds],
+    queryKey: ["equipment-expense", dateRange.from.toISOString(), dateRange.to.toISOString(), equipmentIds, kwhRate],
     queryFn: async () => {
       let query = supabase.from("equipments").select("id, name");
       
@@ -171,32 +167,27 @@ export const useEquipmentEfficiency = (dateRange: DateRange, equipmentIds?: stri
 
       if (error) throw error;
 
-      const efficiencyMap = new Map<string, { efficiencies: number[]; consumptions: number[] }>();
+      const consumptionMap = new Map<string, number[]>();
       
       energyData?.forEach((item) => {
-        if (!efficiencyMap.has(item.equipment_id)) {
-          efficiencyMap.set(item.equipment_id, { efficiencies: [], consumptions: [] });
+        if (!consumptionMap.has(item.equipment_id)) {
+          consumptionMap.set(item.equipment_id, []);
         }
-        const entry = efficiencyMap.get(item.equipment_id)!;
-        entry.efficiencies.push(Number(item.efficiency));
-        entry.consumptions.push(Number(item.energy_consumption));
+        consumptionMap.get(item.equipment_id)!.push(Number(item.energy_consumption));
       });
 
-      const result: EquipmentEfficiency[] = equipments?.map((eq) => {
-        const entry = efficiencyMap.get(eq.id);
+      const result: EquipmentExpense[] = equipments?.map((eq) => {
+        const consumptions = consumptionMap.get(eq.id) || [];
+        const totalKwh = consumptions.reduce((a, b) => a + b, 0);
         return {
           equipment_id: eq.id,
           equipment_name: eq.name,
-          avg_efficiency: entry 
-            ? entry.efficiencies.reduce((a, b) => a + b, 0) / entry.efficiencies.length 
-            : 0,
-          total_consumption: entry 
-            ? entry.consumptions.reduce((a, b) => a + b, 0) 
-            : 0,
+          total_kwh: totalKwh,
+          total_expense: totalKwh * kwhRate,
         };
       }) || [];
 
-      return result;
+      return result.sort((a, b) => b.total_expense - a.total_expense);
     },
     enabled: !!energyData,
   });
