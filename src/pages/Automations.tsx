@@ -13,9 +13,10 @@ import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { Switch } from "@/components/ui/switch";
 import { isAfter, addDays } from "date-fns";
 import { useTranslation } from "react-i18next";
-
 const Automations = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const {
     currentWorkspaceId
   } = useWorkspaceContext();
@@ -34,7 +35,6 @@ const Automations = () => {
   const {
     environments
   } = useEnvironments();
-
   const daysOfWeek: Record<string, string> = {
     monday: t('automations.days.monday'),
     tuesday: t('automations.days.tuesday'),
@@ -44,11 +44,9 @@ const Automations = () => {
     saturday: t('automations.days.saturday'),
     sunday: t('automations.days.sunday')
   };
-
   const getEnvironmentNames = (ids: string[]) => {
     return ids.map(id => environments.find(e => e.id === id)?.name).filter(Boolean).join(", ");
   };
-
   const getScheduleSummary = (schedules: {
     day_of_week: string;
     start_time: string;
@@ -61,26 +59,20 @@ const Automations = () => {
     }, {} as Record<string, string[]>);
     return Object.entries(dayGroups).map(([day, times]) => `${daysOfWeek[day]}: ${times.join(", ")}`).join(" | ");
   };
-
   const getUpcomingExceptions = (exceptions: typeof routines[0]['exceptions']) => {
     const now = new Date();
     const sevenDaysFromNow = addDays(now, 7);
-    
     return exceptions.filter(e => {
       const excDate = new Date(e.exception_date + 'T12:00:00');
       return isAfter(excDate, now) && !isAfter(excDate, sevenDaysFromNow);
     });
   };
-
   const activeRoutinesCount = routines.filter(r => r.is_active).length;
   const inactiveRoutinesCount = routines.filter(r => !r.is_active).length;
   const activeOccupancyCount = occupancyAutomations.filter(a => a.is_active).length;
   const inactiveOccupancyCount = occupancyAutomations.filter(a => !a.is_active).length;
-
   const isLoading = isLoadingRoutines || isLoadingOccupancy;
-
-  return (
-    <div className="p-6 space-y-8">
+  return <div className="p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-cooling bg-clip-text text-transparent">
@@ -92,13 +84,13 @@ const Automations = () => {
         </div>
         <div className="flex gap-2">
           <OccupancyAutomationDialog>
-            <Button variant="control" className="gap-2">
+            <Button variant="control" className="gap-2 bg-primary">
               <Users className="h-4 w-4" />
               {t('automations.newOccupancyAutomation')}
             </Button>
           </OccupancyAutomationDialog>
           <TimeRoutineDialog>
-            <Button variant="control" className="gap-2">
+            <Button variant="control" className="gap-2 bg-primary">
               <Plus className="h-4 w-4" />
               {t('automations.newTimeRoutine')}
             </Button>
@@ -123,26 +115,16 @@ const Automations = () => {
           </div>
         </div>
 
-        {isLoadingOccupancy ? (
-          <div className="text-center py-8 text-muted-foreground">{t('common.loading')}</div>
-        ) : occupancyAutomations.length === 0 ? (
-          <Card className="p-8 text-center">
+        {isLoadingOccupancy ? <div className="text-center py-8 text-muted-foreground">{t('common.loading')}</div> : occupancyAutomations.length === 0 ? <Card className="p-8 text-center">
             <p className="text-muted-foreground">
               {t('automations.noOccupancyAutomations')}
             </p>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {occupancyAutomations.map(automation => (
-              <OccupancyAutomationCard
-                key={automation.id}
-                automation={automation}
-                onToggle={(id, isActive) => toggleAutomation.mutate({ id, is_active: isActive })}
-                onDelete={(id) => deleteAutomation.mutate(id)}
-              />
-            ))}
-          </div>
-        )}
+          </Card> : <div className="grid gap-4">
+            {occupancyAutomations.map(automation => <OccupancyAutomationCard key={automation.id} automation={automation} onToggle={(id, isActive) => toggleAutomation.mutate({
+          id,
+          is_active: isActive
+        })} onDelete={id => deleteAutomation.mutate(id)} />)}
+          </div>}
       </div>
 
       {/* Time Routines Section */}
@@ -162,18 +144,12 @@ const Automations = () => {
           </div>
         </div>
 
-        {isLoadingRoutines ? (
-          <div className="text-center py-8 text-muted-foreground">{t('automations.loadingRoutines')}</div>
-        ) : routines.length === 0 ? (
-          <Card className="p-8 text-center">
+        {isLoadingRoutines ? <div className="text-center py-8 text-muted-foreground">{t('automations.loadingRoutines')}</div> : routines.length === 0 ? <Card className="p-8 text-center">
             <p className="text-muted-foreground">
               {t('automations.noTimeRoutines')}
             </p>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {routines.map(routine => (
-              <Card key={routine.id} className="hover:shadow-elevated transition-shadow">
+          </Card> : <div className="grid gap-4">
+            {routines.map(routine => <Card key={routine.id} className="hover:shadow-elevated transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -188,17 +164,11 @@ const Automations = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Switch 
-                        checked={routine.is_active} 
-                        onCheckedChange={checked => toggleRoutine.mutate({
-                          id: routine.id,
-                          is_active: checked
-                        })} 
-                      />
-                      <Badge 
-                        variant={routine.is_active ? "default" : "secondary"} 
-                        className={routine.is_active ? "bg-primary text-primary-foreground" : ""}
-                      >
+                      <Switch checked={routine.is_active} onCheckedChange={checked => toggleRoutine.mutate({
+                  id: routine.id,
+                  is_active: checked
+                })} />
+                      <Badge variant={routine.is_active ? "default" : "secondary"} className={routine.is_active ? "bg-primary text-primary-foreground" : ""}>
                         {routine.is_active ? t('automations.active') : t('automations.inactive')}
                       </Badge>
                       <EditTimeRoutineDialog routine={routine}>
@@ -227,42 +197,30 @@ const Automations = () => {
                   </div>
 
                   {/* Exceptions info */}
-                  {routine.exceptions && routine.exceptions.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-border">
+                  {routine.exceptions && routine.exceptions.length > 0 && <div className="mt-4 pt-4 border-t border-border">
                       <div className="flex items-center gap-2 flex-wrap">
                         <CalendarOff className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm text-muted-foreground">{t('automations.exceptions')}:</span>
                         
-                        {routine.exceptions.filter(e => e.is_recurring).length > 0 && (
-                          <Badge variant="outline" className="text-xs">
+                        {routine.exceptions.filter(e => e.is_recurring).length > 0 && <Badge variant="outline" className="text-xs">
                             <RefreshCw className="h-3 w-3 mr-1" />
                             {routine.exceptions.filter(e => e.is_recurring).length} {t('automations.annual')}
-                          </Badge>
-                        )}
+                          </Badge>}
                         
-                        {routine.exceptions.filter(e => !e.is_recurring).length > 0 && (
-                          <Badge variant="outline" className="text-xs">
+                        {routine.exceptions.filter(e => !e.is_recurring).length > 0 && <Badge variant="outline" className="text-xs">
                             <CalendarIcon className="h-3 w-3 mr-1" />
                             {routine.exceptions.filter(e => !e.is_recurring).length} {t('automations.punctual')}
-                          </Badge>
-                        )}
+                          </Badge>}
 
-                        {getUpcomingExceptions(routine.exceptions).length > 0 && (
-                          <Badge className="bg-warning/10 text-warning text-xs">
+                        {getUpcomingExceptions(routine.exceptions).length > 0 && <Badge className="bg-warning/10 text-warning text-xs">
                             {getUpcomingExceptions(routine.exceptions).length} {t('automations.next7Days')}
-                          </Badge>
-                        )}
+                          </Badge>}
                       </div>
-                    </div>
-                  )}
+                    </div>}
                 </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+              </Card>)}
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Automations;
