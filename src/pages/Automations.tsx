@@ -153,9 +153,7 @@ const Automations = () => {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-primary/10">
-                        <Clock className="h-5 w-5 text-primary" />
-                      </div>
+                      
                       <div>
                         <CardTitle className="text-lg">{routine.name}</CardTitle>
                         <CardDescription>
