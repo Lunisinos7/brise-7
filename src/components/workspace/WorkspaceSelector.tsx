@@ -69,7 +69,7 @@ const WorkspaceSelector = () => {
                 setOpen(false);
               }}>
                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <div className="h-6 w-6 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                      <div className="h-6 w-6 rounded flex items-center justify-center flex-shrink-0 bg-primary">
                         <Building2 className="h-3 w-3" />
                       </div>
                       <span className="truncate">{workspace.name}</span>
