@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -39,22 +39,29 @@ const Reports = () => {
   const { settings } = useWorkspaceSettings(currentWorkspaceId);
   const { environments } = useEnvironments();
 
-  // Filtrar equipmentIds baseado nos ambientes selecionados
-  const filteredEquipmentIds = selectedEnvironmentIds.length > 0
-    ? [...new Set(
+  // Memoize dateRange to prevent infinite loops
+  const dateRange = useMemo(() => 
+    getDateRangeFromPeriod(selectedPeriod, customRange),
+    [selectedPeriod, customRange]
+  );
+
+  // Memoize filteredEquipmentIds to prevent infinite loops
+  const filteredEquipmentIds = useMemo(() => {
+    if (selectedEnvironmentIds.length > 0) {
+      return [...new Set(
         environments
           .filter(e => selectedEnvironmentIds.includes(e.id))
           .flatMap(e => e.equipmentIds)
-      )]
-    : equipments.map(eq => eq.id);
+      )];
+    }
+    return equipments.map(eq => eq.id);
+  }, [selectedEnvironmentIds, environments, equipments]);
 
   const selectedEnvironmentName = selectedEnvironmentIds.length === 0
     ? t('reports.allEnvironments')
     : selectedEnvironmentIds.length === 1
       ? environments.find(e => e.id === selectedEnvironmentIds[0])?.name || t('dashboard.environments')
       : `${selectedEnvironmentIds.length} ${t('reports.environments')}`;
-
-  const dateRange = getDateRangeFromPeriod(selectedPeriod, customRange);
 
   const { data: energyData = [], isLoading: isLoadingEnergy } = useAggregatedEnergyData(dateRange, filteredEquipmentIds);
   const { data: equipmentEfficiency = [], isLoading: isLoadingEfficiency } = useEquipmentEfficiency(dateRange, filteredEquipmentIds);
