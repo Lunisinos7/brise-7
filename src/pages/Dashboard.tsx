@@ -8,6 +8,8 @@ import CreateEnvironmentDialog from "@/components/dashboard/CreateEnvironmentDia
 import EditEnvironmentDialog from "@/components/dashboard/EditEnvironmentDialog";
 import EnvironmentCard from "@/components/dashboard/EnvironmentCard";
 import { useEquipments } from "@/hooks/useEquipments";
+import { useBriseControl } from "@/hooks/useBriseControl";
+import { useSmartThingsControl } from "@/hooks/useSmartThingsControl";
 import { Wind, Zap, Thermometer, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +31,8 @@ const Dashboard = () => {
   const { currentWorkspaceId } = useWorkspaceContext();
   const { equipments, updateEquipment, isLoading } = useEquipments(currentWorkspaceId);
   const { environments, addEnvironment, updateEnvironment, removeEnvironment } = useEnvironments();
+  const briseControl = useBriseControl();
+  const smartThingsControl = useSmartThingsControl();
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
   const [isControlDialogOpen, setIsControlDialogOpen] = useState(false);
   const [isCreateEnvironmentOpen, setIsCreateEnvironmentOpen] = useState(false);
@@ -61,12 +65,35 @@ const Dashboard = () => {
     if (!equipment) return;
     
     const newState = !equipment.isOn;
+    
     try {
+      // Call real API based on integration type
+      let apiSuccess = true;
+      
+      if (equipment.brise_device_id) {
+        // BRISE equipment - call real API
+        apiSuccess = newState 
+          ? await briseControl.turnOn(equipment.brise_device_id)
+          : await briseControl.turnOff(equipment.brise_device_id);
+      } else if (equipment.smartthings_device_id) {
+        // SmartThings equipment - call real API
+        apiSuccess = newState
+          ? await smartThingsControl.turnOn(equipment.smartthings_device_id)
+          : await smartThingsControl.turnOff(equipment.smartthings_device_id);
+      }
+      
+      if (!apiSuccess) {
+        // API call failed - don't update local state
+        return;
+      }
+      
+      // Update local database
       await updateEquipment({
         ...equipment,
         isOn: newState,
         energyConsumption: newState ? equipment.capacity * 0.8 : 0
       });
+      
       toast({
         title: newState ? t('dashboard.equipmentOn') : t('dashboard.equipmentOff'),
         description: t('dashboard.equipmentToggleSuccess', { name: equipment.name, state: newState ? t('dashboard.turnedOn') : t('dashboard.turnedOff') })

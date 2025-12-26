@@ -22,10 +22,13 @@ import {
   Plus,
   Clock,
   Info,
+  Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { useBriseControl } from "@/hooks/useBriseControl";
+import { useSmartThingsControl } from "@/hooks/useSmartThingsControl";
 
 interface Equipment {
   id: string;
@@ -37,6 +40,8 @@ interface Equipment {
   mode: string;
   energyConsumption: number;
   efficiency: number;
+  brise_device_id?: string | null;
+  smartthings_device_id?: string | null;
 }
 
 interface EquipmentControlDialogProps {
@@ -54,6 +59,9 @@ const EquipmentControlDialog = ({
 }: EquipmentControlDialogProps) => {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const briseControl = useBriseControl();
+  const smartThingsControl = useSmartThingsControl();
+  
   const [localTemp, setLocalTemp] = useState(equipment?.targetTemp || 22);
   const [localMode, setLocalMode] = useState(equipment?.mode || "cool");
   const [fanSpeed, setFanSpeed] = useState(2);
@@ -61,6 +69,7 @@ const EquipmentControlDialog = ({
   const [timerMinutes, setTimerMinutes] = useState(0);
   const [timerEnabled, setTimerEnabled] = useState(false);
   const [isManualMode, setIsManualMode] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Setpoints - Opção C: configurações separadas
   const [coolingEnabled, setCoolingEnabled] = useState(true);
@@ -77,28 +86,68 @@ const EquipmentControlDialog = ({
 
   if (!equipment) return null;
 
-  const handlePowerToggle = () => {
+  const handlePowerToggle = async () => {
     const newState = !equipment.isOn;
-    onUpdate(equipment.id, { isOn: newState });
-    toast({
-      title: newState ? t("equipmentControlDialog.equipmentOn") : t("equipmentControlDialog.equipmentOff"),
-      description: t("equipmentControlDialog.equipmentToggled", { 
-        name: equipment.name, 
-        state: newState ? t("dashboard.turnedOn") : t("dashboard.turnedOff") 
-      }),
-    });
+    setIsLoading(true);
+    
+    try {
+      let apiSuccess = true;
+      
+      // Call real API based on integration type
+      if (equipment.brise_device_id) {
+        apiSuccess = newState 
+          ? await briseControl.turnOn(equipment.brise_device_id)
+          : await briseControl.turnOff(equipment.brise_device_id);
+      } else if (equipment.smartthings_device_id) {
+        apiSuccess = newState
+          ? await smartThingsControl.turnOn(equipment.smartthings_device_id)
+          : await smartThingsControl.turnOff(equipment.smartthings_device_id);
+      }
+      
+      if (!apiSuccess) {
+        setIsLoading(false);
+        return;
+      }
+      
+      onUpdate(equipment.id, { isOn: newState });
+      toast({
+        title: newState ? t("equipmentControlDialog.equipmentOn") : t("equipmentControlDialog.equipmentOff"),
+        description: t("equipmentControlDialog.equipmentToggled", { 
+          name: equipment.name, 
+          state: newState ? t("dashboard.turnedOn") : t("dashboard.turnedOff") 
+        }),
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleTempChange = (increment: boolean) => {
+  const handleTempChange = async (increment: boolean) => {
     const newTemp = increment ? localTemp + 1 : localTemp - 1;
     if (newTemp >= -30 && newTemp <= 50) {
       setLocalTemp(newTemp);
+      
+      // Call real API based on integration type
+      if (equipment.brise_device_id) {
+        await briseControl.setTemperature(equipment.brise_device_id, newTemp);
+      } else if (equipment.smartthings_device_id) {
+        await smartThingsControl.setTemperature(equipment.smartthings_device_id, newTemp);
+      }
+      
       onUpdate(equipment.id, { targetTemp: newTemp });
     }
   };
 
-  const handleModeChange = (mode: string) => {
+  const handleModeChange = async (mode: string) => {
     setLocalMode(mode);
+    
+    // Call real API based on integration type
+    if (equipment.brise_device_id) {
+      await briseControl.setMode(equipment.brise_device_id, mode);
+    } else if (equipment.smartthings_device_id) {
+      await smartThingsControl.setMode(equipment.smartthings_device_id, mode);
+    }
+    
     onUpdate(equipment.id, { mode });
     const modeTranslation = mode === "cool" 
       ? t("equipmentControlDialog.modeCool") 

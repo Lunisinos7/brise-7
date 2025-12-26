@@ -320,8 +320,103 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
               </div>
             )}
 
-            {/* Manual form fields - show for non-SmartThings or after device selection */}
-            {(watchIntegration !== "SMARTTHINGS" || selectedDevice) && (
+            {/* BRISE Device Selection */}
+            {watchIntegration === "BRISE" && (
+              <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                {isBriseConfigLoading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  </div>
+                ) : !isBriseConfigured ? (
+                  <div className="flex flex-col items-center gap-3 py-4 text-center">
+                    <AlertCircle className="h-8 w-8 text-yellow-500" />
+                    <div>
+                      <p className="font-medium">{t("equipments.addDialog.briseNotConfigured")}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {t("equipments.addDialog.briseNotConfiguredDesc")}
+                      </p>
+                    </div>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/settings">
+                        <Settings className="h-4 w-4 mr-2" />
+                        {t("equipments.addDialog.goToSettings")}
+                      </Link>
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">{t("equipments.addDialog.selectBriseDevice")}</Label>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => discoverBriseDevices()}
+                        disabled={isBriseDevicesLoading}
+                      >
+                        {isBriseDevicesLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <RefreshCw className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+
+                    {isBriseDevicesLoading ? (
+                      <div className="flex items-center justify-center py-6">
+                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                        <span className="ml-2 text-sm text-muted-foreground">
+                          {t("equipments.addDialog.searchingDevices")}
+                        </span>
+                      </div>
+                    ) : availableBriseDevices.length === 0 ? (
+                      <div className="text-center py-4 text-sm text-muted-foreground">
+                        {briseDevices.length > 0 
+                          ? t("equipments.addDialog.allImported")
+                          : t("equipments.addDialog.noDevicesFound")
+                        }
+                      </div>
+                    ) : (
+                      <RadioGroup
+                        value={selectedBriseDevice?.deviceId || ""}
+                        onValueChange={(value) => {
+                          const device = availableBriseDevices.find(d => d.deviceId === value);
+                          if (device) handleBriseDeviceSelect(device);
+                        }}
+                        className="space-y-2"
+                      >
+                        {availableBriseDevices.map((device) => (
+                          <div
+                            key={device.deviceId}
+                            className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+                              selectedBriseDevice?.deviceId === device.deviceId
+                                ? "border-primary bg-primary/5"
+                                : "hover:bg-muted/50"
+                            }`}
+                          >
+                            <RadioGroupItem value={device.deviceId} id={device.deviceId} />
+                            <Label htmlFor={device.deviceId} className="flex-1 cursor-pointer">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="font-medium">{device.name}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {device.model}{device.location ? ` • ${device.location}` : ""}
+                                  </p>
+                                </div>
+                                <Snowflake className="h-4 w-4 text-blue-500" />
+                              </div>
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Manual form fields - show for non-SmartThings/BRISE or after device selection */}
+            {((watchIntegration !== "SMARTTHINGS" && watchIntegration !== "BRISE") || selectedDevice || selectedBriseDevice) && (
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
