@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { subHours, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
@@ -286,24 +287,33 @@ export const useReportSummary = (
   kwhRate: number = 0.70,
   currencySymbol: string = "R$"
 ) => {
-  const { data: energyData } = useEnergyHistory(dateRange, equipmentIds);
+  const { data: energyData, isLoading } = useEnergyHistory(dateRange, equipmentIds);
   
-  if (!energyData || energyData.length === 0) {
+  // Use useMemo to avoid recalculating on every render
+  const summary = React.useMemo(() => {
+    if (!energyData || energyData.length === 0) {
+      return {
+        totalConsumption: 0,
+        totalSpent: 0,
+        currencySymbol,
+      };
+    }
+
+    // energy_consumption is already stored in kWh from the edge function
+    const totalConsumption = energyData.reduce((acc, item) => acc + Number(item.energy_consumption), 0);
+    
+    // Gasto total (consumo × tarifa)
+    const totalSpent = totalConsumption * kwhRate;
+
     return {
-      totalConsumption: 0,
-      totalSpent: 0,
+      totalConsumption,
+      totalSpent,
       currencySymbol,
     };
-  }
-
-  const totalConsumption = energyData.reduce((acc, item) => acc + Number(item.energy_consumption), 0);
-  
-  // Gasto total (consumo × tarifa)
-  const totalSpent = totalConsumption * kwhRate;
+  }, [energyData, kwhRate, currencySymbol]);
 
   return {
-    totalConsumption,
-    totalSpent,
-    currencySymbol,
+    ...summary,
+    isLoading,
   };
 };
