@@ -294,6 +294,8 @@ const EnvironmentControlDialog = ({
                   className="w-full"
                   thumbClassName="border-blue-500"
                   rangeClassName="bg-blue-500"
+                  showScale={true}
+                  scaleStep={10}
                 />
 
                 {/* Legenda visual */}
@@ -346,6 +348,8 @@ const EnvironmentControlDialog = ({
                   className="w-full"
                   thumbClassName="border-red-500"
                   rangeClassName="bg-red-500"
+                  showScale={true}
+                  scaleStep={10}
                 />
 
                 {/* Legenda visual */}
