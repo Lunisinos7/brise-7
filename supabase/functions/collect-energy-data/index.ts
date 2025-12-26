@@ -48,14 +48,25 @@ serve(async (req) => {
     let energyRecordsInserted = 0;
     let temperatureRecordsInserted = 0;
 
+    // Collection interval in hours (30 minutes = 0.5 hours)
+    const COLLECTION_INTERVAL_HOURS = 0.5;
+
     // Prepare batch inserts
-    const energyHistoryRecords = equipments.map(eq => ({
-      equipment_id: eq.id,
-      energy_consumption: eq.energy_consumption || 0,
-      efficiency: eq.efficiency || 85,
-      is_on: eq.is_on,
-      recorded_at: now,
-    }));
+    // Convert watts to kWh: kWh = (watts × hours) / 1000
+    const energyHistoryRecords = equipments.map(eq => {
+      const watts = eq.energy_consumption || 0;
+      const kWh = (watts * COLLECTION_INTERVAL_HOURS) / 1000;
+      
+      console.log(`Equipment ${eq.id}: ${watts}W → ${kWh.toFixed(4)} kWh (${COLLECTION_INTERVAL_HOURS}h interval)`);
+      
+      return {
+        equipment_id: eq.id,
+        energy_consumption: kWh,
+        efficiency: eq.efficiency || 85,
+        is_on: eq.is_on,
+        recorded_at: now,
+      };
+    });
 
     const temperatureHistoryRecords = equipments.map(eq => ({
       equipment_id: eq.id,
