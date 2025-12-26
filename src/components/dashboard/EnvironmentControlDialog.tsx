@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -160,79 +160,42 @@ const EnvironmentControlDialog = ({
     }
   };
 
-  // Validações para evitar configurações inválidas
-  const handleCoolTriggerChange = (value: number[]) => {
-    const newValue = value[0];
-    // Se ambos os modos estão ativos, validar não-sobreposição
-    if (heatingEnabled) {
-      if (newValue > heatTargetTemp) {
-        setCoolTriggerTemp(newValue);
-        if (coolTargetTemp >= newValue) {
-          setCoolTargetTemp(newValue - 1);
-        }
-      }
+  // Handler para range slider de refrigeração [target, trigger]
+  const handleCoolingRangeChange = (value: [number, number]) => {
+    const [target, trigger] = value;
+    // O slider já impede que os thumbs se cruzem
+    // Validar contra aquecimento se estiver ativo
+    if (heatingEnabled && target < heatTargetTemp) {
+      setCoolTargetTemp(heatTargetTemp);
+      setCoolTriggerTemp(trigger);
     } else {
-      // Sem validação cruzada
-      setCoolTriggerTemp(newValue);
-      if (coolTargetTemp >= newValue) {
-        setCoolTargetTemp(newValue - 1);
-      }
+      setCoolTargetTemp(target);
+      setCoolTriggerTemp(trigger);
     }
   };
 
-  const handleCoolTargetChange = (value: number[]) => {
-    const newValue = value[0];
-    if (heatingEnabled) {
-      if (newValue < coolTriggerTemp && newValue >= heatTargetTemp) {
-        setCoolTargetTemp(newValue);
-      }
+  // Handler para range slider de aquecimento [trigger, target]
+  const handleHeatingRangeChange = (value: [number, number]) => {
+    const [trigger, target] = value;
+    // O slider já impede que os thumbs se cruzem
+    // Validar contra refrigeração se estiver ativo
+    if (coolingEnabled && target > coolTargetTemp) {
+      setHeatTargetTemp(coolTargetTemp);
+      setHeatTriggerTemp(trigger);
     } else {
-      if (newValue < coolTriggerTemp) {
-        setCoolTargetTemp(newValue);
-      }
-    }
-  };
-
-  const handleHeatTriggerChange = (value: number[]) => {
-    const newValue = value[0];
-    if (coolingEnabled) {
-      if (newValue < coolTargetTemp) {
-        setHeatTriggerTemp(newValue);
-        if (heatTargetTemp <= newValue) {
-          setHeatTargetTemp(newValue + 1);
-        }
-      }
-    } else {
-      // Sem validação cruzada
-      setHeatTriggerTemp(newValue);
-      if (heatTargetTemp <= newValue) {
-        setHeatTargetTemp(newValue + 1);
-      }
-    }
-  };
-
-  const handleHeatTargetChange = (value: number[]) => {
-    const newValue = value[0];
-    if (coolingEnabled) {
-      if (newValue > heatTriggerTemp && newValue <= coolTargetTemp) {
-        setHeatTargetTemp(newValue);
-      }
-    } else {
-      if (newValue > heatTriggerTemp) {
-        setHeatTargetTemp(newValue);
-      }
+      setHeatTriggerTemp(trigger);
+      setHeatTargetTemp(target);
     }
   };
 
   // Toggle de refrigeração com auto-correção
   const handleCoolingToggle = (enabled: boolean) => {
     if (enabled && heatingEnabled) {
-      // Verificar sobreposição e corrigir se necessário
       if (coolTargetTemp <= heatTargetTemp) {
         setCoolTargetTemp(heatTargetTemp + 1);
       }
-      if (coolTriggerTemp <= heatTargetTemp) {
-        setCoolTriggerTemp(heatTargetTemp + 2);
+      if (coolTriggerTemp <= coolTargetTemp) {
+        setCoolTriggerTemp(coolTargetTemp + 1);
       }
     }
     setCoolingEnabled(enabled);
@@ -241,12 +204,11 @@ const EnvironmentControlDialog = ({
   // Toggle de aquecimento com auto-correção
   const handleHeatingToggle = (enabled: boolean) => {
     if (enabled && coolingEnabled) {
-      // Verificar sobreposição e corrigir se necessário
       if (heatTargetTemp >= coolTargetTemp) {
         setHeatTargetTemp(coolTargetTemp - 1);
       }
-      if (heatTriggerTemp >= coolTargetTemp) {
-        setHeatTriggerTemp(coolTargetTemp - 2);
+      if (heatTriggerTemp >= heatTargetTemp) {
+        setHeatTriggerTemp(heatTargetTemp - 1);
       }
     }
     setHeatingEnabled(enabled);
@@ -296,7 +258,7 @@ const EnvironmentControlDialog = ({
           {!isManualMode ? (
             /* Setpoints Mode - Opção C */
             <div className="space-y-5">
-              {/* Refrigeração */}
+              {/* Refrigeração - Range Slider */}
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 coolingEnabled 
@@ -315,42 +277,40 @@ const EnvironmentControlDialog = ({
                   />
                 </div>
                 
-                {/* Cool Trigger */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className={cn("text-sm", !coolingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.turnOnAbove")}</Label>
-                    <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>{coolTriggerTemp}°C</span>
-                  </div>
-                  <Slider
-                    value={[coolTriggerTemp]}
-                    onValueChange={handleCoolTriggerChange}
-                    min={-30}
-                    max={50}
-                    step={1}
-                    className="w-full [&_[role=slider]]:border-blue-500 [&_.bg-primary]:bg-blue-500"
-                    disabled={!coolingEnabled}
-                  />
-                </div>
-
-                {/* Cool Target */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className={cn("text-sm", !coolingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.coolTo")}</Label>
+                {/* Labels e valores */}
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col items-start">
+                    <Label className={cn("text-xs", !coolingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.coolTo")}</Label>
                     <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>{coolTargetTemp}°C</span>
                   </div>
-                  <Slider
-                    value={[coolTargetTemp]}
-                    onValueChange={handleCoolTargetChange}
-                    min={-30}
-                    max={coolTriggerTemp - 1}
-                    step={1}
-                    className="w-full [&_[role=slider]]:border-blue-500 [&_.bg-primary]:bg-blue-500"
-                    disabled={!coolingEnabled}
-                  />
+                  <div className="flex flex-col items-end">
+                    <Label className={cn("text-xs", !coolingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.turnOnAbove")}</Label>
+                    <span className={cn("text-lg font-bold", coolingEnabled ? "text-blue-500" : "text-muted-foreground")}>{coolTriggerTemp}°C</span>
+                  </div>
+                </div>
+
+                {/* Range Slider [target, trigger] */}
+                <RangeSlider
+                  value={[coolTargetTemp, coolTriggerTemp]}
+                  onValueChange={handleCoolingRangeChange}
+                  min={heatingEnabled ? heatTargetTemp : -30}
+                  max={50}
+                  step={1}
+                  disabled={!coolingEnabled}
+                  className="w-full"
+                  thumbClassName="border-blue-500"
+                  rangeClassName="bg-blue-500"
+                />
+
+                {/* Legenda visual */}
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                  <span>←</span>
+                  <span>{t("environmentControlDialog.rangeExplanationCooling")}</span>
+                  <span>→</span>
                 </div>
               </div>
 
-              {/* Aquecimento */}
+              {/* Aquecimento - Range Slider */}
               <div className={cn(
                 "p-4 rounded-lg border space-y-4 transition-opacity",
                 heatingEnabled 
@@ -369,38 +329,36 @@ const EnvironmentControlDialog = ({
                   />
                 </div>
                 
-                {/* Heat Trigger */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className={cn("text-sm", !heatingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.turnOnBelow")}</Label>
+                {/* Labels e valores */}
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex flex-col items-start">
+                    <Label className={cn("text-xs", !heatingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.turnOnBelow")}</Label>
                     <span className={cn("text-lg font-bold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>{heatTriggerTemp}°C</span>
                   </div>
-                  <Slider
-                    value={[heatTriggerTemp]}
-                    onValueChange={handleHeatTriggerChange}
-                    min={-30}
-                    max={50}
-                    step={1}
-                    className="w-full [&_[role=slider]]:border-red-500 [&_.bg-primary]:bg-red-500"
-                    disabled={!heatingEnabled}
-                  />
-                </div>
-
-                {/* Heat Target */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className={cn("text-sm", !heatingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.heatTo")}</Label>
+                  <div className="flex flex-col items-end">
+                    <Label className={cn("text-xs", !heatingEnabled && "text-muted-foreground")}>{t("environmentControlDialog.heatTo")}</Label>
                     <span className={cn("text-lg font-bold", heatingEnabled ? "text-red-500" : "text-muted-foreground")}>{heatTargetTemp}°C</span>
                   </div>
-                  <Slider
-                    value={[heatTargetTemp]}
-                    onValueChange={handleHeatTargetChange}
-                    min={heatTriggerTemp + 1}
-                    max={50}
-                    step={1}
-                    className="w-full [&_[role=slider]]:border-red-500 [&_.bg-primary]:bg-red-500"
-                    disabled={!heatingEnabled}
-                  />
+                </div>
+
+                {/* Range Slider [trigger, target] */}
+                <RangeSlider
+                  value={[heatTriggerTemp, heatTargetTemp]}
+                  onValueChange={handleHeatingRangeChange}
+                  min={-30}
+                  max={coolingEnabled ? coolTargetTemp : 50}
+                  step={1}
+                  disabled={!heatingEnabled}
+                  className="w-full"
+                  thumbClassName="border-red-500"
+                  rangeClassName="bg-red-500"
+                />
+
+                {/* Legenda visual */}
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                  <span>←</span>
+                  <span>{t("environmentControlDialog.rangeExplanationHeating")}</span>
+                  <span>→</span>
                 </div>
               </div>
 

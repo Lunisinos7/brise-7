@@ -234,7 +234,9 @@
     "fanSpeed": "Velocidad del Ventilador",
     "timer": "Temporizador - Apagar en:",
     "remaining": "restantes",
-    "setTimer": "Establecer"
+    "setTimer": "Establecer",
+    "rangeExplanationCooling": "Rango de operación: Objetivo ← → Activación",
+    "rangeExplanationHeating": "Rango de operación: Activación ← → Objetivo"
   },
   "equipmentControlDialog": {
     "control": "Control",

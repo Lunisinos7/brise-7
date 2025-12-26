@@ -234,7 +234,9 @@
     "fanSpeed": "Lüftergeschwindigkeit",
     "timer": "Timer - Ausschalten in:",
     "remaining": "verbleibend",
-    "setTimer": "Einstellen"
+    "setTimer": "Einstellen",
+    "rangeExplanationCooling": "Betriebsbereich: Ziel ← → Aktivierung",
+    "rangeExplanationHeating": "Betriebsbereich: Aktivierung ← → Ziel"
   },
   "equipmentControlDialog": {
     "control": "Steuerung",
