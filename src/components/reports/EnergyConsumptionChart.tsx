@@ -32,7 +32,7 @@ export const EnergyConsumptionChart = ({
   return <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Zap className="h-5 w-5 bg-primary-foreground text-primary" />
+          <Zap className="h-5 w-5 text-primary bg-card" />
           {t('charts.energyConsumption')}
         </CardTitle>
       </CardHeader>
