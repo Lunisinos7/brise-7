@@ -61,7 +61,7 @@ export function BriseConfig() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-card">
+              <div className="p-2 rounded-lg bg-card text-card">
                 <Circle className="border-solid bg-card border-[#0096db] text-card w-[30px] h-[30px] rounded-full border-8" />
               </div>
               <div>
