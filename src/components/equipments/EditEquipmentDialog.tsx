@@ -66,8 +66,17 @@ export function EditEquipmentDialog({
     name: z.string().min(1, t("equipments.validation.nameRequired")),
     location: z.string().min(1, t("equipments.validation.locationRequired")),
     model: z.string().min(1, t("equipments.validation.modelRequired")),
-    capacity: z.string().min(1, t("equipments.validation.capacityRequired")),
-    nominalPower: z.string().optional(),
+    capacity: z.string()
+      .min(1, t("equipments.validation.capacityRequired"))
+      .refine((val) => {
+        const num = parseInt(val);
+        return num >= 1000 && num <= 100000;
+      }, t("equipments.validation.capacityRange")),
+    nominalPower: z.string().optional().refine((val) => {
+      if (!val || val === "") return true;
+      const num = parseInt(val);
+      return num >= 100 && num <= 50000;
+    }, t("equipments.validation.nominalPowerRange")),
     integration: z.enum(["BRISE", "SMART"], {
       required_error: t("equipments.validation.integrationRequired"),
     }),

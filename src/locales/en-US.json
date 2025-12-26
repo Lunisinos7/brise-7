@@ -172,6 +172,8 @@
       "locationRequired": "Location is required",
       "modelRequired": "Model is required",
       "capacityRequired": "Capacity is required",
+      "capacityRange": "Capacity must be between 1,000 and 100,000 BTU",
+      "nominalPowerRange": "Nominal power must be between 100 and 50,000 W",
       "integrationRequired": "Select integration type"
     },
     "placeholders": {
