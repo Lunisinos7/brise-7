@@ -14,19 +14,18 @@ export interface ExportTranslations {
   value: string;
   totalConsumption: string;
   totalSpending: string;
-  efficiencyByEquipment: string;
+  expenseByEquipment: string;
   equipment: string;
-  avgEfficiency: string;
+  expense: string;
   energyConsumptionByDate: string;
   date: string;
   consumption: string;
-  efficiency: string;
   pageOf: string;
   generatedAt: string;
   sheetSummary: string;
   sheetEnergyConsumption: string;
   sheetTemperature: string;
-  sheetEfficiency: string;
+  sheetExpense: string;
   currentTemp: string;
   targetTemp: string;
   currencySymbol: string;
@@ -35,7 +34,7 @@ export interface ExportTranslations {
 interface ExportData {
   energyData: any[];
   temperatureData: any[];
-  equipmentEfficiency: any[];
+  equipmentExpense: any[];
   summary: {
     totalConsumption: number;
     totalSpent: number;
@@ -50,7 +49,7 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   const { 
     energyData, 
     temperatureData, 
-    equipmentEfficiency, 
+    equipmentExpense, 
     summary, 
     dateRange, 
     environmentName,
@@ -118,25 +117,25 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
     styles: { cellPadding: 4 },
   });
   
-  // Equipment efficiency section
+  // Equipment expense section
   currentY = (doc as any).lastAutoTable.finalY + 20;
   currentY = checkPageBreak(currentY, 60);
   
   doc.setFontSize(14);
   doc.setTextColor(40, 40, 40);
-  doc.text(t.efficiencyByEquipment, margin, currentY);
+  doc.text(t.expenseByEquipment, margin, currentY);
   
-  if (equipmentEfficiency.length > 0) {
-    const efficiencyTableData = equipmentEfficiency.map((eq) => [
+  if (equipmentExpense.length > 0) {
+    const expenseTableData = equipmentExpense.map((eq: any) => [
       eq.equipment_name,
-      `${eq.avg_efficiency.toFixed(1)}%`,
-      `${eq.total_consumption.toFixed(2)} kWh`,
+      `${eq.total_kwh.toFixed(2)} kWh`,
+      `${t.currencySymbol} ${eq.total_expense.toFixed(2)}`,
     ]);
     
     autoTable(doc, {
       startY: currentY + 8,
-      head: [[t.equipment, t.avgEfficiency, t.totalConsumption]],
-      body: efficiencyTableData,
+      head: [[t.equipment, t.totalConsumption, t.expense]],
+      body: expenseTableData,
       theme: "striped",
       headStyles: { fillColor: [0, 150, 136] },
       margin: { left: margin, right: margin },
@@ -159,15 +158,14 @@ export const exportToPDF = async (data: ExportData): Promise<void> => {
   doc.text(t.energyConsumptionByDate, margin, currentY);
   
   if (energyData.length > 0) {
-    const energyTableData = energyData.slice(0, 20).map((item) => [
+    const energyTableData = energyData.slice(0, 20).map((item: any) => [
       formatDate(new Date(item.date), "dd/MM/yyyy"),
       `${item.consumption.toFixed(2)} kWh`,
-      `${item.efficiency.toFixed(1)}%`,
     ]);
     
     autoTable(doc, {
       startY: currentY + 8,
-      head: [[t.date, t.consumption, t.efficiency]],
+      head: [[t.date, t.consumption]],
       body: energyTableData,
       theme: "striped",
       headStyles: { fillColor: [0, 150, 136] },
@@ -202,7 +200,7 @@ export const exportToExcel = async (data: ExportData): Promise<void> => {
   const { 
     energyData, 
     temperatureData, 
-    equipmentEfficiency, 
+    equipmentExpense, 
     summary, 
     dateRange, 
     environmentName,
@@ -237,11 +235,10 @@ export const exportToExcel = async (data: ExportData): Promise<void> => {
   
   // Energy consumption sheet
   const energySheetData = [
-    [t.date, `${t.consumption} (kWh)`, `${t.efficiency} (%)`],
-    ...energyData.map((item) => [
+    [t.date, `${t.consumption} (kWh)`],
+    ...energyData.map((item: any) => [
       formatDate(new Date(item.date), "dd/MM/yyyy"),
       item.consumption.toFixed(2),
-      item.efficiency.toFixed(1),
     ]),
   ];
   
@@ -251,7 +248,7 @@ export const exportToExcel = async (data: ExportData): Promise<void> => {
   // Temperature sheet
   const temperatureSheetData = [
     [t.date, t.currentTemp, t.targetTemp],
-    ...temperatureData.map((item) => [
+    ...temperatureData.map((item: any) => [
       formatDate(new Date(item.date), "dd/MM/yyyy"),
       item.current_temp.toFixed(1),
       item.target_temp.toFixed(1),
@@ -261,18 +258,18 @@ export const exportToExcel = async (data: ExportData): Promise<void> => {
   const temperatureSheet = XLSX.utils.aoa_to_sheet(temperatureSheetData);
   XLSX.utils.book_append_sheet(workbook, temperatureSheet, t.sheetTemperature);
   
-  // Equipment efficiency sheet
-  const efficiencySheetData = [
-    [t.equipment, `${t.avgEfficiency} (%)`, `${t.totalConsumption} (kWh)`],
-    ...equipmentEfficiency.map((eq) => [
+  // Equipment expense sheet
+  const expenseSheetData = [
+    [t.equipment, `${t.consumption} (kWh)`, `${t.expense} (${t.currencySymbol})`],
+    ...equipmentExpense.map((eq: any) => [
       eq.equipment_name,
-      eq.avg_efficiency.toFixed(1),
-      eq.total_consumption.toFixed(2),
+      eq.total_kwh.toFixed(2),
+      eq.total_expense.toFixed(2),
     ]),
   ];
   
-  const efficiencySheet = XLSX.utils.aoa_to_sheet(efficiencySheetData);
-  XLSX.utils.book_append_sheet(workbook, efficiencySheet, t.sheetEfficiency);
+  const expenseSheet = XLSX.utils.aoa_to_sheet(expenseSheetData);
+  XLSX.utils.book_append_sheet(workbook, expenseSheet, t.sheetExpense);
   
   XLSX.writeFile(workbook, `report-${format(new Date(), "yyyy-MM-dd")}.xlsx`);
 };

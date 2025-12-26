@@ -6,7 +6,7 @@ import { BarChart3, Calendar, Zap, Building2 } from "lucide-react";
 import { PeriodSelector } from "@/components/reports/PeriodSelector";
 import { ExportDialog } from "@/components/reports/ExportDialog";
 import { EnergyConsumptionChart } from "@/components/reports/EnergyConsumptionChart";
-import { EfficiencyChart } from "@/components/reports/EfficiencyChart";
+import { ExpenseByEquipmentChart } from "@/components/reports/ExpenseByEquipmentChart";
 import { TemperatureChart } from "@/components/reports/TemperatureChart";
 import { UsagePatternsChart } from "@/components/reports/UsagePatternsChart";
 import {
@@ -14,7 +14,7 @@ import {
   DateRange,
   getDateRangeFromPeriod,
   useAggregatedEnergyData,
-  useEquipmentEfficiency,
+  useEquipmentExpense,
   useAggregatedTemperatureData,
   useUsagePatterns,
   useReportSummary,
@@ -64,7 +64,7 @@ const Reports = () => {
       : `${selectedEnvironmentIds.length} ${t('reports.environments')}`;
 
   const { data: energyData = [], isLoading: isLoadingEnergy } = useAggregatedEnergyData(dateRange, filteredEquipmentIds);
-  const { data: equipmentEfficiency = [], isLoading: isLoadingEfficiency } = useEquipmentEfficiency(dateRange, filteredEquipmentIds);
+  const { data: equipmentExpense = [], isLoading: isLoadingExpense } = useEquipmentExpense(dateRange, filteredEquipmentIds, settings.kwh_rate);
   const { data: temperatureData = [], isLoading: isLoadingTemperature } = useAggregatedTemperatureData(dateRange, filteredEquipmentIds);
   const { data: usagePatterns = [], isLoading: isLoadingUsage } = useUsagePatterns(dateRange, filteredEquipmentIds);
   const summary = useReportSummary(
@@ -190,7 +190,7 @@ const Reports = () => {
           <ExportDialog
             energyData={energyData}
             temperatureData={temperatureData}
-            equipmentEfficiency={equipmentEfficiency}
+            equipmentExpense={equipmentExpense}
             summary={summary}
             environmentName={getEnvironmentNameForExport()}
             currencySymbol={settings?.currency_symbol || "R$"}
@@ -232,7 +232,7 @@ const Reports = () => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <EnergyConsumptionChart data={energyData} isLoading={isLoadingEnergy} />
-        <EfficiencyChart data={equipmentEfficiency} isLoading={isLoadingEfficiency} />
+        <ExpenseByEquipmentChart data={equipmentExpense} isLoading={isLoadingExpense} currencySymbol={settings?.currency_symbol || "R$"} />
         <TemperatureChart data={temperatureData} isLoading={isLoadingTemperature} />
         <UsagePatternsChart data={usagePatterns} isLoading={isLoadingUsage} />
       </div>
