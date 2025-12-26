@@ -162,30 +162,24 @@ const EnvironmentControlDialog = ({
 
   // Handler para range slider de refrigeração [target, trigger]
   const handleCoolingRangeChange = (value: [number, number]) => {
-    const [target, trigger] = value;
-    // O slider já impede que os thumbs se cruzem
-    // Validar contra aquecimento se estiver ativo
+    let [target, trigger] = value;
+    // Clampar target para não ir abaixo de heatTargetTemp se aquecimento ativo
     if (heatingEnabled && target < heatTargetTemp) {
-      setCoolTargetTemp(heatTargetTemp);
-      setCoolTriggerTemp(trigger);
-    } else {
-      setCoolTargetTemp(target);
-      setCoolTriggerTemp(trigger);
+      target = heatTargetTemp;
     }
+    setCoolTargetTemp(target);
+    setCoolTriggerTemp(trigger);
   };
 
   // Handler para range slider de aquecimento [trigger, target]
   const handleHeatingRangeChange = (value: [number, number]) => {
-    const [trigger, target] = value;
-    // O slider já impede que os thumbs se cruzem
-    // Validar contra refrigeração se estiver ativo
+    let [trigger, target] = value;
+    // Clampar target para não ir acima de coolTargetTemp se refrigeração ativa
     if (coolingEnabled && target > coolTargetTemp) {
-      setHeatTargetTemp(coolTargetTemp);
-      setHeatTriggerTemp(trigger);
-    } else {
-      setHeatTriggerTemp(trigger);
-      setHeatTargetTemp(target);
+      target = coolTargetTemp;
     }
+    setHeatTriggerTemp(trigger);
+    setHeatTargetTemp(target);
   };
 
   // Toggle de refrigeração com auto-correção
@@ -228,7 +222,7 @@ const EnvironmentControlDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t("environmentControlDialog.control")} - {environment?.name || ""}</DialogTitle>
         </DialogHeader>
@@ -293,7 +287,7 @@ const EnvironmentControlDialog = ({
                 <RangeSlider
                   value={[coolTargetTemp, coolTriggerTemp]}
                   onValueChange={handleCoolingRangeChange}
-                  min={heatingEnabled ? heatTargetTemp : -30}
+                  min={-30}
                   max={50}
                   step={1}
                   disabled={!coolingEnabled}
@@ -346,7 +340,7 @@ const EnvironmentControlDialog = ({
                   value={[heatTriggerTemp, heatTargetTemp]}
                   onValueChange={handleHeatingRangeChange}
                   min={-30}
-                  max={coolingEnabled ? coolTargetTemp : 50}
+                  max={50}
                   step={1}
                   disabled={!heatingEnabled}
                   className="w-full"
