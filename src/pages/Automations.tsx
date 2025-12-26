@@ -110,11 +110,11 @@ const Automations = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-orange-500" />
+            <Users className="h-5 w-5 text-primary" />
             <h2 className="text-xl font-semibold">{t('automations.occupancyAutomations')}</h2>
           </div>
           <div className="flex gap-2">
-            <Badge variant="secondary" className="bg-energy-efficient/10 text-energy-efficient">
+            <Badge variant="secondary" className="bg-primary/10 text-primary">
               {activeOccupancyCount} {activeOccupancyCount !== 1 ? t('automations.actives') : t('automations.active')}
             </Badge>
             <Badge variant="outline">
@@ -149,11 +149,11 @@ const Automations = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-cooling" />
+            <Clock className="h-5 w-5 text-primary" />
             <h2 className="text-xl font-semibold">{t('automations.timeRoutines')}</h2>
           </div>
           <div className="flex gap-2">
-            <Badge variant="secondary" className="bg-energy-efficient/10 text-energy-efficient">
+            <Badge variant="secondary" className="bg-primary/10 text-primary">
               {activeRoutinesCount} {activeRoutinesCount !== 1 ? t('automations.actives') : t('automations.active')}
             </Badge>
             <Badge variant="outline">
@@ -177,8 +177,8 @@ const Automations = () => {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-gradient-cooling/10">
-                        <Clock className="h-5 w-5 text-cooling" />
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <Clock className="h-5 w-5 text-primary" />
                       </div>
                       <div>
                         <CardTitle className="text-lg">{routine.name}</CardTitle>

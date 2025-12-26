@@ -22,11 +22,9 @@ const StatusCard = ({
   const getVariantStyles = () => {
     switch (variant) {
       case "cooling":
-        return "border-cooling/20 bg-gradient-to-br from-cooling-light/10 to-transparent";
       case "heating":
-        return "border-heating/20 bg-gradient-to-br from-heating-light/10 to-transparent";
       case "energy":
-        return "border-energy-efficient/20 bg-gradient-to-br from-energy-efficient/10 to-transparent";
+        return "border-primary/20 bg-gradient-to-br from-primary/10 to-transparent";
       default:
         return "border-border";
     }
@@ -35,11 +33,9 @@ const StatusCard = ({
   const getIconStyles = () => {
     switch (variant) {
       case "cooling":
-        return "text-cooling";
       case "heating":
-        return "text-heating";
       case "energy":
-        return "text-energy-efficient";
+        return "text-primary";
       default:
         return "text-muted-foreground";
     }
