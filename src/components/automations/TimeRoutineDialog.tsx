@@ -216,36 +216,35 @@ const TimeRoutineDialog = ({ children }: TimeRoutineDialogProps) => {
                             
                             {daySchedule.timeSlots.map((slot) => (
                               <Card key={slot.id} className="p-3">
-                                <div className="flex items-center gap-4">
-                                  <div className="grid grid-cols-2 gap-4 flex-1">
-                                    <div className="space-y-2">
-                                      <Label htmlFor={`start-time-${day.id}-${slot.id}`} className="text-xs">
-                                        {t('automations.dialog.startTime')}
-                                      </Label>
-                                      <Input
-                                        id={`start-time-${day.id}-${slot.id}`}
-                                        type="time"
-                                        value={slot.startTime}
-                                        onChange={(e) => updateTimeSlot(day.id, slot.id, 'startTime', e.target.value)}
-                                      />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label htmlFor={`end-time-${day.id}-${slot.id}`} className="text-xs">
-                                        {t('automations.dialog.endTime')}
-                                      </Label>
-                                      <Input
-                                        id={`end-time-${day.id}-${slot.id}`}
-                                        type="time"
-                                        value={slot.endTime}
-                                        onChange={(e) => updateTimeSlot(day.id, slot.id, 'endTime', e.target.value)}
-                                      />
-                                    </div>
+                                <div className="grid grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                                  <div className="space-y-2">
+                                    <Label htmlFor={`start-time-${day.id}-${slot.id}`} className="text-xs">
+                                      {t('automations.dialog.startTime')}
+                                    </Label>
+                                    <Input
+                                      id={`start-time-${day.id}-${slot.id}`}
+                                      type="time"
+                                      value={slot.startTime}
+                                      onChange={(e) => updateTimeSlot(day.id, slot.id, 'startTime', e.target.value)}
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor={`end-time-${day.id}-${slot.id}`} className="text-xs">
+                                      {t('automations.dialog.endTime')}
+                                    </Label>
+                                    <Input
+                                      id={`end-time-${day.id}-${slot.id}`}
+                                      type="time"
+                                      value={slot.endTime}
+                                      onChange={(e) => updateTimeSlot(day.id, slot.id, 'endTime', e.target.value)}
+                                    />
                                   </div>
                                   {daySchedule.timeSlots.length > 1 && (
                                     <Button
                                       type="button"
                                       variant="outline"
-                                      size="sm"
+                                      size="icon"
+                                      className="h-10 w-10"
                                       onClick={() => removeTimeSlot(day.id, slot.id)}
                                     >
                                       <Trash2 className="h-4 w-4" />
