@@ -234,7 +234,9 @@
     "fanSpeed": "Velocidade do Ventilador",
     "timer": "Timer - Desligar em:",
     "remaining": "restantes",
-    "setTimer": "Definir"
+    "setTimer": "Definir",
+    "rangeExplanationCooling": "Faixa de operação: Alvo ← → Ativação",
+    "rangeExplanationHeating": "Faixa de operação: Ativação ← → Alvo"
   },
   "equipmentControlDialog": {
     "control": "Controle",

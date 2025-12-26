@@ -234,7 +234,9 @@
     "fanSpeed": "Fan Speed",
     "timer": "Timer - Turn off in:",
     "remaining": "remaining",
-    "setTimer": "Set"
+    "setTimer": "Set",
+    "rangeExplanationCooling": "Operating range: Target ← → Activation",
+    "rangeExplanationHeating": "Operating range: Activation ← → Target"
   },
   "equipmentControlDialog": {
     "control": "Control",
