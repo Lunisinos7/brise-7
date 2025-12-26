@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Wifi, WifiOff, Eye, EyeOff, RefreshCw, LogOut, Circle } from "lucide-react";
+import { Loader2, Wifi, Eye, EyeOff, RefreshCw, LogOut, Circle } from "lucide-react";
 import { useBriseConfig } from "@/hooks/useBriseConfig";
 import { useBriseDevices } from "@/hooks/useBriseDevices";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -62,7 +62,7 @@ export function BriseConfig() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div>
-                <Circle className="border-solid bg-card border-primary text-card w-[30px] h-[30px] rounded-full border-8" />
+                <Circle className="border-solid bg-card text-card w-[30px] h-[30px] rounded-full border-8 border-[#0ba0da]" />
               </div>
               <div>
                 <CardTitle className="text-lg">BRISE</CardTitle>
@@ -76,7 +76,7 @@ export function BriseConfig() {
                   <Wifi className="h-3 w-3 mr-1" />
                   {t("brise.connected")}
                 </> : <>
-                  <WifiOff className="h-3 w-3 mr-1" />
+                  
                   {t("brise.notConfigured")}
                 </>}
             </Badge>
