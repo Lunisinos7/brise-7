@@ -172,6 +172,8 @@
       "locationRequired": "Standort ist erforderlich",
       "modelRequired": "Modell ist erforderlich",
       "capacityRequired": "Kapazität ist erforderlich",
+      "capacityRange": "Kapazität muss zwischen 1.000 und 100.000 BTU liegen",
+      "nominalPowerRange": "Nennleistung muss zwischen 100 und 50.000 W liegen",
       "integrationRequired": "Integrationstyp auswählen"
     },
     "placeholders": {
