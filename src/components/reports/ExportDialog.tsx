@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, FileSpreadsheet, FileText } from "lucide-react";
 import { PeriodSelector } from "./PeriodSelector";
@@ -14,7 +8,6 @@ import { exportToPDF, exportToExcel, ExportTranslations } from "@/lib/exportUtil
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { ptBR, enUS, es } from "date-fns/locale";
-
 interface ExportDialogProps {
   energyData: any[];
   temperatureData: any[];
@@ -26,7 +19,6 @@ interface ExportDialogProps {
   environmentName?: string;
   currencySymbol?: string;
 }
-
 const getDateLocale = (language: string) => {
   switch (language) {
     case "pt-BR":
@@ -37,32 +29,33 @@ const getDateLocale = (language: string) => {
       return enUS;
   }
 };
-
 export const ExportDialog = ({
   energyData,
   temperatureData,
   equipmentEfficiency,
   summary,
   environmentName,
-  currencySymbol = "R$",
+  currencySymbol = "R$"
 }: ExportDialogProps) => {
-  const { t, i18n } = useTranslation();
+  const {
+    t,
+    i18n
+  } = useTranslation();
   const [open, setOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("month");
   const [customRange, setCustomRange] = useState<DateRange | undefined>();
   const [isExporting, setIsExporting] = useState(false);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const handlePeriodChange = (period: PeriodType, range?: DateRange) => {
     setSelectedPeriod(period);
     if (range) {
       setCustomRange(range);
     }
   };
-
   const dateRange = getDateRangeFromPeriod(selectedPeriod, customRange);
   const dateLocale = getDateLocale(i18n.language);
-
   const getExportTranslations = (): ExportTranslations => ({
     reportTitle: t("export.reportTitle"),
     environment: t("export.environment"),
@@ -88,9 +81,8 @@ export const ExportDialog = ({
     sheetEfficiency: t("export.sheetEfficiency"),
     currentTemp: t("export.currentTemp"),
     targetTemp: t("export.targetTemp"),
-    currencySymbol,
+    currencySymbol
   });
-
   const handleExportPDF = async () => {
     setIsExporting(true);
     try {
@@ -102,24 +94,23 @@ export const ExportDialog = ({
         dateRange,
         environmentName,
         translations: getExportTranslations(),
-        dateLocale,
+        dateLocale
       });
       toast({
         title: t("export.exportComplete"),
-        description: t("export.pdfSuccess"),
+        description: t("export.pdfSuccess")
       });
       setOpen(false);
     } catch (error) {
       toast({
         title: t("export.exportError"),
         description: t("export.pdfError"),
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsExporting(false);
     }
   };
-
   const handleExportExcel = async () => {
     setIsExporting(true);
     try {
@@ -131,28 +122,26 @@ export const ExportDialog = ({
         dateRange,
         environmentName,
         translations: getExportTranslations(),
-        dateLocale,
+        dateLocale
       });
       toast({
         title: t("export.exportComplete"),
-        description: t("export.excelSuccess"),
+        description: t("export.excelSuccess")
       });
       setOpen(false);
     } catch (error) {
       toast({
         title: t("export.exportError"),
         description: t("export.excelError"),
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsExporting(false);
     }
   };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
+  return <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="energy" className="gap-2">
+        <Button variant="energy" className="gap-2 bg-primary">
           <Download className="h-4 w-4" />
           {t("export.export")}
         </Button>
@@ -165,31 +154,17 @@ export const ExportDialog = ({
         <div className="space-y-6 py-4">
           <div>
             <h4 className="text-sm font-medium mb-3">{t("reports.selectPeriod")}</h4>
-            <PeriodSelector
-              selectedPeriod={selectedPeriod}
-              customRange={customRange}
-              onPeriodChange={handlePeriodChange}
-            />
+            <PeriodSelector selectedPeriod={selectedPeriod} customRange={customRange} onPeriodChange={handlePeriodChange} />
           </div>
 
           <div>
             <h4 className="text-sm font-medium mb-3">{t("export.exportFormat")}</h4>
             <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                className="h-20 flex-col gap-2"
-                onClick={handleExportPDF}
-                disabled={isExporting}
-              >
+              <Button variant="outline" className="h-20 flex-col gap-2" onClick={handleExportPDF} disabled={isExporting}>
                 <FileText className="h-6 w-6 text-destructive" />
                 <span>PDF</span>
               </Button>
-              <Button
-                variant="outline"
-                className="h-20 flex-col gap-2"
-                onClick={handleExportExcel}
-                disabled={isExporting}
-              >
+              <Button variant="outline" className="h-20 flex-col gap-2" onClick={handleExportExcel} disabled={isExporting}>
                 <FileSpreadsheet className="h-6 w-6 text-energy-efficient" />
                 <span>Excel</span>
               </Button>
@@ -197,6 +172,5 @@ export const ExportDialog = ({
           </div>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
