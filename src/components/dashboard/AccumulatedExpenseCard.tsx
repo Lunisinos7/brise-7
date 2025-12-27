@@ -15,7 +15,7 @@ export const AccumulatedExpenseCard = ({ workspaceId }: AccumulatedExpenseCardPr
   return (
     <Card className={cn(
       "transition-all duration-300 hover:shadow-elevated",
-      "border-primary/20 bg-gradient-to-br from-primary/10 to-transparent"
+      "border-primary/20"
     )}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">

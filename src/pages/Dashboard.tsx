@@ -215,7 +215,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gradient-dashboard min-h-screen">
+    <div className="p-6 space-y-6 min-h-screen">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{t('dashboard.title')}</h1>
