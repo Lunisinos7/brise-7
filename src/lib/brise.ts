@@ -24,7 +24,7 @@ export interface BriseConfig {
   updated_at: string;
 }
 
-export type BriseAction = 'turnOn' | 'turnOff' | 'setTemperature' | 'setMode';
+export type BriseAction = 'turnOn' | 'turnOff' | 'setTemperature' | 'setMode' | 'setTimer' | 'cancelTimer';
 
 export interface BriseCommandResult {
   success: boolean;

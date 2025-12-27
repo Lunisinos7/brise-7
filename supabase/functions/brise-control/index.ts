@@ -8,12 +8,13 @@ const corsHeaders = {
 
 const BRISE_API_BASE = "https://brisev2.agst.com.br:8090/api/v2";
 
-type BriseAction = 'turnOn' | 'turnOff' | 'setTemperature' | 'setMode';
+type BriseAction = 'turnOn' | 'turnOff' | 'setTemperature' | 'setMode' | 'setTimer' | 'cancelTimer';
 
 interface ControlRequest {
   deviceId: string;
   action: BriseAction;
   value?: string | number;
+  timerMinutes?: number;
   workspaceId: string;
 }
 
@@ -28,7 +29,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { deviceId, action, value, workspaceId }: ControlRequest = await req.json();
+    const { deviceId, action, value, timerMinutes, workspaceId }: ControlRequest = await req.json();
 
     if (!deviceId || !action || !workspaceId) {
       return new Response(
@@ -108,6 +109,71 @@ serve(async (req) => {
         commandPayload.operation_mode = modeMap[value] || value;
         commandPayload.mode = modeMap[value] || value;
         break;
+      case 'setTimer':
+        if (typeof timerMinutes !== 'number' || timerMinutes <= 0) {
+          return new Response(
+            JSON.stringify({ error: "timerMinutes must be a positive number" }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        // Calculate the scheduled time
+        const scheduledTime = new Date(Date.now() + timerMinutes * 60 * 1000);
+        commandPayload = {
+          device_id: parseInt(deviceId),
+          immediate: false,
+          scheduled_at: scheduledTime.toISOString(),
+          power: false,
+          status: 'off',
+          description: `Auto off timer - ${timerMinutes} minutes`,
+        };
+        break;
+      case 'cancelTimer':
+        // For canceling, we need to find and delete the scheduled agenda
+        // First, get active schedules for this device
+        console.log(`[brise-control] Attempting to cancel timer for device: ${deviceId}`);
+        
+        try {
+          const agendasResponse = await fetch(`${BRISE_API_BASE}/agendas?device_id=${deviceId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${config.access_token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (agendasResponse.ok) {
+            const agendas = await agendasResponse.json();
+            console.log(`[brise-control] Found agendas:`, JSON.stringify(agendas));
+            
+            // Find and delete pending timer schedules
+            const pendingTimers = (agendas.agendas || agendas || []).filter((a: any) => 
+              a.device_id === parseInt(deviceId) && 
+              !a.executed && 
+              a.description?.includes('Auto off timer')
+            );
+            
+            for (const timer of pendingTimers) {
+              const deleteResponse = await fetch(`${BRISE_API_BASE}/agendas/${timer.id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${config.access_token}`,
+                },
+              });
+              console.log(`[brise-control] Deleted timer ${timer.id}: ${deleteResponse.status}`);
+            }
+          }
+          
+          return new Response(
+            JSON.stringify({ success: true, message: "Timer cancelled" }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        } catch (cancelError) {
+          console.error(`[brise-control] Error cancelling timer:`, cancelError);
+          return new Response(
+            JSON.stringify({ error: "Failed to cancel timer" }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
       default:
         return new Response(
           JSON.stringify({ error: `Unknown action: ${action}` }),
