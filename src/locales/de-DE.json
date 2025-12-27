@@ -266,7 +266,9 @@
     "modeFan": "Lüfter",
     "equipmentOn": "Gerät ein",
     "equipmentOff": "Gerät aus",
-    "equipmentToggled": "{{name}} wurde {{state}}"
+    "equipmentToggled": "{{name}} wurde {{state}}",
+    "fanSpeedChanged": "Geschwindigkeit geändert",
+    "fanSpeedChangedDesc": "Lüftergeschwindigkeit auf {{speed}} geändert"
   },
   "automations": {
     "title": "Automatisierungen",

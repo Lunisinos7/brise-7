@@ -266,7 +266,9 @@
     "modeFan": "Ventilación",
     "equipmentOn": "Equipo Encendido",
     "equipmentOff": "Equipo Apagado",
-    "equipmentToggled": "{{name}} fue {{state}}"
+    "equipmentToggled": "{{name}} fue {{state}}",
+    "fanSpeedChanged": "Velocidad Cambiada",
+    "fanSpeedChangedDesc": "Velocidad del ventilador cambiada a {{speed}}"
   },
   "automations": {
     "title": "Automatizaciones",
