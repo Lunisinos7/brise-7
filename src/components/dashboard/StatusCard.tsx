@@ -24,7 +24,7 @@ const StatusCard = ({
       case "cooling":
       case "heating":
       case "energy":
-        return "border-primary/20 bg-gradient-to-br from-primary/10 to-transparent";
+        return "border-primary/20";
       default:
         return "border-border";
     }

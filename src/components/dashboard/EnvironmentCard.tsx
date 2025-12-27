@@ -34,7 +34,7 @@ const EnvironmentCard = ({
   const isActive = environment.isActive;
 
   return (
-    <Card className={cn("transition-all duration-300 hover:shadow-elevated h-full flex flex-col", !isActive && "opacity-60", isActive && activeCount > 0 ? "border-primary/30 bg-gradient-to-br from-primary/5 to-transparent" : "")}>
+    <Card className={cn("transition-all duration-300 hover:shadow-elevated h-full flex flex-col", !isActive && "opacity-60", isActive && activeCount > 0 ? "border-primary/30" : "")}>
       <CardHeader className="p-4 pb-2">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
