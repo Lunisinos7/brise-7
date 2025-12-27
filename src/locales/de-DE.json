@@ -650,14 +650,14 @@
   "charts": {
     "energyConsumption": "Energieverbrauch",
     "temperatureByLocation": "Temperatur nach Standort",
-    "efficiencyByEquipment": "Effizienz nach Gerät",
+    "expenseByEquipment": "Kosten nach Gerät",
     "usagePatternsByHour": "Nutzungsmuster nach Stunde",
     "noData": "Keine Daten für den ausgewählten Zeitraum verfügbar",
     "consumption": "Verbrauch",
     "date": "Datum",
     "currentTemp": "Aktuelle Temperatur",
     "targetTemp": "Zieltemperatur",
-    "efficiency": "Effizienz",
+    "expense": "Kosten",
     "usage": "Nutzung",
     "activations": "Aktivierungen",
     "time": "Zeit"
