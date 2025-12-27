@@ -266,7 +266,9 @@
     "modeFan": "Fan",
     "equipmentOn": "Equipment On",
     "equipmentOff": "Equipment Off",
-    "equipmentToggled": "{{name}} was {{state}}"
+    "equipmentToggled": "{{name}} was {{state}}",
+    "fanSpeedChanged": "Speed Changed",
+    "fanSpeedChangedDesc": "Fan speed changed to {{speed}}"
   },
   "automations": {
     "title": "Automations",

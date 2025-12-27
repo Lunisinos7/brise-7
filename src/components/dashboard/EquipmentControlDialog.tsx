@@ -160,6 +160,21 @@ const EquipmentControlDialog = ({
     });
   };
 
+  const handleFanSpeedChange = async (speed: number) => {
+    setFanSpeed(speed);
+    
+    // Call BRISE API for fan speed
+    if (equipment.brise_device_id) {
+      await briseControl.setFanSpeed(equipment.brise_device_id, speed);
+    }
+    
+    const speedLabel = speed === 4 ? "Auto" : String(speed);
+    toast({
+      title: t("equipmentControlDialog.fanSpeedChanged"),
+      description: t("equipmentControlDialog.fanSpeedChangedDesc", { speed: speedLabel }),
+    });
+  };
+
   const handleTimerSet = async () => {
     const totalMinutes = timerHours * 60 + timerMinutes;
     if (totalMinutes > 0) {
@@ -461,11 +476,11 @@ const EquipmentControlDialog = ({
                       key={speed}
                       variant={fanSpeed === speed ? "default" : "outline"}
                       size="sm"
-                      onClick={() => setFanSpeed(speed)}
-                      disabled={!equipment.isOn}
+                      onClick={() => handleFanSpeedChange(speed)}
+                      disabled={!equipment.isOn || !equipment.brise_device_id}
                       className="h-8"
                     >
-                      {speed}
+                      {speed === 4 ? "Auto" : speed}
                     </Button>
                   ))}
                 </div>

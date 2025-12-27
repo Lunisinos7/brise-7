@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const BRISE_API_BASE = "https://brisev2.agst.com.br:8090/api/v2";
 
-type BriseAction = 'turnOn' | 'turnOff' | 'setTemperature' | 'setMode' | 'setTimer' | 'cancelTimer';
+type BriseAction = 'turnOn' | 'turnOff' | 'setTemperature' | 'setMode' | 'setFanSpeed' | 'setTimer' | 'cancelTimer';
 
 interface ControlRequest {
   deviceId: string;
@@ -108,6 +108,24 @@ serve(async (req) => {
         };
         commandPayload.operation_mode = modeMap[value] || value;
         commandPayload.mode = modeMap[value] || value;
+        break;
+      case 'setFanSpeed':
+        if (typeof value !== 'number' || value < 1 || value > 4) {
+          return new Response(
+            JSON.stringify({ error: "Fan speed must be a number between 1 and 4" }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        // Map fan speed levels to BRISE API values
+        // BRISE typically uses: 'low', 'medium', 'high', 'auto' or numeric values
+        const fanSpeedMap: Record<number, string> = {
+          1: 'low',
+          2: 'medium',
+          3: 'high',
+          4: 'auto',
+        };
+        commandPayload.fan_speed = fanSpeedMap[value] || 'auto';
+        commandPayload.fan_mode = fanSpeedMap[value] || 'auto';
         break;
       case 'setTimer':
         if (typeof timerMinutes !== 'number' || timerMinutes <= 0) {

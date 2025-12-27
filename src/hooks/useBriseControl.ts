@@ -62,6 +62,10 @@ export function useBriseControl() {
     return sendCommand(deviceId, "setMode", mode);
   };
 
+  const setFanSpeed = async (deviceId: string, speed: number): Promise<boolean> => {
+    return sendCommand(deviceId, "setFanSpeed", speed);
+  };
+
   const setTimer = async (deviceId: string, minutes: number): Promise<boolean> => {
     return sendCommand(deviceId, "setTimer", undefined, minutes);
   };
@@ -76,6 +80,7 @@ export function useBriseControl() {
     turnOff,
     setTemperature,
     setMode,
+    setFanSpeed,
     setTimer,
     cancelTimer,
   };
