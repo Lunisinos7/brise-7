@@ -67,6 +67,7 @@ const EquipmentControlDialog = ({
   const [timerHours, setTimerHours] = useState(0);
   const [timerMinutes, setTimerMinutes] = useState(0);
   const [timerEnabled, setTimerEnabled] = useState(false);
+  const [isTimerLoading, setIsTimerLoading] = useState(false);
   const [isManualMode, setIsManualMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -159,24 +160,53 @@ const EquipmentControlDialog = ({
     });
   };
 
-  const handleTimerSet = () => {
-    if (timerHours > 0 || timerMinutes > 0) {
-      setTimerEnabled(true);
-      toast({
-        title: t("equipmentControlDialog.timerSet"),
-        description: t("equipmentControlDialog.timerSetDesc", { hours: timerHours, minutes: timerMinutes }),
-      });
+  const handleTimerSet = async () => {
+    const totalMinutes = timerHours * 60 + timerMinutes;
+    if (totalMinutes > 0) {
+      setIsTimerLoading(true);
+      try {
+        let success = false;
+        
+        // Call BRISE API for timer
+        if (equipment.brise_device_id) {
+          success = await briseControl.setTimer(equipment.brise_device_id, totalMinutes);
+        }
+        
+        if (success) {
+          setTimerEnabled(true);
+          toast({
+            title: t("equipmentControlDialog.timerSet"),
+            description: t("equipmentControlDialog.timerSetDesc", { hours: timerHours, minutes: timerMinutes }),
+          });
+        }
+      } finally {
+        setIsTimerLoading(false);
+      }
     }
   };
 
-  const handleTimerCancel = () => {
-    setTimerEnabled(false);
-    setTimerHours(0);
-    setTimerMinutes(0);
-    toast({
-      title: t("equipmentControlDialog.timerCancelled"),
-      description: t("equipmentControlDialog.timerCancelledDesc"),
-    });
+  const handleTimerCancel = async () => {
+    setIsTimerLoading(true);
+    try {
+      let success = false;
+      
+      // Cancel timer via BRISE API
+      if (equipment.brise_device_id) {
+        success = await briseControl.cancelTimer(equipment.brise_device_id);
+      }
+      
+      if (success) {
+        setTimerEnabled(false);
+        setTimerHours(0);
+        setTimerMinutes(0);
+        toast({
+          title: t("equipmentControlDialog.timerCancelled"),
+          description: t("equipmentControlDialog.timerCancelledDesc"),
+        });
+      }
+    } finally {
+      setIsTimerLoading(false);
+    }
   };
 
   const getModeIcon = (mode: string) => {
@@ -456,7 +486,11 @@ const EquipmentControlDialog = ({
                       variant="destructive"
                       size="sm"
                       onClick={handleTimerCancel}
+                      disabled={isTimerLoading || !equipment.brise_device_id}
                     >
+                      {isTimerLoading ? (
+                        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                      ) : null}
                       {t("equipmentControlDialog.cancelTimer")}
                     </Button>
                   </div>
@@ -470,7 +504,7 @@ const EquipmentControlDialog = ({
                         value={timerHours}
                         onChange={(e) => setTimerHours(Math.min(24, Math.max(0, parseInt(e.target.value) || 0)))}
                         className="w-14 h-8 text-center text-sm"
-                        disabled={!equipment.isOn}
+                        disabled={!equipment.isOn || !equipment.brise_device_id}
                       />
                       <span className="text-xs text-muted-foreground">h</span>
                     </div>
@@ -482,7 +516,7 @@ const EquipmentControlDialog = ({
                         value={timerMinutes}
                         onChange={(e) => setTimerMinutes(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)))}
                         className="w-14 h-8 text-center text-sm"
-                        disabled={!equipment.isOn}
+                        disabled={!equipment.isOn || !equipment.brise_device_id}
                       />
                       <span className="text-xs text-muted-foreground">min</span>
                     </div>
@@ -490,10 +524,14 @@ const EquipmentControlDialog = ({
                       variant="outline"
                       size="sm"
                       onClick={handleTimerSet}
-                      disabled={!equipment.isOn || (timerHours === 0 && timerMinutes === 0)}
+                      disabled={!equipment.isOn || !equipment.brise_device_id || (timerHours === 0 && timerMinutes === 0) || isTimerLoading}
                       className="h-8"
                     >
-                      <Timer className="h-3 w-3 mr-1" />
+                      {isTimerLoading ? (
+                        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                      ) : (
+                        <Timer className="h-3 w-3 mr-1" />
+                      )}
                       {t("equipmentControlDialog.setTimer")}
                     </Button>
                   </div>

@@ -11,7 +11,8 @@ export function useBriseControl() {
   const sendCommand = async (
     deviceId: string,
     action: BriseAction,
-    value?: string | number
+    value?: string | number,
+    timerMinutes?: number
   ): Promise<boolean> => {
     if (!currentWorkspaceId) {
       toast({
@@ -24,7 +25,7 @@ export function useBriseControl() {
 
     try {
       const { data, error } = await supabase.functions.invoke("brise-control", {
-        body: { deviceId, action, value, workspaceId: currentWorkspaceId },
+        body: { deviceId, action, value, timerMinutes, workspaceId: currentWorkspaceId },
       });
 
       if (error) throw error;
@@ -61,11 +62,21 @@ export function useBriseControl() {
     return sendCommand(deviceId, "setMode", mode);
   };
 
+  const setTimer = async (deviceId: string, minutes: number): Promise<boolean> => {
+    return sendCommand(deviceId, "setTimer", undefined, minutes);
+  };
+
+  const cancelTimer = async (deviceId: string): Promise<boolean> => {
+    return sendCommand(deviceId, "cancelTimer");
+  };
+
   return {
     sendCommand,
     turnOn,
     turnOff,
     setTemperature,
     setMode,
+    setTimer,
+    cancelTimer,
   };
 }
