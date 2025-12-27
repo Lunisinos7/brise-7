@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Trash2, Plus, Pencil, CalendarOff, RefreshCw, CalendarIcon, Users } from "lucide-react";
+import { Clock, Trash2, Pencil, CalendarOff, RefreshCw, CalendarIcon, Users } from "lucide-react";
 import TimeRoutineDialog from "@/components/automations/TimeRoutineDialog";
 import EditTimeRoutineDialog from "@/components/automations/EditTimeRoutineDialog";
 import OccupancyAutomationDialog from "@/components/automations/OccupancyAutomationDialog";
@@ -91,7 +91,7 @@ const Automations = () => {
           </OccupancyAutomationDialog>
           <TimeRoutineDialog>
             <Button variant="control" className="gap-2 bg-primary">
-              <Plus className="h-4 w-4" />
+              <Clock className="h-4 w-4" />
               {t('automations.newTimeRoutine')}
             </Button>
           </TimeRoutineDialog>
