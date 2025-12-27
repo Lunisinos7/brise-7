@@ -82,7 +82,7 @@ export const TemperatureChart = ({ data, isLoading }: TemperatureChartProps) => 
               <Line
                 type="monotone"
                 dataKey="current_temp"
-                stroke="hsl(195, 80%, 45%)"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 6 }}
@@ -90,7 +90,7 @@ export const TemperatureChart = ({ data, isLoading }: TemperatureChartProps) => 
               <Line
                 type="monotone"
                 dataKey="target_temp"
-                stroke="hsl(165, 80%, 45%)"
+                stroke="hsl(var(--primary) / 0.5)"
                 strokeWidth={2}
                 strokeDasharray="5 5"
                 dot={false}
