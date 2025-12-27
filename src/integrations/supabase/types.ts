@@ -136,7 +136,6 @@ export type Database = {
       energy_history: {
         Row: {
           created_at: string
-          efficiency: number
           energy_consumption: number
           equipment_id: string
           id: string
@@ -145,7 +144,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          efficiency: number
           energy_consumption: number
           equipment_id: string
           id?: string
@@ -154,7 +152,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          efficiency?: number
           energy_consumption?: number
           equipment_id?: string
           id?: string
@@ -236,7 +233,6 @@ export type Database = {
           capacity: number
           created_at: string
           current_temp: number
-          efficiency: number
           energy_consumption: number
           id: string
           integration: string
@@ -258,7 +254,6 @@ export type Database = {
           capacity: number
           created_at?: string
           current_temp?: number
-          efficiency?: number
           energy_consumption?: number
           id?: string
           integration: string
@@ -280,7 +275,6 @@ export type Database = {
           capacity?: number
           created_at?: string
           current_temp?: number
-          efficiency?: number
           energy_consumption?: number
           id?: string
           integration?: string

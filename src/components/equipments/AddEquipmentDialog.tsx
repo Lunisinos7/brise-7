@@ -159,7 +159,6 @@ export function AddEquipmentDialog({ open, onOpenChange, onAddEquipment }: AddEq
         targetTemp: 22,
         mode: "cool",
         energyConsumption: 0,
-        efficiency: 85,
         nominalPower: nominalPower,
       };
 
