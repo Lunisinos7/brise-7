@@ -75,7 +75,7 @@ const Automations = () => {
   return <div className="p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-cooling bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-foreground">
             {t('automations.title')}
           </h1>
           <p className="text-muted-foreground">

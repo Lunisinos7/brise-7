@@ -84,12 +84,12 @@ const Auth = () => {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>;
   }
-  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
+  return <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Disc className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold bg-gradient-cooling bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-foreground">
               {t('brand.name')}
             </h1>
           </div>
