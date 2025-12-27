@@ -658,14 +658,14 @@
   "charts": {
     "energyConsumption": "Consumo Energético",
     "temperatureByLocation": "Temperatura por Local",
-    "efficiencyByEquipment": "Eficiência por Equipamento",
+    "expenseByEquipment": "Gasto por Equipamento",
     "usagePatternsByHour": "Padrões de Uso por Hora",
     "noData": "Nenhum dado disponível para o período selecionado",
     "consumption": "Consumo",
     "date": "Data",
     "currentTemp": "Temperatura Atual",
     "targetTemp": "Temperatura Alvo",
-    "efficiency": "Eficiência",
+    "expense": "Gasto",
     "usage": "Uso",
     "activations": "ativações",
     "time": "Horário"
