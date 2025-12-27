@@ -7,7 +7,6 @@ export interface Equipment {
   targetTemp: number;
   mode: "cool" | "heat" | "auto" | "fan";
   energyConsumption: number;
-  efficiency: number;
   model: string;
   capacity: number; // BTU/h
   integration: "BRISE" | "SMART";
@@ -32,7 +31,6 @@ export const mockEquipments: Equipment[] = [
     targetTemp: 21,
     mode: "cool",
     energyConsumption: 1250,
-    efficiency: 87,
     model: "Samsung AR12345",
     capacity: 12000,
     integration: "SMART"
@@ -46,7 +44,6 @@ export const mockEquipments: Equipment[] = [
     targetTemp: 23,
     mode: "cool",
     energyConsumption: 980,
-    efficiency: 92,
     model: "LG Dual Inverter",
     capacity: 9000,
     integration: "BRISE"
@@ -60,7 +57,6 @@ export const mockEquipments: Equipment[] = [
     targetTemp: 22,
     mode: "auto",
     energyConsumption: 0,
-    efficiency: 78,
     model: "Daikin Split Hi-Wall",
     capacity: 18000,
     integration: "SMART"
@@ -74,7 +70,6 @@ export const mockEquipments: Equipment[] = [
     targetTemp: 19,
     mode: "cool",
     energyConsumption: 1850,
-    efficiency: 95,
     model: "Hitachi Performance",
     capacity: 24000,
     integration: "SMART"
@@ -88,7 +83,6 @@ export const mockEquipments: Equipment[] = [
     targetTemp: 22,
     mode: "auto",
     energyConsumption: 1100,
-    efficiency: 89,
     model: "Midea Inverter",
     capacity: 12000,
     integration: "BRISE"
@@ -102,7 +96,6 @@ export const mockEquipments: Equipment[] = [
     targetTemp: 21,
     mode: "cool", 
     energyConsumption: 0,
-    efficiency: 82,
     model: "Carrier Split",
     capacity: 18000,
     integration: "BRISE"

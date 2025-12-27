@@ -23,7 +23,7 @@ serve(async (req) => {
     // Fetch all active equipments across all workspaces
     const { data: equipments, error: equipmentsError } = await supabase
       .from('equipments')
-      .select('id, is_on, energy_consumption, efficiency, current_temp, target_temp, mode, workspace_id')
+      .select('id, is_on, energy_consumption, current_temp, target_temp, mode, workspace_id')
       .eq('is_on', true);
 
     if (equipmentsError) {
@@ -62,7 +62,6 @@ serve(async (req) => {
       return {
         equipment_id: eq.id,
         energy_consumption: kWh,
-        efficiency: eq.efficiency || 85,
         is_on: eq.is_on,
         recorded_at: now,
       };

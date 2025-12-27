@@ -176,7 +176,7 @@ export const useAlerts = () => {
                     if (newAlert.equipment_id) {
                       const { data: equipment } = await supabase
                         .from("equipments")
-                        .select("name, current_temp, efficiency")
+                        .select("name, current_temp")
                         .eq("id", newAlert.equipment_id)
                         .single();
                       if (equipment) {
@@ -185,29 +185,23 @@ export const useAlerts = () => {
                         // Get alert thresholds
                         const { data: thresholds } = await supabase
                           .from("alert_settings")
-                          .select("temp_alert_min, temp_alert_max, efficiency_threshold")
+                          .select("temp_alert_min, temp_alert_max")
                           .eq("workspace_id", currentWorkspaceId)
                           .single();
 
                         // Send emails to all admins/owners
                         for (const profile of profiles || []) {
-                          const emailType = newAlert.message.toLowerCase().includes("temperatura") 
-                            ? "temperature_alert" 
-                            : "efficiency_alert";
-
                           await supabase.functions.invoke('send-email', {
                             body: {
-                              type: emailType,
+                              type: 'temperature_alert',
                               to: profile.email,
                               language: i18n.language || 'pt-BR',
                               data: {
                                 workspaceName: workspace?.name || 'Workspace',
                                 equipmentName,
                                 currentTemp: equipment.current_temp?.toString(),
-                                efficiency: equipment.efficiency?.toString(),
                                 minTemp: thresholds?.temp_alert_min?.toString() || '16',
                                 maxTemp: thresholds?.temp_alert_max?.toString() || '28',
-                                threshold: thresholds?.efficiency_threshold?.toString() || '85',
                               },
                             },
                           });

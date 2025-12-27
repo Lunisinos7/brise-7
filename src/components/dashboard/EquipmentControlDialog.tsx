@@ -39,7 +39,6 @@ interface Equipment {
   targetTemp: number;
   mode: string;
   energyConsumption: number;
-  efficiency: number;
   brise_device_id?: string | null;
   smartthings_device_id?: string | null;
 }
