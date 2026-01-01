@@ -17,11 +17,8 @@ import Alarms from "./pages/Alarms";
 import Users from "./pages/Users";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-
 const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
         <WorkspaceProvider>
@@ -30,15 +27,10 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <Routes>
-                <Route path="/auth" element={<Auth />} />
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
+                <Route path="/auth" element={<Auth />} className="text-[#17a1cf]" />
+                <Route path="/" element={<ProtectedRoute>
                       <Layout />
-                    </ProtectedRoute>
-                  }
-                >
+                    </ProtectedRoute>}>
                   <Route index element={<Dashboard />} />
                   <Route path="equipments" element={<Equipments />} />
                   <Route path="automations" element={<Automations />} />
@@ -54,7 +46,5 @@ const App = () => (
         </WorkspaceProvider>
       </AuthProvider>
     </TooltipProvider>
-  </QueryClientProvider>
-);
-
+  </QueryClientProvider>;
 export default App;

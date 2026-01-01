@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Disc } from 'lucide-react';
+import { Loader2, Circle } from 'lucide-react';
 const Auth = () => {
   const navigate = useNavigate();
   const {
@@ -88,12 +88,12 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Disc className="h-8 w-8 text-primary" />
+            <Circle className="w-[28px] h-[28px] rounded-full opacity-100 border-[#17a1cf] bg-black/0 text-black/0 border-8" />
             <h1 className="text-2xl font-bold text-foreground">
               {t('brand.name')}
             </h1>
           </div>
-          <CardTitle>{t('auth.welcome')}</CardTitle>
+          <CardTitle className="text-primary">{t('auth.welcome')}</CardTitle>
           <CardDescription>
             {t('auth.loginOrSignup')}
           </CardDescription>
