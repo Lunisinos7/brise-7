@@ -89,7 +89,7 @@ const Auth = () => {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Circle className="w-[28px] h-[28px] rounded-full opacity-100 border-[#17a1cf] bg-black/0 text-black/0 border-8" />
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-2xl font-bold text-[#17a1cf]">
               {t('brand.name')}
             </h1>
           </div>
