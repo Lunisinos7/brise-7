@@ -594,11 +594,6 @@
     "currentTemp": "Temperatura Atual (°C)",
     "targetTemp": "Temperatura Alvo (°C)"
   },
-  "charts": {
-    "expenseByEquipment": "Gasto por Equipamento",
-    "expense": "Gasto",
-    "noData": "Nenhum dado disponível"
-  },
   "energyRate": {
     "title": "Configurações de Tarifa de Energia",
     "description": "Configure o valor do kWh e a moeda para cálculo de custos do workspace atual",
