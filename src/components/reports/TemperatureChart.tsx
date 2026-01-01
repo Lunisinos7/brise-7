@@ -5,101 +5,65 @@ import { ptBR, enUS, es, Locale } from "date-fns/locale";
 import { Thermometer, Loader2 } from "lucide-react";
 import { TemperatureData } from "@/hooks/useReportData";
 import { useTranslation } from "react-i18next";
-
 const localeMap: Record<string, Locale> = {
   'pt-BR': ptBR,
   'en-US': enUS,
-  'es-ES': es,
+  'es-ES': es
 };
-
 interface TemperatureChartProps {
   data: TemperatureData[];
   isLoading: boolean;
 }
-
-export const TemperatureChart = ({ data, isLoading }: TemperatureChartProps) => {
-  const { t, i18n } = useTranslation();
+export const TemperatureChart = ({
+  data,
+  isLoading
+}: TemperatureChartProps) => {
+  const {
+    t,
+    i18n
+  } = useTranslation();
   const currentLocale = localeMap[i18n.language] || ptBR;
-
-  const formattedData = data.map((item) => ({
+  const formattedData = data.map(item => ({
     ...item,
-    dateFormatted: format(new Date(item.date), "dd/MM", { locale: currentLocale }),
+    dateFormatted: format(new Date(item.date), "dd/MM", {
+      locale: currentLocale
+    })
   }));
-
-  return (
-    <Card>
+  return <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Thermometer className="h-5 w-5 text-cooling" />
+          <Thermometer className="h-5 w-5 text-primary" />
           {t('charts.temperatureByLocation')}
         </CardTitle>
       </CardHeader>
       <CardContent className="h-80">
-        {isLoading ? (
-          <div className="h-full flex items-center justify-center">
+        {isLoading ? <div className="h-full flex items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        ) : data.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-muted-foreground">
+          </div> : data.length === 0 ? <div className="h-full flex items-center justify-center text-muted-foreground">
             {t('charts.noData')}
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          </div> : <ResponsiveContainer width="100%" height="100%">
             <LineChart data={formattedData}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis
-                dataKey="dateFormatted"
-                tick={{ fontSize: 12 }}
-                tickLine={false}
-                axisLine={false}
-                className="fill-muted-foreground"
-              />
-              <YAxis
-                tick={{ fontSize: 12 }}
-                tickLine={false}
-                axisLine={false}
-                className="fill-muted-foreground"
-                domain={["dataMin - 2", "dataMax + 2"]}
-                tickFormatter={(value) => `${value}°C`}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "8px",
-                }}
-                formatter={(value: number, name: string) => [
-                  `${value.toFixed(1)}°C`,
-                  name === "current_temp" ? t('charts.currentTemp') : t('charts.targetTemp'),
-                ]}
-                labelFormatter={(label) => `${t('charts.date')}: ${label}`}
-              />
-              <Legend
-                formatter={(value) =>
-                  value === "current_temp" ? t('charts.currentTemp') : t('charts.targetTemp')
-                }
-              />
-              <Line
-                type="monotone"
-                dataKey="current_temp"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="target_temp"
-                stroke="hsl(var(--primary) / 0.5)"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                dot={false}
-                activeDot={{ r: 6 }}
-              />
+              <XAxis dataKey="dateFormatted" tick={{
+            fontSize: 12
+          }} tickLine={false} axisLine={false} className="fill-muted-foreground" />
+              <YAxis tick={{
+            fontSize: 12
+          }} tickLine={false} axisLine={false} className="fill-muted-foreground" domain={["dataMin - 2", "dataMax + 2"]} tickFormatter={value => `${value}°C`} />
+              <Tooltip contentStyle={{
+            backgroundColor: "hsl(var(--card))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "8px"
+          }} formatter={(value: number, name: string) => [`${value.toFixed(1)}°C`, name === "current_temp" ? t('charts.currentTemp') : t('charts.targetTemp')]} labelFormatter={label => `${t('charts.date')}: ${label}`} />
+              <Legend formatter={value => value === "current_temp" ? t('charts.currentTemp') : t('charts.targetTemp')} />
+              <Line type="monotone" dataKey="current_temp" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} activeDot={{
+            r: 6
+          }} />
+              <Line type="monotone" dataKey="target_temp" stroke="hsl(var(--primary) / 0.5)" strokeWidth={2} strokeDasharray="5 5" dot={false} activeDot={{
+            r: 6
+          }} />
             </LineChart>
-          </ResponsiveContainer>
-        )}
+          </ResponsiveContainer>}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
