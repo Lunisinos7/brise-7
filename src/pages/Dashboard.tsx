@@ -9,6 +9,7 @@ import EditEnvironmentDialog from "@/components/dashboard/EditEnvironmentDialog"
 import EnvironmentCard from "@/components/dashboard/EnvironmentCard";
 import { useEquipments } from "@/hooks/useEquipments";
 import { useBriseControl } from "@/hooks/useBriseControl";
+import { useBriseSync } from "@/hooks/useBriseSync";
 import { useSmartThingsControl } from "@/hooks/useSmartThingsControl";
 import { Wind, Zap, Thermometer, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,9 @@ const Dashboard = () => {
   const { environments, addEnvironment, updateEnvironment, removeEnvironment } = useEnvironments();
   const briseControl = useBriseControl();
   const smartThingsControl = useSmartThingsControl();
+  
+  // Enable real-time sync for BRISE devices
+  useBriseSync(true);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
   const [isControlDialogOpen, setIsControlDialogOpen] = useState(false);
   const [isCreateEnvironmentOpen, setIsCreateEnvironmentOpen] = useState(false);

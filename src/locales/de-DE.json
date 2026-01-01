@@ -844,7 +844,11 @@
     "selectDevice": "Wählen Sie ein BRISE-Gerät",
     "searchingDevices": "Suche nach Geräten...",
     "allImported": "Alle Geräte wurden importiert",
-    "noDevicesFound": "Keine BRISE-Geräte gefunden"
+    "noDevicesFound": "Keine BRISE-Geräte gefunden",
+    "syncInProgress": "Synchronisiere...",
+    "syncComplete": "Synchronisierung abgeschlossen",
+    "syncCompleteDesc": "{{count}} Gerät(e) aktualisiert",
+    "syncError": "Synchronisierungsfehler"
   },
   "export": {
     "export": "Bericht exportieren",

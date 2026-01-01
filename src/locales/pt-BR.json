@@ -863,7 +863,11 @@
     "selectDevice": "Selecione um dispositivo BRISE",
     "searchingDevices": "Buscando dispositivos...",
     "allImported": "Todos os dispositivos já foram importados",
-    "noDevicesFound": "Nenhum dispositivo BRISE encontrado"
+    "noDevicesFound": "Nenhum dispositivo BRISE encontrado",
+    "syncInProgress": "Sincronizando...",
+    "syncComplete": "Sincronização concluída",
+    "syncCompleteDesc": "{{count}} dispositivo(s) atualizado(s)",
+    "syncError": "Erro na sincronização"
   },
   "export": {
     "export": "Exportar Relatório",
