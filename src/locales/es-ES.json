@@ -594,11 +594,6 @@
     "currentTemp": "Temperatura Actual (°C)",
     "targetTemp": "Temperatura Objetivo (°C)"
   },
-  "charts": {
-    "expenseByEquipment": "Gasto por Equipo",
-    "expense": "Gasto",
-    "noData": "No hay datos disponibles"
-  },
   "energyRate": {
     "title": "Configuración de Tarifa de Energía",
     "description": "Configure el valor del kWh y la moneda para cálculo de costos del workspace actual",

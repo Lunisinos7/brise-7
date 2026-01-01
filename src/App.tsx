@@ -27,7 +27,7 @@ const App = () => <QueryClientProvider client={queryClient}>
             <Sonner />
             <BrowserRouter>
               <Routes>
-                <Route path="/auth" element={<Auth />} className="text-[#17a1cf]" />
+                <Route path="/auth" element={<Auth />} />
                 <Route path="/" element={<ProtectedRoute>
                       <Layout />
                     </ProtectedRoute>}>

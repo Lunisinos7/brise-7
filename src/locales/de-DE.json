@@ -598,11 +598,6 @@
     "exportSuccess": "Export abgeschlossen",
     "customPeriod": "Benutzerdefinierter Zeitraum"
   },
-  "charts": {
-    "expenseByEquipment": "Kosten nach Gerät",
-    "expense": "Kosten",
-    "noData": "Keine Daten verfügbar"
-  },
   "energyRate": {
     "title": "Energietarif-Einstellungen",
     "description": "Konfigurieren Sie den kWh-Wert und die Währung für die Kostenberechnung im aktuellen Arbeitsbereich",

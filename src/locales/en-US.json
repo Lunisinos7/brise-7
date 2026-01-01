@@ -594,11 +594,6 @@
     "currentTemp": "Current Temperature (°C)",
     "targetTemp": "Target Temperature (°C)"
   },
-  "charts": {
-    "expenseByEquipment": "Expense by Equipment",
-    "expense": "Expense",
-    "noData": "No data available"
-  },
   "energyRate": {
     "title": "Energy Rate Settings",
     "description": "Configure kWh value and currency for cost calculation in current workspace",
