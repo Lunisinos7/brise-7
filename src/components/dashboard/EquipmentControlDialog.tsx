@@ -65,7 +65,10 @@ const EquipmentControlDialog = ({
   const briseControl = useBriseControl();
   const smartThingsControl = useSmartThingsControl();
   
-  const [localTemp, setLocalTemp] = useState(equipment?.targetTemp || 22);
+  const [localTemp, setLocalTemp] = useState(() => {
+    const temp = equipment?.targetTemp || 22;
+    return Math.min(Math.max(temp, MANUAL_TEMP_MIN), MANUAL_TEMP_MAX);
+  });
   const [localMode, setLocalMode] = useState(equipment?.mode || "cool");
   const [fanSpeed, setFanSpeed] = useState(2);
   const [timerHours, setTimerHours] = useState(0);
