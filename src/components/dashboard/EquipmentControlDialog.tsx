@@ -50,6 +50,10 @@ interface EquipmentControlDialogProps {
   onUpdate: (id: string, updates: Partial<Equipment>) => void;
 }
 
+// Limites de temperatura para modo manual (padrão de ar condicionados)
+const MANUAL_TEMP_MIN = 16;
+const MANUAL_TEMP_MAX = 30;
+
 const EquipmentControlDialog = ({
   equipment,
   isOpen,
@@ -80,7 +84,10 @@ const EquipmentControlDialog = ({
   const [heatTargetTemp, setHeatTargetTemp] = useState(22);
 
   useEffect(() => {
-    setLocalTemp(equipment?.targetTemp || 22);
+    // Garantir que a temperatura esteja dentro dos limites do modo manual
+    const targetTemp = equipment?.targetTemp || 22;
+    const clampedTemp = Math.min(Math.max(targetTemp, MANUAL_TEMP_MIN), MANUAL_TEMP_MAX);
+    setLocalTemp(clampedTemp);
     setLocalMode(equipment?.mode || "cool");
   }, [equipment?.id]);
 
@@ -124,7 +131,7 @@ const EquipmentControlDialog = ({
 
   const handleTempChange = async (increment: boolean) => {
     const newTemp = increment ? localTemp + 1 : localTemp - 1;
-    if (newTemp >= -30 && newTemp <= 50) {
+    if (newTemp >= MANUAL_TEMP_MIN && newTemp <= MANUAL_TEMP_MAX) {
       setLocalTemp(newTemp);
       
       // Call real API based on integration type
@@ -415,19 +422,22 @@ const EquipmentControlDialog = ({
                   variant="outline"
                   size="default"
                   onClick={() => handleTempChange(false)}
-                  disabled={!equipment.isOn || localTemp <= -30}
+                  disabled={!equipment.isOn || localTemp <= MANUAL_TEMP_MIN}
                   className="rounded-full w-10 h-10"
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <div className="text-center min-w-[60px]">
                   <div className="text-xl font-bold">{localTemp}°C</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {MANUAL_TEMP_MIN}° - {MANUAL_TEMP_MAX}°
+                  </div>
                 </div>
                 <Button
                   variant="outline"
                   size="default"
                   onClick={() => handleTempChange(true)}
-                  disabled={!equipment.isOn || localTemp >= 50}
+                  disabled={!equipment.isOn || localTemp >= MANUAL_TEMP_MAX}
                   className="rounded-full w-10 h-10"
                 >
                   <Plus className="h-4 w-4" />
