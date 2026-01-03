@@ -26,6 +26,10 @@ interface EnvironmentControlDialogProps {
   onUpdateEnvironment: (updates: Partial<Omit<Environment, "id">>) => Promise<void>;
 }
 
+// Temperature limits for manual mode
+const MANUAL_TEMP_MIN = 16;
+const MANUAL_TEMP_MAX = 30;
+
 const EnvironmentControlDialog = ({
   isOpen,
   onClose,
@@ -46,7 +50,7 @@ const EnvironmentControlDialog = ({
   const [heatTargetTemp, setHeatTargetTemp] = useState(22);
   
   // Manual mode state
-  const [targetTemp, setTargetTemp] = useState(21);
+  const [targetTemp, setTargetTemp] = useState(22);
   const [mode, setMode] = useState<"cool" | "heat" | "fan">("cool");
   const [fanSpeed, setFanSpeed] = useState(2);
   const [timerHours, setTimerHours] = useState(0);
@@ -58,8 +62,8 @@ const EnvironmentControlDialog = ({
     ? Math.round(equipments.reduce((sum, eq) => sum + eq.currentTemp, 0) / equipments.length)
     : 0;
   const avgTargetTemp = equipments.length > 0
-    ? Math.round(equipments.reduce((sum, eq) => sum + eq.targetTemp, 0) / equipments.length)
-    : 21;
+    ? Math.min(MANUAL_TEMP_MAX, Math.max(MANUAL_TEMP_MIN, Math.round(equipments.reduce((sum, eq) => sum + eq.targetTemp, 0) / equipments.length)))
+    : 22;
 
   // Sync state with environment setpoints when dialog opens
   useEffect(() => {
@@ -128,7 +132,7 @@ const EnvironmentControlDialog = ({
   };
 
   const handleTemperatureChange = async (newTemp: number) => {
-    const clampedTemp = Math.min(50, Math.max(-30, newTemp));
+    const clampedTemp = Math.min(MANUAL_TEMP_MAX, Math.max(MANUAL_TEMP_MIN, newTemp));
     setTargetTemp(clampedTemp);
     await onUpdateEquipments({ targetTemp: clampedTemp });
   };
@@ -436,16 +440,19 @@ const EnvironmentControlDialog = ({
                   variant="outline"
                   size="icon"
                   onClick={() => handleTemperatureChange(targetTemp - 1)}
-                  disabled={!isAnyOn}
+                  disabled={!isAnyOn || targetTemp <= MANUAL_TEMP_MIN}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
-                <span className="text-2xl font-bold w-20 text-center">{targetTemp}°C</span>
+                <div className="text-center">
+                  <span className="text-2xl font-bold">{targetTemp}°C</span>
+                  <p className="text-xs text-muted-foreground">{MANUAL_TEMP_MIN}°C - {MANUAL_TEMP_MAX}°C</p>
+                </div>
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => handleTemperatureChange(targetTemp + 1)}
-                  disabled={!isAnyOn}
+                  disabled={!isAnyOn || targetTemp >= MANUAL_TEMP_MAX}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>

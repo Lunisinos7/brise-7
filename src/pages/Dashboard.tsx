@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import StatusCard from "@/components/dashboard/StatusCard";
 import { AccumulatedExpenseCard } from "@/components/dashboard/AccumulatedExpenseCard";
-import EquipmentControlDialog from "@/components/dashboard/EquipmentControlDialog";
 import EnvironmentControlDialog from "@/components/dashboard/EnvironmentControlDialog";
 import CreateEnvironmentDialog from "@/components/dashboard/CreateEnvironmentDialog";
 import EditEnvironmentDialog from "@/components/dashboard/EditEnvironmentDialog";
@@ -37,8 +36,6 @@ const Dashboard = () => {
   
   // Enable real-time sync for BRISE devices
   useBriseSync(true);
-  const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
-  const [isControlDialogOpen, setIsControlDialogOpen] = useState(false);
   const [isCreateEnvironmentOpen, setIsCreateEnvironmentOpen] = useState(false);
   const [selectedEnvironmentId, setSelectedEnvironmentId] = useState<string | null>(null);
   const [isEnvironmentControlOpen, setIsEnvironmentControlOpen] = useState(false);
@@ -47,7 +44,6 @@ const Dashboard = () => {
   const [environmentToDelete, setEnvironmentToDelete] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const selectedEquipment = selectedEquipmentId ? equipments.find(eq => eq.id === selectedEquipmentId) ?? null : null;
   const selectedEnvironment = selectedEnvironmentId ? environments.find(env => env.id === selectedEnvironmentId) : null;
   const selectedEnvironmentEquipments = selectedEnvironment 
     ? equipments.filter(eq => selectedEnvironment.equipmentIds.includes(eq.id))
@@ -106,26 +102,6 @@ const Dashboard = () => {
       toast({
         title: t('common.error'),
         description: t('dashboard.errorToggleEquipment'),
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleControlEquipment = (id: string) => {
-    setSelectedEquipmentId(id);
-    setIsControlDialogOpen(true);
-  };
-
-  const handleEquipmentUpdate = async (id: string, updates: any) => {
-    const equipment = equipments.find(eq => eq.id === id);
-    if (!equipment) return;
-    
-    try {
-      await updateEquipment({ ...equipment, ...updates });
-    } catch {
-      toast({
-        title: t('common.error'),
-        description: t('dashboard.errorUpdateEquipment'),
         variant: "destructive"
       });
     }
@@ -266,8 +242,6 @@ const Dashboard = () => {
           </div>
         )}
       </div>
-
-      <EquipmentControlDialog equipment={selectedEquipment} isOpen={isControlDialogOpen} onClose={() => setIsControlDialogOpen(false)} onUpdate={handleEquipmentUpdate} />
       
       <CreateEnvironmentDialog
         isOpen={isCreateEnvironmentOpen}
