@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Wind } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Wind, Info } from "lucide-react";
 import { Equipment } from "@/hooks/useEquipments";
 import { Environment } from "@/contexts/EnvironmentContext";
 
@@ -94,6 +95,14 @@ const EditEnvironmentDialog = ({
 
           <div className="space-y-2">
             <Label>{t("editEnvironmentDialog.linkedEquipments")}</Label>
+            
+            <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/50">
+              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <AlertDescription className="text-sm text-blue-700 dark:text-blue-300">
+                {t("editEnvironmentDialog.syncWarning")}
+              </AlertDescription>
+            </Alert>
+            
             {availableEquipments.length > 0 ? (
               <ScrollArea className="h-48 border rounded-md p-2">
                 <div className="space-y-2">

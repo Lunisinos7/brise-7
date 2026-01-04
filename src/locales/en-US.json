@@ -201,7 +201,8 @@
     "namePlaceholder": "E.g.: Meeting Room B",
     "linkEquipments": "Equipment to be linked",
     "selectedCount": "{{count}} equipment(s) selected",
-    "create": "Create Environment"
+    "create": "Create Environment",
+    "syncWarning": "Before adding equipment, set all of them physically to 24°C. This ensures temperature commands work correctly."
   },
   "editEnvironmentDialog": {
     "title": "Edit Environment",
@@ -210,7 +211,8 @@
     "namePlaceholder": "E.g.: Meeting Room",
     "linkedEquipments": "Linked Equipment",
     "noEquipments": "No equipment available.",
-    "selectAtLeastOne": "Select at least 1 equipment."
+    "selectAtLeastOne": "Select at least 1 equipment.",
+    "syncWarning": "When adding new equipment, set them physically to 24°C before linking."
   },
   "environmentControlDialog": {
     "control": "Control",
@@ -238,7 +240,9 @@
     "remaining": "remaining",
     "setTimer": "Set",
     "rangeExplanationCooling": "Operating range: Target ← → Activation",
-    "rangeExplanationHeating": "Operating range: Activation ← → Target"
+    "rangeExplanationHeating": "Operating range: Activation ← → Target",
+    "syncWarning": "Different temperatures detected ({{min}}°C - {{max}}°C). Click to sync.",
+    "syncButton": "Sync"
   },
   "equipmentControlDialog": {
     "control": "Control",
