@@ -201,7 +201,8 @@
     "namePlaceholder": "Ej: Sala de Reuniones B",
     "linkEquipments": "Equipos a vincular",
     "selectedCount": "{{count}} equipo(s) seleccionado(s)",
-    "create": "Crear Ambiente"
+    "create": "Crear Ambiente",
+    "syncWarning": "Antes de agregar equipos, configúrelos físicamente a 24°C. Esto asegura que los comandos de temperatura funcionen correctamente."
   },
   "editEnvironmentDialog": {
     "title": "Editar Ambiente",
@@ -210,7 +211,8 @@
     "namePlaceholder": "Ej: Sala de Reuniones",
     "linkedEquipments": "Equipos Vinculados",
     "noEquipments": "Ningún equipo disponible.",
-    "selectAtLeastOne": "Seleccione al menos 1 equipo."
+    "selectAtLeastOne": "Seleccione al menos 1 equipo.",
+    "syncWarning": "Al agregar nuevos equipos, configúrelos físicamente a 24°C antes de vincularlos."
   },
   "environmentControlDialog": {
     "control": "Control",
@@ -238,7 +240,9 @@
     "remaining": "restantes",
     "setTimer": "Establecer",
     "rangeExplanationCooling": "Rango de operación: Objetivo ← → Activación",
-    "rangeExplanationHeating": "Rango de operación: Activación ← → Objetivo"
+    "rangeExplanationHeating": "Rango de operación: Activación ← → Objetivo",
+    "syncWarning": "Temperaturas diferentes detectadas ({{min}}°C - {{max}}°C). Haga clic para sincronizar.",
+    "syncButton": "Sincronizar"
   },
   "equipmentControlDialog": {
     "control": "Control",

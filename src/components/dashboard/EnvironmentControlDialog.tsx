@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
-import { Power, Minus, Plus, Snowflake, Sun, Wind, Timer, Info, Thermometer } from "lucide-react";
+import { Power, Minus, Plus, Snowflake, Sun, Wind, Timer, Info, Thermometer, AlertTriangle, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Equipment, calculateEnergyConsumption } from "@/hooks/useEquipments";
 import { Environment } from "@/contexts/EnvironmentContext";
@@ -49,12 +50,26 @@ const EnvironmentControlDialog = ({
   const [heatTriggerTemp, setHeatTriggerTemp] = useState(18);
   const [heatTargetTemp, setHeatTargetTemp] = useState(22);
   
-  // Manual mode state
-  const [targetTemp, setTargetTemp] = useState(22);
+  // Manual mode state - default to 24°C for sync
+  const [targetTemp, setTargetTemp] = useState(24);
   const [mode, setMode] = useState<"cool" | "heat" | "fan">("cool");
   const [fanSpeed, setFanSpeed] = useState(2);
   const [timerHours, setTimerHours] = useState(0);
   const [timerMinutes, setTimerMinutes] = useState(0);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Detect desynchronization (>2°C difference between equipments)
+  const desyncInfo = useMemo(() => {
+    if (equipments.length < 2) return { isDesynced: false, minTemp: 0, maxTemp: 0 };
+    const temps = equipments.map(eq => eq.targetTemp);
+    const minTemp = Math.min(...temps);
+    const maxTemp = Math.max(...temps);
+    return {
+      isDesynced: maxTemp - minTemp > 2,
+      minTemp,
+      maxTemp,
+    };
+  }, [equipments]);
 
   // Calculate averages from equipments
   const isAnyOn = equipments.some(eq => eq.isOn);
@@ -81,13 +96,25 @@ const EnvironmentControlDialog = ({
   // Sync manual mode state with equipments when dialog opens
   useEffect(() => {
     if (isOpen && equipments.length > 0) {
-      setTargetTemp(avgTargetTemp);
+      // Use 24°C as default if no equipment has a valid temp, otherwise use average
+      const hasValidTemp = equipments.some(eq => eq.targetTemp >= MANUAL_TEMP_MIN && eq.targetTemp <= MANUAL_TEMP_MAX);
+      setTargetTemp(hasValidTemp ? avgTargetTemp : 24);
       const firstEquipment = equipments[0];
       if (firstEquipment.mode === "cool" || firstEquipment.mode === "heat" || firstEquipment.mode === "fan") {
         setMode(firstEquipment.mode);
       }
     }
   }, [isOpen, equipments, avgTargetTemp]);
+
+  // Sync all equipments to current temperature
+  const handleSyncTemperatures = async () => {
+    setIsSyncing(true);
+    try {
+      await onUpdateEquipments({ targetTemp });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   // Save setpoints when they change (debounced via mode toggle)
   const handleModeToggle = async (manual: boolean) => {
@@ -252,6 +279,28 @@ const EnvironmentControlDialog = ({
               {t("environmentControlDialog.manualMode")}
             </span>
           </div>
+
+          {/* Desync Warning */}
+          {desyncInfo.isDesynced && (
+            <Alert className="border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/50">
+              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertDescription className="flex items-center justify-between gap-2">
+                <span className="text-sm text-amber-700 dark:text-amber-300">
+                  {t("environmentControlDialog.syncWarning", { min: desyncInfo.minTemp, max: desyncInfo.maxTemp })}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSyncTemperatures}
+                  disabled={isSyncing}
+                  className="shrink-0 border-amber-400 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-300 dark:hover:bg-amber-900"
+                >
+                  <RefreshCw className={cn("h-4 w-4 mr-1", isSyncing && "animate-spin")} />
+                  {t("environmentControlDialog.syncButton")}
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
 
           {!isManualMode ? (
             /* Setpoints Mode - Opção C */

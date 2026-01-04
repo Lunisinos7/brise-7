@@ -201,7 +201,8 @@
     "namePlaceholder": "Z.B.: Besprechungsraum B",
     "linkEquipments": "Zu verknüpfende Geräte",
     "selectedCount": "{{count}} Gerät(e) ausgewählt",
-    "create": "Umgebung erstellen"
+    "create": "Umgebung erstellen",
+    "syncWarning": "Bevor Sie Geräte hinzufügen, stellen Sie alle physisch auf 24°C ein. Dies stellt sicher, dass Temperaturbefehle korrekt funktionieren."
   },
   "editEnvironmentDialog": {
     "title": "Umgebung bearbeiten",
@@ -210,7 +211,8 @@
     "namePlaceholder": "Z.B.: Besprechungsraum",
     "linkedEquipments": "Verknüpfte Geräte",
     "noEquipments": "Keine Geräte verfügbar.",
-    "selectAtLeastOne": "Wählen Sie mindestens 1 Gerät aus."
+    "selectAtLeastOne": "Wählen Sie mindestens 1 Gerät aus.",
+    "syncWarning": "Wenn Sie neue Geräte hinzufügen, stellen Sie diese vor dem Verknüpfen physisch auf 24°C ein."
   },
   "environmentControlDialog": {
     "control": "Steuerung",
@@ -238,7 +240,9 @@
     "remaining": "verbleibend",
     "setTimer": "Einstellen",
     "rangeExplanationCooling": "Betriebsbereich: Ziel ← → Aktivierung",
-    "rangeExplanationHeating": "Betriebsbereich: Aktivierung ← → Ziel"
+    "rangeExplanationHeating": "Betriebsbereich: Aktivierung ← → Ziel",
+    "syncWarning": "Unterschiedliche Temperaturen erkannt ({{min}}°C - {{max}}°C). Klicken Sie zum Synchronisieren.",
+    "syncButton": "Synchronisieren"
   },
   "equipmentControlDialog": {
     "control": "Steuerung",

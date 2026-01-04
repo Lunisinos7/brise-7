@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 import { Equipment } from "@/hooks/useEquipments";
 
 interface CreateEnvironmentDialogProps {
@@ -68,6 +70,14 @@ const CreateEnvironmentDialog = ({
 
           <div className="space-y-2">
             <Label>{t("createEnvironmentDialog.linkEquipments")}</Label>
+            
+            <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/50">
+              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <AlertDescription className="text-sm text-blue-700 dark:text-blue-300">
+                {t("createEnvironmentDialog.syncWarning")}
+              </AlertDescription>
+            </Alert>
+            
             <div className="border rounded-md bg-background">
               <ScrollArea className="h-48 p-3">
                 <div className="space-y-3">
