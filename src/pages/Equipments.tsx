@@ -9,73 +9,51 @@ import { EditEquipmentDialog } from "@/components/equipments/EditEquipmentDialog
 import { useEquipments, Equipment } from "@/hooks/useEquipments";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { Search, Filter, Plus, Pencil, Loader2 } from "lucide-react";
-
 const Equipments = () => {
-  const { t } = useTranslation();
-  const { currentWorkspaceId } = useWorkspaceContext();
-  const { equipments, isLoading, addEquipment, updateEquipment, deleteEquipment } = useEquipments(currentWorkspaceId);
+  const {
+    t
+  } = useTranslation();
+  const {
+    currentWorkspaceId
+  } = useWorkspaceContext();
+  const {
+    equipments,
+    isLoading,
+    addEquipment,
+    updateEquipment,
+    deleteEquipment
+  } = useEquipments(currentWorkspaceId);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
-
-  const filteredEquipments = equipments.filter(
-    (eq) =>
-      eq.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      eq.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  const filteredEquipments = equipments.filter(eq => eq.name.toLowerCase().includes(searchTerm.toLowerCase()) || eq.location.toLowerCase().includes(searchTerm.toLowerCase()));
   const handleAddEquipment = async (equipment: Omit<Equipment, "id">) => {
     await addEquipment(equipment);
   };
-
   const handleEditEquipment = async (updatedEquipment: Equipment) => {
     await updateEquipment(updatedEquipment);
   };
-
   const handleDeleteEquipment = async (id: string) => {
     await deleteEquipment(id);
   };
-
   const openEditDialog = (equipment: Equipment) => {
     setSelectedEquipment(equipment);
     setShowEditDialog(true);
   };
-
-  const getStatusBadge = (isOn: boolean) => (
-    <Badge variant={isOn ? "default" : "secondary"} className="gap-1">
-      <div
-        className={`w-2 h-2 rounded-full ${
-          isOn ? "bg-energy-efficient" : "bg-muted-foreground"
-        }`}
-      />
+  const getStatusBadge = (isOn: boolean) => <Badge variant={isOn ? "default" : "secondary"} className="gap-1">
+      <div className={`w-2 h-2 rounded-full ${isOn ? "bg-energy-efficient" : "bg-muted-foreground"}`} />
       {isOn ? t("common.active") : t("common.inactive")}
-    </Badge>
-  );
-
-  const getIntegrationBadge = (integration: string) => (
-    <Badge
-      variant="outline"
-      className={
-        integration === "SMART"
-          ? "border-cooling text-cooling"
-          : "border-energy-efficient text-energy-efficient"
-      }
-    >
+    </Badge>;
+  const getIntegrationBadge = (integration: string) => <Badge variant="outline" className={integration === "SMART" ? "border-cooling text-cooling" : "border-energy-efficient text-energy-efficient"}>
       {integration}
-    </Badge>
-  );
-
+    </Badge>;
   if (isLoading) {
-    return (
-      <div className="p-6 flex items-center justify-center min-h-[400px]">
+    return <div className="p-6 flex items-center justify-center min-h-[400px]">
         <Loader2 className="h-8 w-8 animate-spin text-cooling" />
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="p-6 space-y-6">
+  return <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{t("equipments.title")}</h1>
@@ -83,11 +61,7 @@ const Equipments = () => {
             {t("equipments.subtitle")}
           </p>
         </div>
-        <Button
-          variant="cooling"
-          className="gap-2"
-          onClick={() => setShowAddDialog(true)}
-        >
+        <Button variant="cooling" onClick={() => setShowAddDialog(true)} className="gap-2 bg-primary">
           <Plus className="h-4 w-4" />
           {t("equipments.addEquipment")}
         </Button>
@@ -97,12 +71,7 @@ const Equipments = () => {
       <div className="flex gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={t("equipments.searchPlaceholder")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+          <Input placeholder={t("equipments.searchPlaceholder")} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" />
         </div>
         <Button variant="outline" className="gap-2">
           <Filter className="h-4 w-4" />
@@ -112,18 +81,11 @@ const Equipments = () => {
 
       {/* Equipment List */}
       <div className="grid gap-4">
-        {filteredEquipments.length === 0 ? (
-          <Card className="p-8 text-center">
+        {filteredEquipments.length === 0 ? <Card className="p-8 text-center">
             <p className="text-muted-foreground">
               {searchTerm ? t("equipments.noResults") : t("equipments.noEquipments")}
             </p>
-          </Card>
-        ) : (
-          filteredEquipments.map((equipment) => (
-            <Card
-              key={equipment.id}
-              className="hover:shadow-elevated transition-all duration-300"
-            >
+          </Card> : filteredEquipments.map(equipment => <Card key={equipment.id} className="hover:shadow-elevated transition-all duration-300">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -161,37 +123,19 @@ const Equipments = () => {
                     </div>
                   </div>
                   <div className="flex gap-2 items-center shrink-0">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openEditDialog(equipment)}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => openEditDialog(equipment)}>
                       <Pencil className="h-3 w-3 mr-1" />
                       {t("common.edit")}
                     </Button>
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          ))
-        )}
+            </Card>)}
       </div>
 
-      <AddEquipmentDialog
-        open={showAddDialog}
-        onOpenChange={setShowAddDialog}
-        onAddEquipment={handleAddEquipment}
-      />
+      <AddEquipmentDialog open={showAddDialog} onOpenChange={setShowAddDialog} onAddEquipment={handleAddEquipment} />
 
-      <EditEquipmentDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        equipment={selectedEquipment}
-        onEditEquipment={handleEditEquipment}
-        onDeleteEquipment={handleDeleteEquipment}
-      />
-    </div>
-  );
+      <EditEquipmentDialog open={showEditDialog} onOpenChange={setShowEditDialog} equipment={selectedEquipment} onEditEquipment={handleEditEquipment} onDeleteEquipment={handleDeleteEquipment} />
+    </div>;
 };
-
 export default Equipments;
