@@ -15,25 +15,28 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEnvironments } from "@/contexts/EnvironmentContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 const Dashboard = () => {
-  const { t } = useTranslation();
-  const { currentWorkspaceId } = useWorkspaceContext();
-  const { equipments, updateEquipment, isLoading } = useEquipments(currentWorkspaceId);
-  const { environments, addEnvironment, updateEnvironment, removeEnvironment } = useEnvironments();
+  const {
+    t
+  } = useTranslation();
+  const {
+    currentWorkspaceId
+  } = useWorkspaceContext();
+  const {
+    equipments,
+    updateEquipment,
+    isLoading
+  } = useEquipments(currentWorkspaceId);
+  const {
+    environments,
+    addEnvironment,
+    updateEnvironment,
+    removeEnvironment
+  } = useEnvironments();
   const briseControl = useBriseControl();
   const smartThingsControl = useSmartThingsControl();
-  
+
   // Enable real-time sync for BRISE devices
   useBriseSync(true);
   const [isCreateEnvironmentOpen, setIsCreateEnvironmentOpen] = useState(false);
@@ -42,13 +45,11 @@ const Dashboard = () => {
   const [isEditEnvironmentOpen, setIsEditEnvironmentOpen] = useState(false);
   const [environmentToEdit, setEnvironmentToEdit] = useState<string | null>(null);
   const [environmentToDelete, setEnvironmentToDelete] = useState<string | null>(null);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const selectedEnvironment = selectedEnvironmentId ? environments.find(env => env.id === selectedEnvironmentId) : null;
-  const selectedEnvironmentEquipments = selectedEnvironment 
-    ? equipments.filter(eq => selectedEnvironment.equipmentIds.includes(eq.id))
-    : [];
-  
+  const selectedEnvironmentEquipments = selectedEnvironment ? equipments.filter(eq => selectedEnvironment.equipmentIds.includes(eq.id)) : [];
   const environmentBeingEdited = environmentToEdit ? environments.find(env => env.id === environmentToEdit) ?? null : null;
   const environmentBeingDeleted = environmentToDelete ? environments.find(env => env.id === environmentToDelete) : null;
 
@@ -59,44 +60,37 @@ const Dashboard = () => {
   const activeEquipments = equipments.filter(eq => eq.isOn).length;
   const totalConsumption = equipments.reduce((sum, eq) => sum + eq.energyConsumption, 0);
   const avgTemp = Math.round(equipments.filter(eq => eq.isOn).reduce((sum, eq) => sum + eq.currentTemp, 0) / activeEquipments || 0);
-  
   const handleToggleEquipment = async (id: string) => {
     const equipment = equipments.find(eq => eq.id === id);
     if (!equipment) return;
-    
     const newState = !equipment.isOn;
-    
     try {
       // Call real API based on integration type
       let apiSuccess = true;
-      
       if (equipment.brise_device_id) {
         // BRISE equipment - call real API
-        apiSuccess = newState 
-          ? await briseControl.turnOn(equipment.brise_device_id)
-          : await briseControl.turnOff(equipment.brise_device_id);
+        apiSuccess = newState ? await briseControl.turnOn(equipment.brise_device_id) : await briseControl.turnOff(equipment.brise_device_id);
       } else if (equipment.smartthings_device_id) {
         // SmartThings equipment - call real API
-        apiSuccess = newState
-          ? await smartThingsControl.turnOn(equipment.smartthings_device_id)
-          : await smartThingsControl.turnOff(equipment.smartthings_device_id);
+        apiSuccess = newState ? await smartThingsControl.turnOn(equipment.smartthings_device_id) : await smartThingsControl.turnOff(equipment.smartthings_device_id);
       }
-      
       if (!apiSuccess) {
         // API call failed - don't update local state
         return;
       }
-      
+
       // Update local database
       await updateEquipment({
         ...equipment,
         isOn: newState,
         energyConsumption: newState ? equipment.capacity * 0.8 : 0
       });
-      
       toast({
         title: newState ? t('dashboard.equipmentOn') : t('dashboard.equipmentOff'),
-        description: t('dashboard.equipmentToggleSuccess', { name: equipment.name, state: newState ? t('dashboard.turnedOn') : t('dashboard.turnedOff') })
+        description: t('dashboard.equipmentToggleSuccess', {
+          name: equipment.name,
+          state: newState ? t('dashboard.turnedOn') : t('dashboard.turnedOff')
+        })
       });
     } catch {
       toast({
@@ -106,7 +100,6 @@ const Dashboard = () => {
       });
     }
   };
-
   const handleCreateEnvironment = async (name: string, selectedEquipmentIds: string[]) => {
     const created = await addEnvironment({
       name,
@@ -118,34 +111,36 @@ const Dashboard = () => {
       coolTriggerTemp: 28,
       coolTargetTemp: 24,
       heatTriggerTemp: 18,
-      heatTargetTemp: 22,
+      heatTargetTemp: 22
     });
     if (created) {
       toast({
         title: t('dashboard.environmentCreated'),
-        description: t('dashboard.environmentCreatedDesc', { name, count: selectedEquipmentIds.length }),
+        description: t('dashboard.environmentCreatedDesc', {
+          name,
+          count: selectedEquipmentIds.length
+        })
       });
     }
   };
-
   const handleControlEnvironment = (environmentId: string) => {
     setSelectedEnvironmentId(environmentId);
     setIsEnvironmentControlOpen(true);
   };
-
   const handleEnvironmentUpdate = async (updates: Partial<typeof equipments[0]>) => {
     if (!selectedEnvironment) return;
-    
     try {
       // Apply updates to all linked equipments
-      const updatePromises = selectedEnvironmentEquipments.map(eq => 
-        updateEquipment({ ...eq, ...updates })
-      );
+      const updatePromises = selectedEnvironmentEquipments.map(eq => updateEquipment({
+        ...eq,
+        ...updates
+      }));
       await Promise.all(updatePromises);
-      
       toast({
         title: t('dashboard.environmentUpdated'),
-        description: t('dashboard.environmentUpdatedDesc', { count: selectedEnvironmentEquipments.length }),
+        description: t('dashboard.environmentUpdatedDesc', {
+          count: selectedEnvironmentEquipments.length
+        })
       });
     } catch {
       toast({
@@ -155,47 +150,52 @@ const Dashboard = () => {
       });
     }
   };
-
   const handleEditEnvironment = (environmentId: string) => {
     setEnvironmentToEdit(environmentId);
     setIsEditEnvironmentOpen(true);
   };
-
   const handleUpdateEnvironment = (id: string, name: string, equipmentIds: string[]) => {
-    updateEnvironment(id, { name, equipmentIds });
+    updateEnvironment(id, {
+      name,
+      equipmentIds
+    });
     toast({
       title: t('dashboard.environmentUpdated'),
-      description: t('dashboard.environmentUpdatedDesc', { count: equipmentIds.length }),
+      description: t('dashboard.environmentUpdatedDesc', {
+        count: equipmentIds.length
+      })
     });
   };
-
   const handleDeleteEnvironment = (environmentId: string) => {
     setEnvironmentToDelete(environmentId);
   };
-
   const handleToggleEnvironment = async (environmentId: string, isActive: boolean) => {
     const env = environments.find(e => e.id === environmentId);
-    await updateEnvironment(environmentId, { isActive });
+    await updateEnvironment(environmentId, {
+      isActive
+    });
     toast({
       title: isActive ? t('dashboard.environmentActivated') : t('dashboard.environmentPaused'),
-      description: t('dashboard.equipmentToggleSuccess', { name: env?.name, state: isActive ? t('dashboard.turnedOn') : t('dashboard.turnedOff') }),
+      description: t('dashboard.equipmentToggleSuccess', {
+        name: env?.name,
+        state: isActive ? t('dashboard.turnedOn') : t('dashboard.turnedOff')
+      })
     });
   };
-
   const confirmDeleteEnvironment = () => {
     if (environmentToDelete) {
       const env = environments.find(e => e.id === environmentToDelete);
       removeEnvironment(environmentToDelete);
       toast({
         title: t('dashboard.environmentDeleted'),
-        description: t('dashboard.environmentDeletedDesc', { name: env?.name }),
+        description: t('dashboard.environmentDeletedDesc', {
+          name: env?.name
+        })
       });
       setEnvironmentToDelete(null);
     }
   };
-
-  return (
-    <div className="p-6 space-y-6 min-h-screen">
+  return <div className="p-6 space-y-6 min-h-screen">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{t('dashboard.title')}</h1>
@@ -203,7 +203,7 @@ const Dashboard = () => {
             {t('dashboard.subtitle')}
           </p>
         </div>
-        <Button onClick={() => setIsCreateEnvironmentOpen(true)}>
+        <Button onClick={() => setIsCreateEnvironmentOpen(true)} className="bg-primary">
           <Plus className="mr-2 h-4 w-4" />
           {t('dashboard.createEnvironment')}
         </Button>
@@ -219,69 +219,38 @@ const Dashboard = () => {
 
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">{t('dashboard.environments')}</h2>
-        {environments.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {environments.map(environment => (
-              <EnvironmentCard 
-                key={environment.id} 
-                environment={environment} 
-                equipments={equipments}
-                onControlEnvironment={handleControlEnvironment}
-                onEditEnvironment={handleEditEnvironment}
-                onDeleteEnvironment={handleDeleteEnvironment}
-                onToggleEnvironment={handleToggleEnvironment}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 border border-dashed rounded-lg">
+        {environments.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {environments.map(environment => <EnvironmentCard key={environment.id} environment={environment} equipments={equipments} onControlEnvironment={handleControlEnvironment} onEditEnvironment={handleEditEnvironment} onDeleteEnvironment={handleDeleteEnvironment} onToggleEnvironment={handleToggleEnvironment} />)}
+          </div> : <div className="text-center py-12 border border-dashed rounded-lg">
             <p className="text-muted-foreground">{t('dashboard.noEnvironments')}</p>
             <p className="text-sm text-muted-foreground mt-1">
               {t('dashboard.noEnvironmentsHint')}
             </p>
-          </div>
-        )}
+          </div>}
       </div>
       
-      <CreateEnvironmentDialog
-        isOpen={isCreateEnvironmentOpen}
-        onClose={() => setIsCreateEnvironmentOpen(false)}
-        equipments={availableEquipments}
-        onCreateEnvironment={handleCreateEnvironment}
-      />
+      <CreateEnvironmentDialog isOpen={isCreateEnvironmentOpen} onClose={() => setIsCreateEnvironmentOpen(false)} equipments={availableEquipments} onCreateEnvironment={handleCreateEnvironment} />
 
-      <EditEnvironmentDialog
-        isOpen={isEditEnvironmentOpen}
-        onClose={() => {
-          setIsEditEnvironmentOpen(false);
-          setEnvironmentToEdit(null);
-        }}
-        environment={environmentBeingEdited}
-        allEquipments={equipments}
-        assignedEquipmentIds={assignedEquipmentIds}
-        onUpdateEnvironment={handleUpdateEnvironment}
-      />
+      <EditEnvironmentDialog isOpen={isEditEnvironmentOpen} onClose={() => {
+      setIsEditEnvironmentOpen(false);
+      setEnvironmentToEdit(null);
+    }} environment={environmentBeingEdited} allEquipments={equipments} assignedEquipmentIds={assignedEquipmentIds} onUpdateEnvironment={handleUpdateEnvironment} />
 
-      <EnvironmentControlDialog
-        isOpen={isEnvironmentControlOpen}
-        onClose={() => setIsEnvironmentControlOpen(false)}
-        environment={selectedEnvironment || null}
-        equipments={selectedEnvironmentEquipments}
-        onUpdateEquipments={handleEnvironmentUpdate}
-        onUpdateEnvironment={async (updates) => {
-          if (selectedEnvironment) {
-            await updateEnvironment(selectedEnvironment.id, updates);
-          }
-        }}
-      />
+      <EnvironmentControlDialog isOpen={isEnvironmentControlOpen} onClose={() => setIsEnvironmentControlOpen(false)} environment={selectedEnvironment || null} equipments={selectedEnvironmentEquipments} onUpdateEquipments={handleEnvironmentUpdate} onUpdateEnvironment={async updates => {
+      if (selectedEnvironment) {
+        await updateEnvironment(selectedEnvironment.id, updates);
+      }
+    }} />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!environmentToDelete} onOpenChange={(open) => !open && setEnvironmentToDelete(null)}>
+      <AlertDialog open={!!environmentToDelete} onOpenChange={open => !open && setEnvironmentToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('dashboard.deleteEnvironmentTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('dashboard.deleteEnvironmentDesc', { name: environmentBeingDeleted?.name })}
+              {t('dashboard.deleteEnvironmentDesc', {
+              name: environmentBeingDeleted?.name
+            })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -299,8 +268,6 @@ const Dashboard = () => {
           {t('common.lastUpdate')}: {new Date().toLocaleString()}
         </p>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
