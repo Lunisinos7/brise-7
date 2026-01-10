@@ -30,10 +30,8 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Equipment } from "@/hooks/useEquipments";
-import { useSmartThingsConfig } from "@/hooks/useSmartThingsConfig";
-import { useSmartThingsDevices } from "@/hooks/useSmartThingsDevices";
-import { useBriseConfig } from "@/hooks/useBriseConfig";
-import { useBriseDevices } from "@/hooks/useBriseDevices";
+import { useSmartThingsConfig, useSmartThingsDevices } from "@/hooks/smartthings";
+import { useBriseConfig, useBriseDevices } from "@/hooks/brise";
 import { SmartThingsDevice } from "@/lib/smartthings";
 import { BriseDevice } from "@/lib/brise";
 import { Loader2, Wifi, AlertCircle, RefreshCw, Settings, Snowflake } from "lucide-react";

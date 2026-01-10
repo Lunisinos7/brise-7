@@ -37,7 +37,7 @@ export function useSmartThingsDevices() {
       setDevices(discoveredDevices);
       return discoveredDevices;
     } catch (error: any) {
-      console.error("Error discovering devices:", error);
+      console.error("Error discovering SmartThings devices:", error);
       toast({
         title: i18n.t("hooks.smartThingsDevices.discoverError"),
         description: error.message || i18n.t("hooks.smartThingsDevices.checkConfig"),
@@ -59,6 +59,7 @@ export function useSmartThingsDevices() {
       return false;
     }
 
+    setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("smartthings-sync", {
         body: { equipmentId, workspaceId: currentWorkspaceId },
@@ -70,20 +71,17 @@ export function useSmartThingsDevices() {
         throw new Error(data.error);
       }
 
-      toast({
-        title: i18n.t("hooks.smartThingsDevices.synced"),
-        description: i18n.t("hooks.smartThingsDevices.syncedDesc"),
-      });
-
       return true;
     } catch (error: any) {
-      console.error("Error syncing device:", error);
+      console.error("Error syncing SmartThings device:", error);
       toast({
         title: i18n.t("hooks.smartThingsDevices.syncError"),
-        description: error.message,
+        description: error.message || i18n.t("hooks.smartThingsControl.tryAgain"),
         variant: "destructive",
       });
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -97,9 +95,10 @@ export function useSmartThingsDevices() {
       return false;
     }
 
+    setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("smartthings-sync", {
-        body: { workspaceId: currentWorkspaceId },
+        body: { syncAll: true, workspaceId: currentWorkspaceId },
       });
 
       if (error) throw error;
@@ -108,22 +107,22 @@ export function useSmartThingsDevices() {
         throw new Error(data.error);
       }
 
-      const successCount = data.results?.filter((r: any) => r.success).length || 0;
-      
       toast({
-        title: i18n.t("hooks.smartThingsDevices.syncComplete"),
-        description: i18n.t("hooks.smartThingsDevices.syncCompleteDesc", { count: successCount }),
+        title: i18n.t("hooks.smartThingsDevices.syncSuccess"),
+        description: i18n.t("hooks.smartThingsDevices.syncSuccessDesc", { count: data.synced || 0 }),
       });
 
       return true;
     } catch (error: any) {
-      console.error("Error syncing all devices:", error);
+      console.error("Error syncing all SmartThings devices:", error);
       toast({
-        title: i18n.t("hooks.smartThingsDevices.syncAllError"),
-        description: error.message,
+        title: i18n.t("hooks.smartThingsDevices.syncError"),
+        description: error.message || i18n.t("hooks.smartThingsControl.tryAgain"),
         variant: "destructive",
       });
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
