@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Wifi, WifiOff, Eye, EyeOff, ExternalLink, Loader2, CheckCircle, RefreshCw } from "lucide-react";
-import { useSmartThingsConfig } from "@/hooks/useSmartThingsConfig";
-import { useSmartThingsDevices } from "@/hooks/useSmartThingsDevices";
+import { useSmartThingsConfig, useSmartThingsDevices } from "@/hooks/smartthings";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 export function SmartThingsConfig() {
   const {

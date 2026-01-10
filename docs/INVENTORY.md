@@ -2,11 +2,13 @@
 
 Documento para guiar a refatoração. Lista todos os componentes, hooks e dependências com status de uso.
 
+**Última atualização**: Refatoração de 10/01/2026
+
 ---
 
 ## Componentes UI (src/components/ui/)
 
-### ✅ Em Uso (Confirmado)
+### ✅ Em Uso (35 componentes)
 
 | Componente | Usado em |
 |------------|----------|
@@ -20,8 +22,8 @@ Documento para guiar a refatoração. Lista todos os componentes, hooks e depend
 | `card.tsx` | Cards do dashboard |
 | `checkbox.tsx` | Formulários |
 | `collapsible.tsx` | Seções expansíveis |
+| `command.tsx` | Search/command features |
 | `dialog.tsx` | Modais |
-| `drawer.tsx` | Mobile navigation |
 | `dropdown-menu.tsx` | Menus de ação |
 | `form.tsx` | Formulários com react-hook-form |
 | `input.tsx` | Campos de entrada |
@@ -29,12 +31,14 @@ Documento para guiar a refatoração. Lista todos os componentes, hooks e depend
 | `popover.tsx` | Popovers |
 | `progress.tsx` | Barras de progresso |
 | `radio-group.tsx` | Seleção única |
+| `range-slider.tsx` | Controle de setpoints |
 | `scroll-area.tsx` | Áreas com scroll |
 | `select.tsx` | Dropdowns |
 | `separator.tsx` | Divisores |
 | `sheet.tsx` | Painéis laterais |
 | `skeleton.tsx` | Loading states |
 | `slider.tsx` | Controle de temperatura |
+| `sonner.tsx` | Toasts alternativos |
 | `switch.tsx` | Toggles on/off |
 | `table.tsx` | Tabelas de dados |
 | `tabs.tsx` | Navegação por abas |
@@ -43,26 +47,26 @@ Documento para guiar a refatoração. Lista todos os componentes, hooks e depend
 | `toaster.tsx` | Container de toasts |
 | `tooltip.tsx` | Dicas de contexto |
 
-### ⚠️ Candidatos a Remoção (Verificar)
+### ❌ Removidos (16 componentes)
 
-| Componente | Motivo |
-|------------|--------|
-| `aspect-ratio.tsx` | Não encontrado uso |
-| `breadcrumb.tsx` | Navegação não usa |
-| `carousel.tsx` | Não há carrosséis |
-| `command.tsx` | Não há command palette |
-| `context-menu.tsx` | Não há menus de contexto |
-| `hover-card.tsx` | Não encontrado uso |
-| `input-otp.tsx` | Não há autenticação OTP |
-| `menubar.tsx` | Navegação usa drawer |
-| `navigation-menu.tsx` | Não usado |
-| `pagination.tsx` | Tabelas não paginam |
-| `range-slider.tsx` | Verificar se usado |
-| `resizable.tsx` | Não há painéis redimensionáveis |
-| `sidebar.tsx` | Usa drawer em vez disso |
-| `sonner.tsx` | Duplica toaster |
-| `toggle.tsx` | Usa switch em vez disso |
-| `toggle-group.tsx` | Não encontrado uso |
+| Componente | Data | Motivo |
+|------------|------|--------|
+| `aspect-ratio.tsx` | 10/01/2026 | Sem uso |
+| `breadcrumb.tsx` | 10/01/2026 | Navegação não usa |
+| `carousel.tsx` | 10/01/2026 | Sem carrosséis |
+| `chart.tsx` | 10/01/2026 | Usa recharts diretamente |
+| `context-menu.tsx` | 10/01/2026 | Sem menus de contexto |
+| `drawer.tsx` | 10/01/2026 | Usa sheet |
+| `hover-card.tsx` | 10/01/2026 | Sem uso |
+| `input-otp.tsx` | 10/01/2026 | Sem OTP |
+| `menubar.tsx` | 10/01/2026 | Usa dropdown |
+| `navigation-menu.tsx` | 10/01/2026 | Sem uso |
+| `pagination.tsx` | 10/01/2026 | Tabelas não paginam |
+| `resizable.tsx` | 10/01/2026 | Sem painéis redimensionáveis |
+| `sidebar.tsx` | 10/01/2026 | Usa sheet |
+| `toggle.tsx` | 10/01/2026 | Usa switch |
+| `toggle-group.tsx` | 10/01/2026 | Sem uso |
+| `use-toast.ts` | 10/01/2026 | Duplicado (movido para hooks/) |
 
 ---
 
@@ -70,16 +74,26 @@ Documento para guiar a refatoração. Lista todos os componentes, hooks e depend
 
 ### Por Domínio
 
-**BRISE (4 arquivos → consolidar)**
-- `useBriseConfig.ts` - Configuração
-- `useBriseControl.ts` - Comandos
-- `useBriseDevices.ts` - Lista dispositivos
-- `useBriseSync.ts` - Sincronização
+**BRISE (src/hooks/brise/) - ✅ Consolidado**
+```
+src/hooks/brise/
+├── index.ts              # Re-exports
+├── useBriseConfig.ts     # Configuração
+├── useBriseControl.ts    # Comandos
+├── useBriseDevices.ts    # Lista dispositivos
+└── useBriseSync.ts       # Sincronização
+```
+**Import**: `import { useBriseConfig, useBriseControl } from "@/hooks/brise"`
 
-**SmartThings (3 arquivos → consolidar)**
-- `useSmartThingsConfig.ts` - Configuração
-- `useSmartThingsControl.ts` - Comandos
-- `useSmartThingsDevices.ts` - Lista dispositivos
+**SmartThings (src/hooks/smartthings/) - ✅ Consolidado**
+```
+src/hooks/smartthings/
+├── index.ts                  # Re-exports
+├── useSmartThingsConfig.ts   # Configuração
+├── useSmartThingsControl.ts  # Comandos
+└── useSmartThingsDevices.ts  # Lista dispositivos
+```
+**Import**: `import { useSmartThingsConfig } from "@/hooks/smartthings"`
 
 **Core (5 arquivos)**
 - `useAuth.ts` - Autenticação
@@ -100,7 +114,7 @@ Documento para guiar a refatoração. Lista todos os componentes, hooks e depend
 
 **Utilitários (2 arquivos)**
 - `use-mobile.tsx` - Detecção mobile
-- `use-toast.ts` - ⚠️ Duplicado com toast.tsx
+- `use-toast.ts` - Sistema de toasts
 
 ---
 
@@ -127,10 +141,8 @@ Documento para guiar a refatoração. Lista todos os componentes, hooks e depend
 |--------|---------|--------|
 | Português (BR) | `pt-BR.json` | ✅ Principal |
 | English (US) | `en-US.json` | ✅ Manter |
-| Español | `es-ES.json` | ⚠️ Remover inicialmente |
-| Deutsch | `de-DE.json` | ⚠️ Remover inicialmente |
-
-**Recomendação**: Manter apenas PT-BR e EN-US até o projeto estabilizar.
+| Español | `es-ES.json` | ⚠️ Avaliar remoção |
+| Deutsch | `de-DE.json` | ⚠️ Avaliar remoção |
 
 ---
 
@@ -152,21 +164,23 @@ Documento para guiar a refatoração. Lista todos os componentes, hooks e depend
 | `recharts` | Gráficos |
 | `i18next`, `react-i18next` | Internacionalização |
 | `sonner` | Toasts |
+| `cmdk` | Command components |
 
-### ⚠️ Verificar Necessidade
+### ❌ Dependências Removidas (10/01/2026)
 
 | Pacote | Motivo |
 |--------|--------|
-| `embla-carousel-react` | Carousel não usado |
-| `react-resizable-panels` | Resizable não usado |
-| `cmdk` | Command não usado |
-| `vaul` | Drawer - verificar se usado |
-| `input-otp` | OTP não usado |
-| `next-themes` | Apenas para sonner |
-
-### Radix UI (Base do shadcn)
-
-Todos os `@radix-ui/*` são usados pelos componentes shadcn. Remover apenas se remover o componente correspondente.
+| `embla-carousel-react` | Carousel removido |
+| `react-resizable-panels` | Resizable removido |
+| `input-otp` | OTP removido |
+| `vaul` | Drawer removido |
+| `@radix-ui/react-aspect-ratio` | Componente removido |
+| `@radix-ui/react-context-menu` | Componente removido |
+| `@radix-ui/react-hover-card` | Componente removido |
+| `@radix-ui/react-menubar` | Componente removido |
+| `@radix-ui/react-navigation-menu` | Componente removido |
+| `@radix-ui/react-toggle` | Componente removido |
+| `@radix-ui/react-toggle-group` | Componente removido |
 
 ---
 
@@ -187,15 +201,26 @@ Todos os `@radix-ui/*` são usados pelos componentes shadcn. Remover apenas se r
 
 ---
 
+## Métricas da Refatoração
+
+| Métrica | Antes | Depois | Redução |
+|---------|-------|--------|---------|
+| Componentes UI | 51 | 35 | -16 |
+| Hooks na raiz | 20 | 13 | -7 |
+| Dependências NPM | ~50 | ~39 | -11 |
+| Arquivos duplicados | 1 | 0 | -1 |
+
+---
+
 ## Complexidade por Arquivo
 
-### 🔴 Alta (Refatorar)
+### 🔴 Alta (Refatorar próxima fase)
 
 | Arquivo | Linhas | Problema |
 |---------|--------|----------|
 | `Dashboard.tsx` | ~270 | Muitos handlers, mistura lógica |
 | `useEquipments.ts` | ~200 | Muitas responsabilidades |
-| `useTimeRoutines.ts` | ~150 | Complexo |
+| `EnvironmentControlDialog.tsx` | ~600 | Muito extenso |
 
 ### 🟡 Média (Avaliar)
 

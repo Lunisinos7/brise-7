@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Wifi, Eye, EyeOff, RefreshCw, LogOut, Circle } from "lucide-react";
-import { useBriseConfig } from "@/hooks/useBriseConfig";
-import { useBriseDevices } from "@/hooks/useBriseDevices";
+import { useBriseConfig, useBriseDevices } from "@/hooks/brise";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 export function BriseConfig() {

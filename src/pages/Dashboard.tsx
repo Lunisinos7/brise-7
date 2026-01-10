@@ -7,9 +7,8 @@ import CreateEnvironmentDialog from "@/components/dashboard/CreateEnvironmentDia
 import EditEnvironmentDialog from "@/components/dashboard/EditEnvironmentDialog";
 import EnvironmentCard from "@/components/dashboard/EnvironmentCard";
 import { useEquipments } from "@/hooks/useEquipments";
-import { useBriseControl } from "@/hooks/useBriseControl";
-import { useBriseSync } from "@/hooks/useBriseSync";
-import { useSmartThingsControl } from "@/hooks/useSmartThingsControl";
+import { useBriseControl, useBriseSync } from "@/hooks/brise";
+import { useSmartThingsControl } from "@/hooks/smartthings";
 import { Wind, Zap, Thermometer, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
